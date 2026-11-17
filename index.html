@@ -266,8 +266,9 @@
             <h2 class="font-display font-bold text-sm text-white uppercase tracking-wider">Configuración y ajustes</h2>
           </div>
           <!-- Botón Engranaje de Ajustes -->
-          <button onclick="openConfigModal()" class="text-zinc-400 hover:text-brand-yellow hover:rotate-45 transition-all p-2 rounded-xl bg-brand-canvas border border-brand-border" title="Abrir Modal de Configuración">
+          <button onclick="openConfigModal()" class="relative text-zinc-400 hover:text-brand-yellow transition-all p-2 rounded-xl bg-brand-canvas border border-brand-border" title="Abrir Modal de Configuración">
             <i class="fa-solid fa-gear text-base"></i>
+            <span id="reset-badge-gear" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">0</span>
           </button>
         </div>
 
@@ -478,6 +479,7 @@
             <div>
               <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Contraseña</label>
               <input type="password" id="student-password" required placeholder="••••••••" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              <button type="button" id="btn-open-forgot" onclick="openForgotPassword(document.getElementById('student-username').value)" class="mt-1.5 text-[10px] text-brand-yellow/85 hover:text-brand-yellow hover:underline">¿Olvidaste tu contraseña?</button>
             </div>
             
             <div class="flex items-center justify-between text-[10px]">
@@ -569,6 +571,11 @@
               </div>
             </div>
             <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Teléfono / WhatsApp (opcional)</label>
+              <input type="tel" id="reg-phone" maxlength="20" placeholder="Ej: +54 351 1234567" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              <p class="text-[9px] text-zinc-500 mt-1">Lo usamos para avisos del gimnasio.</p>
+            </div>
+            <div>
               <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Contraseña</label>
               <input type="password" id="reg-password" required placeholder="Mínimo 4 caracteres" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
             </div>
@@ -587,6 +594,67 @@
           <button type="button" onclick="closeStudentRegister()" class="w-full mt-3 py-2 text-zinc-400 hover:text-white text-xs">
             <i class="fa-solid fa-chevron-left mr-1"></i> Volver a ingresar
           </button>
+        </div>
+
+        <!-- SCREEN OLVIDÉ MI CONTRASEÑA -->
+        <div id="student-forgot-screen" class="hidden flex-grow flex flex-col px-6 py-8 relative overflow-y-auto scrollbar-none">
+          <div class="text-center mb-5">
+            <img src="logo.webp" alt="CAMBIOZ GYM Logo" class="h-16 w-16 object-contain rounded-xl mx-auto bg-black" />
+            <h3 id="forgot-title" class="font-display font-black text-lg tracking-tight text-white mt-2">Recuperar contraseña</h3>
+          </div>
+
+          <!-- Paso 1: pedir ayuda -->
+          <form id="forgot-step-ask" onsubmit="handleForgotAsk(event)" class="space-y-3">
+            <p class="text-[11px] text-zinc-300">Ingresá tu usuario y le avisamos al administrador para que te habilite el acceso.</p>
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Usuario (DNI o correo)</label>
+              <input type="text" id="forgot-username" required placeholder="Tu usuario..." class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+            </div>
+            <button type="submit" class="w-full bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold py-3 rounded-xl text-xs shadow-lg"><i class="fa-solid fa-paper-plane mr-1.5"></i>Avisar al administrador</button>
+          </form>
+
+          <!-- Paso 2: mensaje enviado -->
+          <div id="forgot-step-sent" class="hidden space-y-3">
+            <div class="bg-brand-surface border border-brand-border rounded-2xl p-4 text-center">
+              <i class="fa-solid fa-circle-check text-emerald-400 text-3xl mb-2"></i>
+              <p id="forgot-sent-text" class="text-xs text-zinc-200"></p>
+            </div>
+          </div>
+
+          <!-- Paso 3: crear nueva contraseña -->
+          <form id="forgot-step-reset" onsubmit="handleForgotReset(event)" class="hidden space-y-3">
+            <p id="forgot-reset-text" class="text-[11px] text-zinc-300"></p>
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Nueva contraseña</label>
+              <input type="password" id="forgot-new-pass" required placeholder="Mínimo 4 caracteres" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Repetir nueva contraseña</label>
+              <input type="password" id="forgot-new-pass2" required placeholder="••••••••" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+            </div>
+            <button type="submit" class="w-full bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold py-3 rounded-xl text-xs shadow-lg"><i class="fa-solid fa-lock mr-1.5"></i>Guardar e ingresar</button>
+          </form>
+
+          <p id="forgot-error" class="hidden mt-3 text-[11px] text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg px-3 py-2"></p>
+
+          <button type="button" onclick="closeForgotPassword()" class="w-full mt-3 py-2 text-zinc-400 hover:text-white text-xs">
+            <i class="fa-solid fa-chevron-left mr-1"></i> Volver a ingresar
+          </button>
+        </div>
+
+        <!-- SCREEN SIN ACCESO A LA RUTINA (sin plan activo / plan sin musculación) -->
+        <div id="student-noaccess-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-6 pb-8 px-5 relative scrollbar-none bg-black">
+          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-400 hover:text-white font-semibold mb-4 flex items-center gap-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <div class="rounded-2xl border border-red-500/40 bg-red-950/20 p-5 text-center mb-5">
+            <div class="h-14 w-14 rounded-full bg-red-500/10 border border-red-500/40 flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-lock text-red-400 text-2xl"></i></div>
+            <h3 id="noaccess-title" class="text-xl font-extrabold uppercase tracking-tight text-white leading-tight">Sin plan activo</h3>
+            <p id="noaccess-text" class="text-xs text-zinc-300 mt-2"></p>
+          </div>
+          <div class="space-y-3">
+            <button onclick="showSoon('Inscripción')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme a un plan</button>
+            <button onclick="showSoon('Comprar crédito')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-cart-plus mr-1.5"></i>Comprar crédito</button>
+            <button onclick="goStudentScreen('precios')" class="w-full rounded-xl py-3 text-sm font-bold border border-brand-yellow/50 text-brand-yellow hover:bg-brand-yellow/10"><i class="fa-solid fa-tag mr-1.5"></i>Ver planes y precios</button>
+          </div>
         </div>
 
         <!-- SCREEN HOME: TABLERO DEL ALUMNO (primera pantalla tras el login) -->
@@ -794,6 +862,7 @@
         </button>
         <button id="tab-btn-students" onclick="switchConfigTab('students')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
           <i class="fa-solid fa-users-gear mr-1"></i> Alumnos (ABM)
+          <span id="reset-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
         </button>
         <button id="tab-btn-plans" onclick="switchConfigTab('plans')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
           <i class="fa-solid fa-id-card mr-1"></i> Planes
@@ -1036,6 +1105,14 @@
 
       <!-- Pestaña 3: Gestión de Alumnos (ABM) -->
       <div id="tab-content-students" class="space-y-4 hidden max-h-[500px] overflow-y-auto pr-1">
+        <!-- Solicitudes de contraseña olvidada -->
+        <div id="reset-requests-card" class="hidden bg-red-950/20 border border-red-500/40 p-3.5 rounded-2xl space-y-2.5">
+          <h4 class="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-key"></i> Solicitudes de contraseña
+          </h4>
+          <p class="text-[10px] text-zinc-400">Un alumno pidió ayuda para ingresar. Asigná una clave genérica (deberá cambiarla al entrar) o habilitá que él mismo cree una nueva.</p>
+          <div id="reset-requests-list" class="space-y-2"></div>
+        </div>
         <!-- Formulario de Alta / Edición -->
         <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
           <h4 id="student-abm-title" class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -1538,6 +1615,7 @@
       renderConstructor();
       updateHeaderBadges();
       updateRoutineNameDisplays();
+      updateResetBadges();
 
       // 4. Decidir vista a mostrar
       const isStudentMode = (viewParam === 'alumno' || !!encodedRoutine);
@@ -2393,6 +2471,7 @@
         if (tabStudents) tabStudents.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
         if (contentStudents) contentStudents.classList.remove('hidden');
         renderStudentsList();
+        renderResetRequests();
       } else if (tabName === 'plans') {
         if (tabPlans) tabPlans.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
         if (contentPlans) contentPlans.classList.remove('hidden');
@@ -2892,7 +2971,7 @@
         tr.innerHTML = `
           <td class="py-2.5">
             <div class="font-bold text-white">${std.name}</div>
-            <div class="text-zinc-500 text-[8px]">DNI: ${std.username}</div>
+            <div class="text-zinc-500 text-[8px]">DNI: ${std.username}${std.phone ? ' · Tel: ' + std.phone : ''}</div>
           </td>
           <td class="py-2.5 text-zinc-400 font-semibold">${std.gender === 'H' || std.gender === 'M' ? (std.gender === 'M' ? '♂️ H' : '♀️ M') : std.gender}</td>
           <td class="py-2.5 text-zinc-400 max-w-[120px] truncate" title="${std.condition || 'Ninguna'}">${std.condition || 'Ninguna'}</td>
@@ -3523,6 +3602,12 @@
         return;
       }
 
+      // Ingresó con una clave genérica asignada por el administrador: debe crear la suya.
+      if (user.must_change_password) {
+        openForgotReset(user.username, 'forced');
+        return;
+      }
+
       const remember = document.getElementById('student-remember').checked;
       if (remember) {
         localStorage.setItem('cambioz_student_user', JSON.stringify(user));
@@ -3569,6 +3654,11 @@
         }
         localStorage.setItem('cambioz_student_user', JSON.stringify(user));
         alert(`👤 Simulación biométrica exitosa.\nIniciando sesión como: ${user.name}`);
+      }
+
+      if (user && user.must_change_password) {
+        openForgotReset(user.username, 'forced');
+        return;
       }
 
       const pending = sessionStorage.getItem('cambioz_pending_routine');
@@ -3633,11 +3723,15 @@
       const preciosScreen = document.getElementById('student-precios-screen');
 
       const registerScreen = document.getElementById('student-register-screen');
+      const forgotScreen = document.getElementById('student-forgot-screen');
+      const noaccessScreen = document.getElementById('student-noaccess-screen');
 
       if (!userStr) {
         studentScreen = 'home';
-        loginScreen.classList.toggle('hidden', studentAuthMode === 'register');
+        loginScreen.classList.toggle('hidden', studentAuthMode !== 'login');
         registerScreen.classList.toggle('hidden', studentAuthMode !== 'register');
+        forgotScreen.classList.toggle('hidden', studentAuthMode !== 'forgot');
+        noaccessScreen.classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -3651,21 +3745,34 @@
 
       loginScreen.classList.add('hidden');
       registerScreen.classList.add('hidden');
+      forgotScreen.classList.add('hidden');
       studentAuthMode = 'login';
       const user = JSON.parse(userStr);
 
-      // Tablero y Precios (nuevas pantallas): la rutina no se toca
-      if (studentScreen === 'home' || studentScreen === 'precios') {
+      // Acceso a la rutina: requiere plan activo que incluya musculación
+      if (studentScreen === 'routine') {
+        const access = getRoutineAccess(user.username);
+        if (!access.ok) {
+          studentScreen = 'noaccess';
+          renderNoAccess(access);
+        }
+      }
+
+      // Tablero, Precios y aviso sin acceso (nuevas pantallas): la rutina no se toca
+      if (studentScreen === 'home' || studentScreen === 'precios' || studentScreen === 'noaccess') {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
         preciosScreen.classList.toggle('hidden', studentScreen !== 'precios');
-        if (studentScreen === 'home') renderStudentHome(user); else renderStudentPrecios();
+        noaccessScreen.classList.toggle('hidden', studentScreen !== 'noaccess');
+        if (studentScreen === 'home') renderStudentHome(user);
+        else if (studentScreen === 'precios') renderStudentPrecios();
         return;
       }
 
       homeScreen.classList.add('hidden');
       preciosScreen.classList.add('hidden');
+      noaccessScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -4718,6 +4825,35 @@
       }
     }
 
+    // ¿Puede el alumno ver su rutina de musculación? Requiere plan ACTIVE vigente que la incluya.
+    // Devuelve { ok, reason: 'none'|'expired'|'no_musculacion', plan, endDate }.
+    function getRoutineAccess(username) {
+      const up = getActiveUserPlan(username);
+      if (!up) {
+        const past = loadUserPlans().filter(x => x.username === username)
+          .sort((a, b) => (a.end_date < b.end_date ? 1 : -1))[0];
+        return { ok: false, reason: past ? 'expired' : 'none', endDate: past ? past.end_date : null };
+      }
+      const plan = loadPlans().find(p => p.id === up.plan_id);
+      if (plan && !plan.includes_musculacion) return { ok: false, reason: 'no_musculacion', plan };
+      return { ok: true, plan, userPlan: up };
+    }
+
+    function renderNoAccess(access) {
+      const title = document.getElementById('noaccess-title');
+      const text = document.getElementById('noaccess-text');
+      if (access.reason === 'expired') {
+        title.innerText = 'Tu plan venció';
+        text.innerText = `Tu plan venció el ${formatDateAR(access.endDate)}. Renovalo o comprá crédito para volver a ver tu rutina y entrenar.`;
+      } else if (access.reason === 'no_musculacion') {
+        title.innerText = 'Tu plan no incluye musculación';
+        text.innerText = `Tu plan "${access.plan.name}" no incluye la sala de musculación. Para ver tu rutina necesitás un plan que la incluya o comprar crédito.`;
+      } else {
+        title.innerText = 'Sin plan activo';
+        text.innerText = 'No tenés un plan activo, por eso no podés ver tu rutina. Inscribite a un plan o comprá crédito para entrenar.';
+      }
+    }
+
     function renderStudentPrecios() {
       const el = document.getElementById('precios-list');
       const plans = loadPlans().filter(p => p.active);
@@ -4739,7 +4875,19 @@
     // REGISTRO DE ALUMNOS NUEVOS (alta desde el login)
     // Guarda en cambioz_students_db con el mismo formato que el ABM del Staff.
     // ----------------------------------------------------
-    let studentAuthMode = 'login'; // 'login' | 'register'
+    let studentAuthMode = 'login'; // 'login' | 'register' | 'forgot'
+
+    // Teléfono opcional (dato para un futuro módulo de CRM). Devuelve { ok, phone, error }.
+    // Acepta espacios, guiones y paréntesis; guarda solo dígitos con "+" inicial opcional (8 a 15 dígitos).
+    function normalizePhone(raw) {
+      const txt = String(raw || '').trim();
+      if (!txt) return { ok: true, phone: '' };
+      const cleaned = txt.replace(/[\s\-().]/g, '');
+      if (!/^\+?\d{8,15}$/.test(cleaned)) {
+        return { ok: false, error: 'El teléfono no es válido. Usá solo números (8 a 15 dígitos), por ejemplo +54 351 1234567.' };
+      }
+      return { ok: true, phone: cleaned };
+    }
 
     // Valida y crea la cuenta. Devuelve { ok, error, student }.
     function registerStudentAccount(data) {
@@ -4754,6 +4902,8 @@
         return { ok: false, error: 'Las contraseñas no coinciden.' };
       }
       const gender = data.gender === 'F' ? 'F' : 'M';
+      const ph = normalizePhone(data.phone);
+      if (!ph.ok) return { ok: false, error: ph.error };
 
       const students = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]');
       if (students.some(s => String(s.username).toLowerCase() === username.toLowerCase())) {
@@ -4766,6 +4916,7 @@
         name: nameRaw.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '),
         gender,
         condition: String(data.condition || '').trim() || 'Ninguna',
+        phone: ph.phone,
         active: true
       };
       students.push(student);
@@ -4787,6 +4938,7 @@
       document.getElementById('reg-username').value = username || '';
       document.getElementById('reg-gender').value = 'M';
       document.getElementById('reg-condition').value = '';
+      document.getElementById('reg-phone').value = '';
       document.getElementById('reg-password').value = '';
       document.getElementById('reg-password2').value = '';
       showRegisterError('');
@@ -4806,13 +4958,20 @@
         username: document.getElementById('reg-username').value,
         gender: document.getElementById('reg-gender').value,
         condition: document.getElementById('reg-condition').value,
+        phone: document.getElementById('reg-phone').value,
         password: document.getElementById('reg-password').value,
         password2: document.getElementById('reg-password2').value
       });
       if (!res.ok) { showRegisterError(res.error); return; }
 
       // Queda registrado y con la sesión iniciada (igual que un login normal).
-      localStorage.setItem('cambioz_student_user', JSON.stringify(res.student));
+      alert(`🎉 ¡Cuenta creada! Bienvenido, ${res.student.name}.`);
+      startStudentSession(res.student);
+    }
+
+    // Inicia la sesión del alumno (guarda el usuario, recupera una rutina pendiente de QR y va al tablero).
+    function startStudentSession(student) {
+      localStorage.setItem('cambioz_student_user', JSON.stringify(student));
       const pending = sessionStorage.getItem('cambioz_pending_routine');
       if (pending) {
         const decoded = decodeRoutine(pending);
@@ -4825,8 +4984,258 @@
       }
       studentAuthMode = 'login';
       studentScreen = 'home';
-      alert(`🎉 ¡Cuenta creada! Bienvenido, ${res.student.name}.`);
       renderStudentView();
+    }
+
+    // ----------------------------------------------------
+    // OLVIDÉ MI CONTRASEÑA
+    // Flujo: el alumno pide ayuda -> queda una solicitud (cambioz_reset_requests) con alerta
+    // para el administrador -> el admin (Ajustes > Alumnos) elige:
+    //   a) clave genérica: el alumno entra con ella y debe crear una nueva (must_change_password)
+    //   b) habilitar cambio: el alumno crea su nueva clave desde "Olvidaste tu contraseña"
+    // Estados: PENDING -> APPROVED (cambio habilitado) | RESOLVED | DISMISSED
+    // ----------------------------------------------------
+    function loadResetRequests() {
+      try { return JSON.parse(localStorage.getItem('cambioz_reset_requests') || '[]'); } catch (e) { return []; }
+    }
+    function saveResetRequests(list) { localStorage.setItem('cambioz_reset_requests', JSON.stringify(list)); }
+
+    function loadStudentsDB() { return JSON.parse(localStorage.getItem('cambioz_students_db') || '[]'); }
+    function saveStudentsDB(list) { localStorage.setItem('cambioz_students_db', JSON.stringify(list)); }
+
+    // El alumno pide ayuda. Para no revelar qué usuarios existen, un usuario desconocido devuelve el mismo
+    // resultado 'sent' sin crear solicitud. Resultados: 'sent' | 'already_pending' | 'approved'.
+    function requestPasswordReset(usernameRaw) {
+      const username = String(usernameRaw || '').trim();
+      if (!username) return { ok: false, error: 'Ingresá tu usuario.' };
+      const student = loadStudentsDB().find(s => s.username === username);
+      if (!student) return { ok: true, status: 'sent' };
+      const list = loadResetRequests();
+      if (list.some(r => r.username === username && r.status === 'APPROVED')) return { ok: true, status: 'approved' };
+      if (list.some(r => r.username === username && r.status === 'PENDING')) return { ok: true, status: 'already_pending' };
+      list.push({
+        id: 'r-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        username,
+        name: student.name,
+        phone: student.phone || '',
+        requested_at: new Date().toISOString(),
+        status: 'PENDING',
+        resolution: null
+      });
+      saveResetRequests(list);
+      return { ok: true, status: 'sent' };
+    }
+
+    function pendingResetCount() {
+      return loadResetRequests().filter(r => r.status === 'PENDING').length;
+    }
+
+    // Admin: asigna una clave genérica; el alumno deberá cambiarla al ingresar.
+    function adminSetGenericPassword(requestId, generic) {
+      const pass = String(generic || '');
+      if (pass.length < 4) return { ok: false, error: 'La clave genérica debe tener al menos 4 caracteres.' };
+      const list = loadResetRequests();
+      const req = list.find(r => r.id === requestId);
+      if (!req || (req.status !== 'PENDING' && req.status !== 'APPROVED')) return { ok: false, error: 'La solicitud ya no está disponible.' };
+      const students = loadStudentsDB();
+      const st = students.find(s => s.username === req.username);
+      if (!st) return { ok: false, error: 'El alumno ya no existe.' };
+      st.password = pass;
+      st.must_change_password = true;
+      saveStudentsDB(students);
+      req.status = 'RESOLVED';
+      req.resolution = 'GENERIC';
+      req.resolved_at = new Date().toISOString();
+      saveResetRequests(list);
+      return { ok: true };
+    }
+
+    // Admin: habilita que el alumno cree él mismo su nueva clave.
+    function adminApproveReset(requestId) {
+      const list = loadResetRequests();
+      const req = list.find(r => r.id === requestId);
+      if (!req || req.status !== 'PENDING') return { ok: false, error: 'La solicitud ya no está pendiente.' };
+      req.status = 'APPROVED';
+      req.approved_at = new Date().toISOString();
+      saveResetRequests(list);
+      return { ok: true };
+    }
+
+    function adminDismissReset(requestId) {
+      const list = loadResetRequests();
+      const req = list.find(r => r.id === requestId);
+      if (!req || (req.status !== 'PENDING' && req.status !== 'APPROVED')) return { ok: false, error: 'La solicitud ya no está disponible.' };
+      req.status = 'DISMISSED';
+      req.resolved_at = new Date().toISOString();
+      saveResetRequests(list);
+      return { ok: true };
+    }
+
+    // El alumno crea su nueva clave. mode 'approved': requiere solicitud APPROVED; 'forced': requiere must_change_password.
+    function setNewStudentPassword(username, pass1, pass2, mode) {
+      const p1 = String(pass1 || '');
+      if (p1.length < 4) return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
+      if (p1 !== String(pass2 || '')) return { ok: false, error: 'Las contraseñas no coinciden.' };
+      const students = loadStudentsDB();
+      const st = students.find(s => s.username === username);
+      if (!st) return { ok: false, error: 'Usuario no encontrado.' };
+      const list = loadResetRequests();
+      const approved = list.find(r => r.username === username && r.status === 'APPROVED');
+      if (mode === 'forced') {
+        if (!st.must_change_password) return { ok: false, error: 'No hace falta cambiar la contraseña.' };
+        if (p1 === st.password) return { ok: false, error: 'La nueva contraseña debe ser distinta de la genérica.' };
+      } else if (!approved) {
+        return { ok: false, error: 'El administrador todavía no habilitó el cambio.' };
+      }
+      st.password = p1;
+      delete st.must_change_password;
+      saveStudentsDB(students);
+      if (approved) {
+        approved.status = 'RESOLVED';
+        approved.resolution = 'SELF';
+        approved.resolved_at = new Date().toISOString();
+        saveResetRequests(list);
+      }
+      return { ok: true, student: st };
+    }
+
+    // ---------- UI alumno ----------
+    let forgotUsername = '';
+    let forgotMode = 'approved'; // 'approved' | 'forced'
+
+    function showForgotError(msg) {
+      const el = document.getElementById('forgot-error');
+      if (!el) return;
+      el.innerText = msg || '';
+      el.classList.toggle('hidden', !msg);
+    }
+
+    function setForgotStep(step) {
+      document.getElementById('forgot-step-ask').classList.toggle('hidden', step !== 'ask');
+      document.getElementById('forgot-step-sent').classList.toggle('hidden', step !== 'sent');
+      document.getElementById('forgot-step-reset').classList.toggle('hidden', step !== 'reset');
+      document.getElementById('forgot-title').innerText = step === 'reset' ? 'Creá tu nueva contraseña' : 'Recuperar contraseña';
+      showForgotError('');
+    }
+
+    function openForgotPassword(prefill) {
+      studentAuthMode = 'forgot';
+      renderStudentView();
+      document.getElementById('forgot-username').value = String(prefill || '').trim();
+      document.getElementById('forgot-new-pass').value = '';
+      document.getElementById('forgot-new-pass2').value = '';
+      setForgotStep('ask');
+    }
+
+    // Pantalla de nueva contraseña: tras clave genérica (forced) o con cambio habilitado (approved).
+    function openForgotReset(username, mode) {
+      forgotUsername = username;
+      forgotMode = mode;
+      studentAuthMode = 'forgot';
+      renderStudentView();
+      document.getElementById('forgot-new-pass').value = '';
+      document.getElementById('forgot-new-pass2').value = '';
+      document.getElementById('forgot-reset-text').innerText = mode === 'forced'
+        ? 'Ingresaste con una clave genérica. Por seguridad, creá ahora tu propia contraseña.'
+        : 'El administrador habilitó el cambio. Creá tu nueva contraseña.';
+      setForgotStep('reset');
+    }
+
+    function closeForgotPassword() {
+      studentAuthMode = 'login';
+      forgotUsername = '';
+      renderStudentView();
+    }
+
+    function handleForgotAsk(e) {
+      if (e) e.preventDefault();
+      const username = document.getElementById('forgot-username').value.trim();
+      const res = requestPasswordReset(username);
+      if (!res.ok) { showForgotError(res.error); return; }
+      if (res.status === 'approved') { openForgotReset(username, 'approved'); return; }
+      document.getElementById('forgot-sent-text').innerText = res.status === 'already_pending'
+        ? 'Ya avisamos al administrador. Cuando habilite tu acceso, volvé a esta pantalla o ingresá con la clave genérica que te indique.'
+        : 'Listo. Si el usuario existe, avisamos al administrador. Cuando habilite tu acceso, volvé a esta pantalla o ingresá con la clave genérica que te indique.';
+      setForgotStep('sent');
+      updateResetBadges();
+    }
+
+    function handleForgotReset(e) {
+      if (e) e.preventDefault();
+      const res = setNewStudentPassword(
+        forgotUsername,
+        document.getElementById('forgot-new-pass').value,
+        document.getElementById('forgot-new-pass2').value,
+        forgotMode
+      );
+      if (!res.ok) { showForgotError(res.error); return; }
+      alert('🔒 Contraseña actualizada. ¡Bienvenido!');
+      forgotUsername = '';
+      startStudentSession(res.student);
+      updateResetBadges();
+    }
+
+    // ---------- UI administrador ----------
+    function updateResetBadges() {
+      const n = pendingResetCount();
+      ['reset-badge-gear', 'reset-badge-tab'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerText = n;
+        el.classList.toggle('hidden', n === 0);
+      });
+    }
+
+    function renderResetRequests() {
+      const card = document.getElementById('reset-requests-card');
+      const listEl = document.getElementById('reset-requests-list');
+      if (!card || !listEl) return;
+      const open = loadResetRequests().filter(r => r.status === 'PENDING' || r.status === 'APPROVED');
+      card.classList.toggle('hidden', open.length === 0);
+      listEl.innerHTML = '';
+      open.forEach(r => {
+        const when = new Date(r.requested_at).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
+        const row = document.createElement('div');
+        row.className = 'border border-red-500/30 rounded-xl p-2.5 bg-brand-canvas/60';
+        row.innerHTML = `
+          <div class="flex justify-between items-start gap-2">
+            <div class="min-w-0">
+              <div class="font-bold text-white text-xs">${escHtml(r.name)} <span class="text-zinc-500 font-normal">· ${escHtml(r.username)}</span></div>
+              <div class="text-[9px] text-zinc-500">${when}${r.phone ? ' · Tel: ' + escHtml(r.phone) : ''}</div>
+            </div>
+            ${r.status === 'APPROVED' ? '<span class="px-1.5 py-0.5 rounded text-[8px] font-bold border bg-emerald-950/40 text-emerald-400 border-emerald-500/30 whitespace-nowrap">Cambio habilitado</span>' : '<span class="px-1.5 py-0.5 rounded text-[8px] font-bold border bg-red-950/40 text-red-300 border-red-500/30 whitespace-nowrap">Pendiente</span>'}
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <button onclick="handleAdminGeneric('${r.id}')" class="px-2 py-1 rounded-lg bg-brand-yellow text-zinc-950 text-[10px] font-bold">Clave genérica</button>
+            ${r.status === 'PENDING' ? `<button onclick="handleAdminApprove('${r.id}')" class="px-2 py-1 rounded-lg bg-brand-card border border-brand-border text-zinc-200 text-[10px] font-bold">Habilitar cambio</button>` : ''}
+            <button onclick="handleAdminDismiss('${r.id}')" class="px-2 py-1 rounded-lg text-zinc-400 hover:text-red-400 text-[10px] font-semibold">Descartar</button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+      updateResetBadges();
+    }
+
+    function handleAdminGeneric(id) {
+      const req = loadResetRequests().find(r => r.id === id);
+      if (!req) return;
+      const generic = prompt(`Clave genérica para ${req.name}.\nDeberá cambiarla al ingresar.`, req.username);
+      if (generic === null) return;
+      const res = adminSetGenericPassword(id, generic);
+      if (!res.ok) { alert('⚠️ ' + res.error); return; }
+      alert(`✅ Clave genérica asignada a ${req.name}.\nUsuario: ${req.username}\nClave: ${generic}\nPasásela por WhatsApp o en persona.`);
+      renderResetRequests();
+    }
+
+    function handleAdminApprove(id) {
+      const res = adminApproveReset(id);
+      if (!res.ok) { alert('⚠️ ' + res.error); return; }
+      renderResetRequests();
+    }
+
+    function handleAdminDismiss(id) {
+      if (!confirm('¿Descartar esta solicitud?')) return;
+      adminDismissReset(id);
+      renderResetRequests();
     }
 
     // ----------------------------------------------------
@@ -4849,6 +5258,7 @@
         
         stopSessionTimer();
         renderConstructor();
+        updateResetBadges();
       } else {
         localStorage.setItem('cambioz_is_student_routine', 'true'); // Desbloquea la papelera del Staff
         staffDiv.classList.add('hidden');

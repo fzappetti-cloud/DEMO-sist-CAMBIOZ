@@ -79,6 +79,23 @@
       box-shadow: 0 0 15px rgba(251, 191, 36, 0.12);
     }
 
+    /* Botones del tablero del alumno (estilo glossy dorado) */
+    .btn-glossy {
+      background: linear-gradient(180deg, #fde68a 0%, #fbbf24 45%, #d99a06 100%);
+      color: #1a1203;
+      border: 1px solid rgba(255, 235, 160, 0.7);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.55), inset 0 -3px 0 rgba(0,0,0,.18), 0 3px 10px rgba(0,0,0,.55);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .btn-glossy:hover { filter: brightness(1.06); }
+    .btn-glossy:active { transform: translateY(1px) scale(.99); }
+    .btn-glossy-off {
+      background: linear-gradient(180deg, #6f6842 0%, #4f4a30 100%);
+      color: #9a936f;
+      border: 1px solid rgba(160,150,100,.35);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.12), 0 3px 10px rgba(0,0,0,.45);
+    }
+
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -200,7 +217,7 @@
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
       <!-- Logo y Branding -->
       <div class="flex items-center gap-3">
-        <img src="logo.png" alt="CAMBIOZ GYM Logo" class="h-10 w-10 object-cover rounded-lg shadow-md border border-brand-border/40" />
+        <img src="logo.webp" alt="CAMBIOZ GYM Logo" class="h-10 w-10 object-contain rounded-lg shadow-md bg-black" />
         <div>
           <h1 class="font-display font-black text-2xl tracking-tighter text-white flex items-center gap-1">
             CAMBIOZ <span class="text-brand-yellow font-light">GYM</span>
@@ -221,12 +238,8 @@
         </button>
       </div>
 
-      <!-- Sede / Turno en cabecera general -->
+      <!-- Turno en cabecera general -->
       <div class="hidden lg:flex items-center gap-4 text-xs">
-        <div class="bg-brand-card px-3 py-1.5 rounded-lg border border-brand-border flex items-center gap-2">
-          <i class="fa-solid fa-location-dot text-brand-yellow"></i>
-          <span class="text-zinc-300 font-medium" id="header-sede-badge">Sede Nva Italia</span>
-        </div>
         <div class="bg-brand-card px-3 py-1.5 rounded-lg border border-brand-border flex items-center gap-2">
           <i class="fa-solid fa-clock text-brand-yellow"></i>
           <span class="text-zinc-300 font-medium" id="header-turno-badge">Mañana</span>
@@ -268,16 +281,8 @@
           </button>
           <div id="acc-card2-content" class="hidden p-5 pt-0 border-t border-brand-border/40 space-y-4 max-h-[650px] overflow-y-auto pr-1 scrollbar-thin">
             
-            <!-- Selectores Sede y Turno de Tarjeta 2 -->
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Sede (Rutinas)</label>
-                <select id="select-sede" onchange="syncSedeSelectors(this.value)" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow">
-                  <option value="Sede Nva Italia">Sede Nva Italia</option>
-                  <option value="Alta Córdoba">Alta Córdoba</option>
-                  <option value="Ambas Sedes">Ambas Sedes</option>
-                </select>
-              </div>
+            <!-- Selector de Turno de Tarjeta 2 -->
+            <div class="grid grid-cols-1 gap-3">
               <div>
                 <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Turno (Rutinas)</label>
                 <select id="select-turno" onchange="syncTurnoSelectors(this.value)" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow">
@@ -329,16 +334,8 @@
           </button>
           <div id="acc-card3-content" class="hidden p-5 pt-0 border-t border-brand-border/40 flex flex-col space-y-4 max-h-[650px] overflow-y-auto pr-1 scrollbar-thin">
             
-            <!-- Idénticos selectores Sede/Turno espejo -->
-            <div class="grid grid-cols-2 gap-3 bg-brand-canvas/30 p-2.5 rounded-xl border border-brand-border/40">
-              <div>
-                <label class="block text-[8px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Sede (Ejercicios)</label>
-                <select id="select-sede-card3" onchange="syncSedeSelectors(this.value)" class="w-full bg-brand-canvas border border-brand-border rounded-lg px-2 py-1 text-[10px] text-white focus:outline-none">
-                  <option value="Sede Nva Italia">Sede Nva Italia</option>
-                  <option value="Alta Córdoba">Alta Córdoba</option>
-                  <option value="Ambas Sedes">Ambas Sedes</option>
-                </select>
-              </div>
+            <!-- Selector de Turno espejo -->
+            <div class="grid grid-cols-1 gap-3 bg-brand-canvas/30 p-2.5 rounded-xl border border-brand-border/40">
               <div>
                 <label class="block text-[8px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Turno (Ejercicios)</label>
                 <select id="select-turno-card3" onchange="syncTurnoSelectors(this.value)" class="w-full bg-brand-canvas border border-brand-border rounded-lg px-2 py-1 text-[10px] text-white focus:outline-none">
@@ -467,7 +464,7 @@
         <div id="student-login-screen" class="hidden flex-grow flex flex-col justify-center px-6 py-8 relative">
           
           <div class="text-center mb-6">
-            <img src="logo.png" alt="CAMBIOZ GYM Logo" class="h-14 w-14 object-cover rounded-xl mx-auto shadow-md border border-brand-border/40" />
+            <img src="logo.webp" alt="CAMBIOZ GYM Logo" class="h-20 w-20 object-contain rounded-xl mx-auto shadow-md bg-black" />
             <h3 class="font-display font-black text-lg tracking-tight text-white mt-2">CAMBIOZ <span class="text-brand-yellow">GYM</span></h3>
             <p class="text-[9px] text-zinc-500 uppercase tracking-widest mt-0.5">Validación de Identidad de Sala</p>
           </div>
@@ -537,6 +534,51 @@
 
         </div>
 
+        <!-- SCREEN HOME: TABLERO DEL ALUMNO (primera pantalla tras el login) -->
+        <div id="student-home-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-6 pb-8 px-5 relative scrollbar-none bg-black">
+          <div class="flex items-center justify-between mb-5">
+            <img src="logo.webp" alt="CAMBIOZ GYM" class="h-12 w-12 object-contain" />
+            <button onclick="logoutStudentUser()" class="text-xs text-zinc-300 hover:text-white font-medium">Salir</button>
+          </div>
+
+          <h2 class="text-[28px] leading-none font-extrabold uppercase tracking-tight text-white mb-5">Hola, <span id="home-user-name" class="text-brand-yellow">Alumno</span></h2>
+
+          <!-- Tarjeta de plan -->
+          <div id="home-plan-card" class="bg-black border border-brand-yellow/50 rounded-2xl p-4 mb-5"></div>
+
+          <!-- Grilla de accesos -->
+          <div class="grid grid-cols-2 gap-3.5 mb-5">
+            <button onclick="goStudentScreen('routine')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-dumbbell text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Mi rutina</span></button>
+            <button onclick="showSoon('Mis Pagos')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-wallet text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Mis pagos</span></button>
+            <button onclick="goStudentScreen('precios')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-tag text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Precios</span></button>
+            <button onclick="showSoon('Nueva Reserva')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-calendar-plus text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Nueva reserva</span></button>
+            <button onclick="showSoon('Mis Reservas')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-calendar-check text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Mis reservas</span></button>
+            <button onclick="showSoon('Presentismo')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-user-check text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Presentismo</span></button>
+            <button onclick="showSoon('Mis Créditos')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-coins text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Mis créditos</span></button>
+            <button onclick="showSoon('Comprar Crédito')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-cart-plus text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Comprar crédito</span></button>
+            <button onclick="showSoon('Reprogramar clase')" class="btn-glossy rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-calendar-days text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Reprogramar clase</span></button>
+            <button onclick="showSoon('Más funciones')" class="btn-glossy-off rounded-2xl py-4 px-2 flex flex-col items-center justify-center gap-2 min-h-[88px]"><i class="fa-solid fa-hourglass-half text-2xl"></i><span class="text-[13px] font-bold leading-tight text-center">Próximamente</span></button>
+          </div>
+
+          <!-- Instalar la app -->
+          <div class="rounded-2xl border border-brand-yellow/40 p-4" style="background:linear-gradient(180deg,rgba(251,191,36,.14),rgba(251,191,36,.05));">
+            <div class="text-brand-yellow font-bold text-sm">Tené tu panel siempre a mano</div>
+            <p class="text-xs text-zinc-200 mt-1 mb-3">Agregá la app a la pantalla de inicio de tu celular.</p>
+            <button onclick="installApp()" class="btn-glossy rounded-xl px-4 py-2 text-xs font-bold">Instalar la app</button>
+          </div>
+        </div>
+
+        <!-- SCREEN PRECIOS (solo lectura) -->
+        <div id="student-precios-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-6 pb-6 px-4 relative scrollbar-none">
+          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-400 hover:text-white font-semibold mb-3 flex items-center gap-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <h3 class="font-display font-black text-xl text-white mb-0.5"><i class="fa-solid fa-tags text-brand-yellow"></i> Precios</h3>
+          <p class="text-[10px] text-zinc-500 mb-4">Planes de membresía vigentes</p>
+          <div id="precios-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Aviso "Próximamente" -->
+        <div id="soon-toast" class="hidden absolute left-4 right-4 top-4 z-40 bg-zinc-900 border border-brand-yellow/50 text-xs text-white rounded-xl px-4 py-3 shadow-2xl text-center"></div>
+
         <!-- SCREEN 2: RUTINA DEL ALUMNO (OCULTABLE) -->
         <div id="student-routine-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-6 pb-28 px-4 relative scrollbar-none">
           
@@ -551,9 +593,14 @@
                 <span class="font-bold text-white" id="identity-banner-name">Juan Pérez</span>
               </div>
             </div>
-            <button onclick="logoutStudentUser()" class="text-[10px] text-zinc-400 hover:text-red-400 font-semibold px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 transition-all">
-              <i class="fa-solid fa-right-from-bracket"></i> Salir
-            </button>
+            <div class="flex items-center">
+              <button onclick="goStudentScreen('home')" class="text-[10px] text-zinc-400 hover:text-brand-yellow font-semibold px-2.5 py-1.5 rounded-lg hover:bg-brand-yellow/10 transition-all">
+                <i class="fa-solid fa-house"></i> Inicio
+              </button>
+              <button onclick="logoutStudentUser()" class="text-[10px] text-zinc-400 hover:text-red-400 font-semibold px-2.5 py-1.5 rounded-lg hover:bg-red-500/10 transition-all">
+                <i class="fa-solid fa-right-from-bracket"></i> Salir
+              </button>
+            </div>
           </div>
 
           <!-- Banner de Condición Física Especial (Ocultable) -->
@@ -586,9 +633,6 @@
             <!-- Datos de Sede / Turno / Cronómetro General -->
             <div class="flex flex-col gap-2 mt-2 items-center">
               <div class="flex items-center justify-center gap-2">
-                <span class="bg-brand-surface border border-brand-border text-zinc-300 text-[10px] font-semibold px-2.5 py-0.5 rounded-full" id="student-sede-val">
-                  Nueva Italia
-                </span>
                 <span class="bg-brand-surface border border-brand-border text-zinc-300 text-[10px] font-semibold px-2.5 py-0.5 rounded-full" id="student-turno-val">
                   Mañana
                 </span>
@@ -696,6 +740,75 @@
         <button id="tab-btn-students" onclick="switchConfigTab('students')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
           <i class="fa-solid fa-users-gear mr-1"></i> Alumnos (ABM)
         </button>
+        <button id="tab-btn-plans" onclick="switchConfigTab('plans')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
+          <i class="fa-solid fa-id-card mr-1"></i> Planes
+        </button>
+      </div>
+
+      <!-- Pestaña: Planes de membresía -->
+      <div id="tab-content-plans" class="space-y-4 hidden max-h-[500px] overflow-y-auto pr-1">
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
+          <h4 id="plan-form-title" class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-plus text-brand-yellow"></i> Nuevo Plan
+          </h4>
+          <form id="form-plan" onsubmit="handlePlanSubmit(event)" class="space-y-3">
+            <input type="hidden" id="plan-edit-id" value="" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Nombre del plan</label>
+                <input type="text" id="plan-name" required maxlength="40" placeholder="Ej: Full Mensual" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Precio (ARS, de referencia)</label>
+                <input type="number" id="plan-price" required min="0" step="1" placeholder="Ej: 35000" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-zinc-300">
+              <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="plan-musculacion" class="accent-brand-yellow" /> Incluye musculación</label>
+              <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="plan-grupales" onchange="updatePlanFormState()" class="accent-brand-yellow" /> Incluye clases grupales</label>
+              <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="plan-active" checked class="accent-brand-yellow" /> Activo</label>
+            </div>
+            <div id="plan-limit-wrapper" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Límite de clases grupales</label>
+                <input type="number" id="plan-class-limit" min="1" step="1" oninput="updatePlanFormState()" placeholder="Vacío = ilimitado" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Período del límite</label>
+                <select id="plan-limit-period" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow">
+                  <option value="WEEK">Por semana</option>
+                  <option value="MONTH">Por mes</option>
+                </select>
+              </div>
+            </div>
+            <p id="plan-form-hint" class="text-[10px] text-zinc-500"></p>
+            <div class="flex gap-2">
+              <button type="submit" class="flex-grow bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold py-2 rounded-xl text-xs transition-all">Guardar plan</button>
+              <button type="button" id="plan-cancel-btn" onclick="resetPlanForm()" class="hidden px-4 bg-brand-card hover:bg-zinc-800 text-zinc-300 border border-brand-border rounded-xl text-xs font-semibold">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i class="fa-solid fa-list text-brand-yellow"></i> Planes cargados</h4>
+          <div id="plans-admin-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Ayudante de demo: asignar plan a un alumno (la inscripción real es la próxima entrega) -->
+        <div class="bg-brand-canvas/60 border border-dashed border-brand-border p-3.5 rounded-2xl space-y-2.5">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-user-tag text-brand-yellow"></i> Asignar plan a alumno <span class="text-[8px] text-zinc-500 normal-case">(ayuda de demo)</span></h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <select id="assign-student" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
+            <select id="assign-plan" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
+            <input type="date" id="assign-start" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+            <input type="number" id="assign-days" min="1" value="30" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" placeholder="Días de vigencia" />
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="assignPlanToStudent()" class="flex-grow bg-brand-card hover:bg-zinc-800 text-brand-yellow border border-brand-yellow/40 font-bold py-2 rounded-xl text-xs">Asignar plan</button>
+            <button type="button" onclick="removeStudentPlan()" class="px-4 bg-brand-card hover:bg-zinc-800 text-zinc-300 border border-brand-border rounded-xl text-xs font-semibold">Quitar plan</button>
+          </div>
+          <div id="assigned-plans-list" class="text-[10px] text-zinc-400 space-y-1"></div>
+        </div>
       </div>
 
       <!-- CONTENIDOS DE PESTAÑAS -->
@@ -1056,13 +1169,8 @@
         </div>
       </div>
 
-      <!-- Sede y Turno del QR -->
+      <!-- Turno del QR -->
       <div class="bg-brand-canvas border border-brand-border rounded-xl p-3 mb-6 flex justify-around text-xs">
-        <div>
-          <span class="text-zinc-500 block uppercase tracking-wider text-[9px] mb-1">Sede</span>
-          <span class="font-bold text-white" id="qr-sede-val">Nueva Italia</span>
-        </div>
-        <div class="border-r border-brand-border h-6 my-auto"></div>
         <div>
           <span class="text-zinc-500 block uppercase tracking-wider text-[9px] mb-1">Turno</span>
           <span class="font-bold text-white" id="qr-turno-val">Mañana</span>
@@ -1116,10 +1224,6 @@
 
       <!-- Estadísticas -->
       <div class="bg-brand-canvas/40 border border-brand-border rounded-xl p-3.5 mb-6 text-left space-y-2.5 text-xs">
-        <div class="flex justify-between items-center">
-          <span class="text-zinc-500 font-medium"><i class="fa-solid fa-location-dot text-brand-yellow/85 mr-2"></i> Sede</span>
-          <span class="font-bold text-white" id="summary-sede">Nueva Italia</span>
-        </div>
         <div class="flex justify-between items-center">
           <span class="text-zinc-500 font-medium"><i class="fa-solid fa-clock text-brand-yellow/85 mr-2"></i> Turno</span>
           <span class="font-bold text-white" id="summary-turno">Mañana</span>
@@ -1347,6 +1451,7 @@
       // 1. Cargar datos combinados de ejercicios personalizados
       initStudentsDB();
       initTurnosDB();
+      initPlansDB();
       loadCatalogAndTemplates();
 
       // 2. Detectar si hay rutina codificada en URL (?r=...)
@@ -1604,7 +1709,6 @@
     // COMPORTAMIENTO DEL PANEL DE SESIÓN
     // ----------------------------------------------------
     function updateSessionConfig() {
-      currentRoutine.sede = document.getElementById('select-sede').value;
       currentRoutine.turno = document.getElementById('select-turno').value;
       saveToLocalStorage();
       updateHeaderBadges();
@@ -1614,15 +1718,7 @@
     // ACTUALIZACIONES DE HEADER BADGES
     // ----------------------------------------------------
     function updateHeaderBadges() {
-      document.getElementById('header-sede-badge').innerText = currentRoutine.sede;
       document.getElementById('header-turno-badge').innerText = currentRoutine.turno;
-      
-      const selectSede = document.getElementById('select-sede');
-      if (selectSede) selectSede.value = currentRoutine.sede;
-      const selectSedeC3 = document.getElementById('select-sede-card3');
-      if (selectSedeC3) selectSedeC3.value = currentRoutine.sede;
-      const selectSedeModal = document.getElementById('select-sede-modal');
-      if (selectSedeModal) selectSedeModal.value = currentRoutine.sede;
 
       const selectTurno = document.getElementById('select-turno');
       if (selectTurno) selectTurno.value = currentRoutine.turno;
@@ -2086,7 +2182,6 @@
       const hostUrl = window.location.origin + window.location.pathname;
       const finalUrl = `${hostUrl}?view=alumno&r=${encodeURIComponent(compressedData)}`;
       
-      document.getElementById('qr-sede-val').innerText = currentRoutine.sede;
       document.getElementById('qr-turno-val').innerText = currentRoutine.turno;
 
       const qrContainer = document.getElementById("qr-canvas-container");
@@ -2211,6 +2306,10 @@
       const contentEx = document.getElementById('tab-content-add-exercise');
       const contentTemp = document.getElementById('tab-content-templates');
       const contentStudents = document.getElementById('tab-content-students');
+      const tabPlans = document.getElementById('tab-btn-plans');
+      const contentPlans = document.getElementById('tab-content-plans');
+      if (tabPlans) tabPlans.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
+      if (contentPlans) contentPlans.classList.add('hidden');
 
       // Restablecer estilos de botones de pestañas
       if (tabSettings) tabSettings.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
@@ -2239,6 +2338,11 @@
         if (tabStudents) tabStudents.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
         if (contentStudents) contentStudents.classList.remove('hidden');
         renderStudentsList();
+      } else if (tabName === 'plans') {
+        if (tabPlans) tabPlans.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
+        if (contentPlans) contentPlans.classList.remove('hidden');
+        resetPlanForm();
+        renderPlansAdmin();
       }
     }
 
@@ -2267,9 +2371,6 @@
         const el = document.getElementById(id);
         if (el) el.value = val;
       });
-      
-      const badge = document.getElementById('header-sede-badge');
-      if (badge) badge.innerText = val;
       
       saveToLocalStorage();
     }
@@ -3380,6 +3481,7 @@
         sessionStorage.removeItem('cambioz_pending_routine');
       }
 
+      studentScreen = 'home';
       alert(`👋 ¡Bienvenido de nuevo, ${user.name}!`);
       renderStudentView();
     }
@@ -3420,10 +3522,12 @@
         sessionStorage.removeItem('cambioz_pending_routine');
       }
 
+      studentScreen = 'home';
       renderStudentView();
     }
 
     function logoutStudentUser() {
+      studentScreen = 'home';
       localStorage.removeItem('cambioz_student_user');
       sessionStorage.removeItem('cambioz_student_user');
       stopSessionTimer();
@@ -3436,7 +3540,10 @@
       stopSessionTimer();
       
       document.getElementById('student-login-screen').classList.add('hidden');
+      studentScreen = 'home';
       document.getElementById('student-routine-screen').classList.add('hidden');
+      document.getElementById('student-home-screen').classList.add('hidden');
+      document.getElementById('student-precios-screen').classList.add('hidden');
       document.getElementById('student-footer-actions').classList.add('hidden');
       document.getElementById('student-goodbye-screen').classList.remove('hidden');
     }
@@ -3462,11 +3569,17 @@
       const routineScreen = document.getElementById('student-routine-screen');
       const footerActions = document.getElementById('student-footer-actions');
 
+      const homeScreen = document.getElementById('student-home-screen');
+      const preciosScreen = document.getElementById('student-precios-screen');
+
       if (!userStr) {
+        studentScreen = 'home';
         loginScreen.classList.remove('hidden');
         routineScreen.classList.add('hidden');
+        homeScreen.classList.add('hidden');
+        preciosScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
-        
+
         document.getElementById('student-username').value = "";
         document.getElementById('student-password').value = "";
         stopSessionTimer();
@@ -3474,10 +3587,22 @@
       }
 
       loginScreen.classList.add('hidden');
+      const user = JSON.parse(userStr);
+
+      // Tablero y Precios (nuevas pantallas): la rutina no se toca
+      if (studentScreen === 'home' || studentScreen === 'precios') {
+        routineScreen.classList.add('hidden');
+        footerActions.classList.add('hidden');
+        homeScreen.classList.toggle('hidden', studentScreen !== 'home');
+        preciosScreen.classList.toggle('hidden', studentScreen !== 'precios');
+        if (studentScreen === 'home') renderStudentHome(user); else renderStudentPrecios();
+        return;
+      }
+
+      homeScreen.classList.add('hidden');
+      preciosScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
-
-      const user = JSON.parse(userStr);
 
       // 2. Poblar Banner de Identidad
       document.getElementById('identity-banner-name').innerText = user.name;
@@ -3509,7 +3634,6 @@
       }
 
       // 5. Renderizar ejercicios
-      document.getElementById('student-sede-val').innerText = currentRoutine.sede;
       document.getElementById('student-turno-val').innerText = currentRoutine.turno;
 
       const container = document.getElementById('student-exercise-list');
@@ -3972,7 +4096,6 @@
       document.getElementById('summary-percentage').innerText = `${percent}%`;
       document.getElementById('summary-progress-bar').style.width = `${percent}%`;
       document.getElementById('summary-motivational-text').innerText = phrase;
-      document.getElementById('summary-sede').innerText = currentRoutine.sede;
       document.getElementById('summary-turno').innerText = currentRoutine.turno;
       document.getElementById('summary-time').innerText = formatTime(sessionSecondsElapsed);
       document.getElementById('summary-series').innerText = `${completedSets} de ${totalSets}`;
@@ -4169,6 +4292,382 @@
             </svg>
           `;
       }
+    }
+
+    // ----------------------------------------------------
+    // PLANES DE MEMBRESÍA Y MEMBRESÍAS DE ALUMNOS
+    // Equivalentes demo de los modelos Plan / UserPlan (localStorage).
+    // Sin sede: un solo gimnasio físico, ningún modelo lleva branch_id.
+    //   cambioz_plans_db      -> [{ id, name, includes_musculacion, includes_grupales,
+    //                               class_limit (null = ilimitado), limit_period ('WEEK'|'MONTH'|null),
+    //                               price, active }]
+    //   cambioz_user_plans_db -> [{ username, plan_id, start_date, end_date (YYYY-MM-DD),
+    //                               credits_used, status ('ACTIVE'|'EXPIRED'|'PENDING') }]
+    // ----------------------------------------------------
+    function escHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function isoToday() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function isoAddDays(iso, days) {
+      const [y, m, d] = iso.split('-').map(Number);
+      const dt = new Date(y, m - 1, d + days);
+      return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+    }
+
+    function formatDateAR(iso) {
+      const [y, m, d] = iso.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function formatPrice(n) {
+      return '$ ' + Number(n).toLocaleString('es-AR');
+    }
+
+    function loadPlans() {
+      try { return JSON.parse(localStorage.getItem('cambioz_plans_db') || '[]'); } catch (e) { return []; }
+    }
+    function savePlans(list) { localStorage.setItem('cambioz_plans_db', JSON.stringify(list)); }
+
+    function loadUserPlans() {
+      try { return JSON.parse(localStorage.getItem('cambioz_user_plans_db') || '[]'); } catch (e) { return []; }
+    }
+    function saveUserPlans(list) { localStorage.setItem('cambioz_user_plans_db', JSON.stringify(list)); }
+
+    function initPlansDB() {
+      if (localStorage.getItem('cambioz_plans_db') !== null) return;
+      // Datos de ejemplo para la demo; la dueña los edita o desactiva desde Ajustes > Planes.
+      const seed = [
+        { id: 'p-seed-1', name: 'Musculación Mensual', includes_musculacion: true, includes_grupales: false, class_limit: null, limit_period: null, price: 28000, active: true },
+        { id: 'p-seed-2', name: 'Grupales 2 por semana', includes_musculacion: false, includes_grupales: true, class_limit: 2, limit_period: 'WEEK', price: 24000, active: true },
+        { id: 'p-seed-3', name: 'Full Libre', includes_musculacion: true, includes_grupales: true, class_limit: null, limit_period: null, price: 38000, active: true }
+      ];
+      savePlans(seed);
+      const today = isoToday();
+      saveUserPlans([
+        { username: 'franco.zappetti', plan_id: 'p-seed-3', start_date: isoAddDays(today, -10), end_date: isoAddDays(today, 20), credits_used: 0, status: 'ACTIVE' },
+        { username: 'carolina.olivi', plan_id: 'p-seed-1', start_date: isoAddDays(today, -45), end_date: isoAddDays(today, -15), credits_used: 0, status: 'EXPIRED' }
+      ]);
+    }
+
+    function describePlanLimit(plan) {
+      if (!plan.includes_grupales) return '';
+      if (plan.class_limit === null || plan.class_limit === undefined) return 'Clases grupales ilimitadas';
+      return `${plan.class_limit} clase${plan.class_limit === 1 ? '' : 's'} grupal${plan.class_limit === 1 ? '' : 'es'} por ${plan.limit_period === 'MONTH' ? 'mes' : 'semana'}`;
+    }
+
+    // Valida y normaliza los datos del formulario. Devuelve { ok, error, plan }.
+    function validatePlanInput(input, excludeId) {
+      const name = String(input.name || '').trim();
+      if (name.length < 3) return { ok: false, error: 'El nombre debe tener al menos 3 caracteres.' };
+      const price = Number(input.price);
+      if (input.price === '' || input.price === null || input.price === undefined || !isFinite(price) || price < 0) {
+        return { ok: false, error: 'Ingresá un precio válido (0 o mayor).' };
+      }
+      if (!input.includes_musculacion && !input.includes_grupales) {
+        return { ok: false, error: 'El plan debe incluir musculación, clases grupales o ambas.' };
+      }
+      let classLimit = null;
+      let limitPeriod = null;
+      if (input.includes_grupales && input.class_limit !== '' && input.class_limit !== null && input.class_limit !== undefined) {
+        classLimit = Number(input.class_limit);
+        if (!Number.isInteger(classLimit) || classLimit < 1) {
+          return { ok: false, error: 'El límite de clases debe ser un entero de 1 o más (o vacío para ilimitado).' };
+        }
+        limitPeriod = input.limit_period === 'MONTH' ? 'MONTH' : 'WEEK';
+      }
+      const dup = loadPlans().some(p => p.id !== excludeId && p.name.toLowerCase() === name.toLowerCase());
+      if (dup) return { ok: false, error: 'Ya existe un plan con ese nombre.' };
+      return {
+        ok: true,
+        plan: {
+          name,
+          includes_musculacion: !!input.includes_musculacion,
+          includes_grupales: !!input.includes_grupales,
+          class_limit: classLimit,
+          limit_period: limitPeriod,
+          price,
+          active: input.active !== false
+        }
+      };
+    }
+
+    // Crea (editId vacío) o edita un plan. Devuelve { ok, error, plan }.
+    function savePlan(input, editId) {
+      const res = validatePlanInput(input, editId || null);
+      if (!res.ok) return res;
+      const plans = loadPlans();
+      if (editId) {
+        const idx = plans.findIndex(p => p.id === editId);
+        if (idx === -1) return { ok: false, error: 'El plan que intentás editar ya no existe.' };
+        plans[idx] = Object.assign({ id: editId }, res.plan);
+        res.plan = plans[idx];
+      } else {
+        res.plan = Object.assign({ id: 'p-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5) }, res.plan);
+        plans.push(res.plan);
+      }
+      savePlans(plans);
+      return res;
+    }
+
+    function togglePlanActive(id) {
+      const plans = loadPlans();
+      const p = plans.find(x => x.id === id);
+      if (!p) return false;
+      p.active = !p.active;
+      savePlans(plans);
+      return p.active;
+    }
+
+    // Devuelve el UserPlan ACTIVE vigente del alumno (marca como EXPIRED los vencidos) o null.
+    function getActiveUserPlan(username) {
+      const list = loadUserPlans();
+      const today = isoToday();
+      let changed = false;
+      list.forEach(up => {
+        if (up.status === 'ACTIVE' && up.end_date < today) { up.status = 'EXPIRED'; changed = true; }
+      });
+      if (changed) saveUserPlans(list);
+      return list.find(up => up.username === username && up.status === 'ACTIVE') || null;
+    }
+
+    // Asigna un plan: deja a lo sumo un ACTIVE por alumno (el anterior pasa a EXPIRED).
+    function assignPlan(username, planId, startIso, days) {
+      const plan = loadPlans().find(p => p.id === planId);
+      if (!username) return { ok: false, error: 'Elegí un alumno.' };
+      if (!plan) return { ok: false, error: 'Elegí un plan.' };
+      const d = Number(days);
+      if (!Number.isInteger(d) || d < 1) return { ok: false, error: 'Los días de vigencia deben ser un entero de 1 o más.' };
+      const start = startIso || isoToday();
+      const list = loadUserPlans();
+      list.forEach(up => { if (up.username === username && up.status === 'ACTIVE') up.status = 'EXPIRED'; });
+      list.push({ username, plan_id: planId, start_date: start, end_date: isoAddDays(start, d), credits_used: 0, status: 'ACTIVE' });
+      saveUserPlans(list);
+      return { ok: true };
+    }
+
+    function removeUserPlan(username) {
+      const list = loadUserPlans();
+      let n = 0;
+      list.forEach(up => { if (up.username === username && up.status === 'ACTIVE') { up.status = 'EXPIRED'; n++; } });
+      saveUserPlans(list);
+      return n;
+    }
+
+    // ---------- UI Admin (Ajustes > Planes) ----------
+    function planChipsHtml(p) {
+      const chip = (txt, cls) => `<span class="px-1.5 py-0.5 rounded text-[8px] font-bold border ${cls}">${txt}</span>`;
+      let h = '';
+      if (p.includes_musculacion) h += chip('Musculación', 'bg-blue-950/50 text-blue-300 border-blue-800/40');
+      if (p.includes_grupales) h += chip('Grupales', 'bg-purple-950/50 text-purple-300 border-purple-800/40');
+      return h;
+    }
+
+    function updatePlanFormState() {
+      const grup = document.getElementById('plan-grupales').checked;
+      const limitInput = document.getElementById('plan-class-limit');
+      const periodSel = document.getElementById('plan-limit-period');
+      const hint = document.getElementById('plan-form-hint');
+      limitInput.disabled = !grup;
+      if (!grup) limitInput.value = '';
+      const hasLimit = grup && limitInput.value !== '';
+      periodSel.disabled = !hasLimit;
+      hint.innerText = !grup
+        ? 'El límite de clases aplica solo si el plan incluye clases grupales.'
+        : (hasLimit ? '' : 'Sin límite cargado: las clases grupales son ilimitadas.');
+    }
+
+    function resetPlanForm() {
+      document.getElementById('plan-edit-id').value = '';
+      document.getElementById('plan-name').value = '';
+      document.getElementById('plan-price').value = '';
+      document.getElementById('plan-musculacion').checked = false;
+      document.getElementById('plan-grupales').checked = false;
+      document.getElementById('plan-active').checked = true;
+      document.getElementById('plan-class-limit').value = '';
+      document.getElementById('plan-limit-period').value = 'WEEK';
+      document.getElementById('plan-form-title').innerHTML = '<i class="fa-solid fa-plus text-brand-yellow"></i> Nuevo Plan';
+      document.getElementById('plan-cancel-btn').classList.add('hidden');
+      updatePlanFormState();
+    }
+
+    function editPlan(id) {
+      const p = loadPlans().find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('plan-edit-id').value = p.id;
+      document.getElementById('plan-name').value = p.name;
+      document.getElementById('plan-price').value = p.price;
+      document.getElementById('plan-musculacion').checked = !!p.includes_musculacion;
+      document.getElementById('plan-grupales').checked = !!p.includes_grupales;
+      document.getElementById('plan-active').checked = p.active !== false;
+      document.getElementById('plan-class-limit').value = p.class_limit === null || p.class_limit === undefined ? '' : p.class_limit;
+      document.getElementById('plan-limit-period').value = p.limit_period || 'WEEK';
+      document.getElementById('plan-form-title').innerHTML = '<i class="fa-solid fa-pen text-brand-yellow"></i> Editar Plan';
+      document.getElementById('plan-cancel-btn').classList.remove('hidden');
+      updatePlanFormState();
+    }
+
+    function handlePlanSubmit(e) {
+      if (e) e.preventDefault();
+      const res = savePlan({
+        name: document.getElementById('plan-name').value,
+        price: document.getElementById('plan-price').value,
+        includes_musculacion: document.getElementById('plan-musculacion').checked,
+        includes_grupales: document.getElementById('plan-grupales').checked,
+        class_limit: document.getElementById('plan-class-limit').value,
+        limit_period: document.getElementById('plan-limit-period').value,
+        active: document.getElementById('plan-active').checked
+      }, document.getElementById('plan-edit-id').value);
+      if (!res.ok) { alert('⚠️ ' + res.error); return; }
+      resetPlanForm();
+      renderPlansAdmin();
+    }
+
+    function handleTogglePlan(id) {
+      togglePlanActive(id);
+      renderPlansAdmin();
+    }
+
+    function renderPlansAdmin() {
+      const listEl = document.getElementById('plans-admin-list');
+      if (!listEl) return;
+      const plans = loadPlans();
+      listEl.innerHTML = plans.length ? '' : '<p class="text-[11px] text-zinc-500">Todavía no hay planes cargados.</p>';
+      plans.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'flex items-start justify-between gap-2 border border-brand-border/50 rounded-xl p-2.5 ' + (p.active ? '' : 'opacity-50');
+        const limitTxt = describePlanLimit(p);
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="font-bold text-white text-xs">${escHtml(p.name)} <span class="text-brand-yellow font-semibold">${formatPrice(p.price)}</span></div>
+            <div class="flex flex-wrap gap-1 mt-1">${planChipsHtml(p)}${p.active ? '' : '<span class="px-1.5 py-0.5 rounded text-[8px] font-bold border bg-zinc-800 text-zinc-400 border-zinc-700">Inactivo</span>'}</div>
+            ${limitTxt ? `<div class="text-[9px] text-zinc-500 mt-1">${limitTxt}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <button onclick="editPlan('${p.id}')" class="text-brand-yellow hover:text-brand-gold"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button onclick="handleTogglePlan('${p.id}')" class="${p.active ? 'text-amber-400 hover:text-amber-300' : 'text-emerald-400 hover:text-emerald-300'} font-bold text-[9px] uppercase tracking-wider">${p.active ? 'Desactivar' : 'Activar'}</button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+
+      // Ayudante de asignación
+      const students = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]');
+      const selStudent = document.getElementById('assign-student');
+      const selPlan = document.getElementById('assign-plan');
+      const prevStudent = selStudent.value, prevPlan = selPlan.value;
+      selStudent.innerHTML = students.map(s => `<option value="${escHtml(s.username)}">${escHtml(s.name)} (${escHtml(s.username)})</option>`).join('');
+      selPlan.innerHTML = plans.filter(p => p.active).map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('');
+      if (prevStudent) selStudent.value = prevStudent;
+      if (prevPlan) selPlan.value = prevPlan;
+      const startInput = document.getElementById('assign-start');
+      if (!startInput.value) startInput.value = isoToday();
+
+      const assigned = document.getElementById('assigned-plans-list');
+      const rows = students.map(s => ({ s, up: getActiveUserPlan(s.username) })).filter(x => x.up);
+      assigned.innerHTML = rows.length
+        ? rows.map(({ s, up }) => {
+            const pl = plans.find(p => p.id === up.plan_id);
+            return `<div>• <span class="text-zinc-200">${escHtml(s.name)}</span>: ${pl ? escHtml(pl.name) : '(plan eliminado)'} · vence ${formatDateAR(up.end_date)}</div>`;
+          }).join('')
+        : 'Ningún alumno tiene plan activo.';
+    }
+
+    function assignPlanToStudent() {
+      const res = assignPlan(
+        document.getElementById('assign-student').value,
+        document.getElementById('assign-plan').value,
+        document.getElementById('assign-start').value,
+        document.getElementById('assign-days').value
+      );
+      if (!res.ok) { alert('⚠️ ' + res.error); return; }
+      renderPlansAdmin();
+    }
+
+    function removeStudentPlan() {
+      removeUserPlan(document.getElementById('assign-student').value);
+      renderPlansAdmin();
+    }
+
+    // ---------- UI Alumno (tablero, Precios, Próximamente) ----------
+    let studentScreen = 'home'; // 'home' | 'routine' | 'precios'
+    let soonToastTimer = null;
+
+    function goStudentScreen(name) {
+      studentScreen = name;
+      renderStudentView();
+    }
+
+    function showToast(html, ms) {
+      const t = document.getElementById('soon-toast');
+      if (!t) return;
+      t.innerHTML = html;
+      t.classList.remove('hidden');
+      clearTimeout(soonToastTimer);
+      soonToastTimer = setTimeout(() => t.classList.add('hidden'), ms || 2200);
+    }
+
+    function showSoon(label) {
+      showToast(`<strong class="text-brand-yellow">${escHtml(label)}</strong> · Próximamente`);
+    }
+
+    // "Instalar la app": usa el aviso nativo si el navegador lo ofrece (requiere PWA con manifest);
+    // si no, explica el paso manual. Hoy el demo no tiene manifest, así que se muestra la guía manual.
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstallPrompt = e; });
+
+    function installApp() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt = null;
+        return;
+      }
+      showToast('En el menú de tu navegador elegí <strong class="text-brand-yellow">“Agregar a pantalla de inicio”</strong>.', 4500);
+    }
+
+    function renderStudentHome(user) {
+      document.getElementById('home-user-name').innerText = String(user.name || '').trim().split(/\s+/)[0] || 'Alumno';
+      const up = getActiveUserPlan(user.username);
+      const plan = up ? loadPlans().find(p => p.id === up.plan_id) : null;
+      const card = document.getElementById('home-plan-card');
+      if (up) {
+        const subtitle = plan ? (plan.includes_grupales ? describePlanLimit(plan) : 'Acceso libre a sala de musculación') : '';
+        const extra = plan && plan.includes_grupales && plan.includes_musculacion ? 'Incluye musculación' : '';
+        card.innerHTML = `
+          <span class="text-[10px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Tu plan vigente</span>
+          <div class="text-[26px] leading-tight font-extrabold uppercase tracking-tight text-white mt-1">${plan ? escHtml(plan.name) : 'Plan'}</div>
+          ${subtitle ? `<div class="text-brand-yellow text-sm font-semibold mt-0.5">${subtitle}</div>` : ''}
+          ${extra ? `<div class="text-xs text-zinc-400 mt-0.5">${extra}</div>` : ''}
+          ${plan ? `<div class="text-base font-extrabold text-white mt-2.5">${formatPrice(plan.price)}</div>` : ''}
+          <div class="text-xs text-zinc-300 mt-0.5">Vigente hasta el ${formatDateAR(up.end_date)}</div>
+          <div class="text-xs font-bold text-emerald-400 mt-2.5"><i class="fa-solid fa-circle-check mr-1"></i>Plan vigente</div>`;
+      } else {
+        card.innerHTML = `
+          <span class="text-[10px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Tu plan</span>
+          <div class="text-[22px] leading-tight font-extrabold uppercase tracking-tight text-white mt-1">Sin plan activo</div>
+          <div class="text-brand-yellow text-sm font-semibold mt-0.5 mb-3.5">Sumate y empezá a entrenar</div>
+          <button onclick="showSoon('Inscripción')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme</button>`;
+      }
+    }
+
+    function renderStudentPrecios() {
+      const el = document.getElementById('precios-list');
+      const plans = loadPlans().filter(p => p.active);
+      if (!plans.length) { el.innerHTML = '<p class="text-xs text-zinc-500">No hay planes disponibles por el momento.</p>'; return; }
+      el.innerHTML = plans.map(p => {
+        const limitTxt = describePlanLimit(p);
+        return `<div class="bg-brand-surface border border-brand-border rounded-2xl p-4">
+          <div class="flex items-start justify-between gap-2">
+            <div class="font-bold text-white text-sm">${escHtml(p.name)}</div>
+            <div class="font-display font-black text-brand-yellow text-base whitespace-nowrap">${formatPrice(p.price)}</div>
+          </div>
+          <div class="flex flex-wrap gap-1 mt-2">${planChipsHtml(p)}</div>
+          ${limitTxt ? `<div class="text-[10px] text-zinc-400 mt-1.5">${limitTxt}</div>` : ''}
+        </div>`;
+      }).join('');
     }
 
     // ----------------------------------------------------

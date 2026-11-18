@@ -687,8 +687,8 @@
             <p id="noaccess-text" class="text-xs text-zinc-300 mt-2"></p>
           </div>
           <div class="space-y-3">
-            <button onclick="showSoon('Inscripción')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme a un plan</button>
-            <button onclick="showSoon('Comprar crédito')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-cart-plus mr-1.5"></i>Comprar crédito</button>
+            <button onclick="openEnroll('ENROLL', null, 'home')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme a un plan</button>
+            <button onclick="openEnroll('CREDIT', null, 'home')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-cart-plus mr-1.5"></i>Comprar crédito</button>
             <button onclick="goStudentScreen('precios')" class="w-full rounded-xl py-3 text-sm font-bold border border-brand-yellow/50 text-brand-yellow hover:bg-brand-yellow/10"><i class="fa-solid fa-tag mr-1.5"></i>Ver planes y precios</button>
           </div>
         </div>
@@ -710,13 +710,13 @@
           <div class="home-grid-wrap flex-1 min-h-[260px] mb-3">
             <div class="h-full grid grid-cols-2 auto-rows-fr gap-2.5">
             <button onclick="goStudentScreen('routine')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-dumbbell text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mi rutina</span></button>
-            <button onclick="showSoon('Mis Pagos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-wallet text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis pagos</span></button>
+            <button onclick="goStudentScreen('pagos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-wallet text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis pagos</span></button>
             <button onclick="goStudentScreen('precios')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-tag text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Precios</span></button>
             <button onclick="showSoon('Nueva Reserva')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
             <button onclick="showSoon('Mis Reservas')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis reservas</span></button>
             <button onclick="showSoon('Presentismo')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-user-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Presentismo</span></button>
             <button onclick="showSoon('Mis Créditos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-coins text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis créditos</span></button>
-            <button onclick="showSoon('Comprar Crédito')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-cart-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar crédito</span></button>
+            <button onclick="openEnroll('CREDIT', null, 'home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-cart-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar crédito</span></button>
             <button onclick="showSoon('Reprogramar clase')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-days text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Reprogramar clase</span></button>
               <button onclick="showSoon('Más funciones')" class="btn-glossy-off rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-hourglass-half text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Próximamente</span></button>
             </div>
@@ -732,12 +732,94 @@
           </div>
         </div>
 
-        <!-- SCREEN PRECIOS (solo lectura) -->
-        <div id="student-precios-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-6 pb-6 px-4 relative scrollbar-none">
-          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-400 hover:text-white font-semibold mb-3 flex items-center gap-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
-          <h3 class="font-display font-black text-xl text-white mb-0.5"><i class="fa-solid fa-tags text-brand-yellow"></i> Precios</h3>
-          <p class="text-[10px] text-zinc-500 mb-4">Planes de membresía vigentes</p>
+        <!-- SCREEN PRECIOS: tarjetas de planes (tocar una abre la inscripción a ese plan) -->
+        <div id="student-precios-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none" style="background: linear-gradient(rgba(0,0,0,.78), rgba(0,0,0,.9)), url('background.png') center / cover;">
+          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <div class="text-center mb-4">
+            <div class="flex items-center gap-3 justify-center">
+              <span class="h-0.5 flex-1 bg-brand-yellow"></span>
+              <h3 class="text-base font-extrabold uppercase tracking-wide text-white whitespace-nowrap">Pases mensuales</h3>
+              <span class="h-0.5 flex-1 bg-brand-yellow"></span>
+            </div>
+            <div class="mt-1 text-[34px] leading-none font-black uppercase tracking-tight"><span class="text-brand-yellow">CAMBIOZ</span><span class="text-white">GYM</span></div>
+            <p class="text-[10px] text-zinc-300 mt-1.5">Tocá un plan para inscribirte</p>
+          </div>
           <div id="precios-list" class="space-y-3"></div>
+          <div class="flex items-center gap-3 justify-center mt-5">
+            <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
+            <img src="logo.webp" alt="CAMBIOZ GYM" class="h-14 w-14 object-contain" />
+            <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
+          </div>
+        </div>
+
+        <!-- SCREEN INSCRIPCIÓN / INFORMAR PAGO / COMPRAR CRÉDITO (mismo formulario) -->
+        <div id="student-enroll-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
+          <button onclick="closeEnroll()" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Volver</button>
+          <h3 id="enroll-title" class="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">Inscripción</h3>
+          <p id="enroll-sub" class="text-[11px] text-zinc-400 mb-3"></p>
+
+          <form id="enroll-form" onsubmit="submitEnroll(event)" class="space-y-3">
+            <div id="enroll-plan-block">
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Plan</label>
+              <select id="enroll-plan" onchange="updateEnrollSummary()" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
+              <div id="enroll-plan-fixed" class="hidden w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white"></div>
+            </div>
+
+            <div id="enroll-credit-block" class="hidden">
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Cantidad de créditos</label>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="stepEnrollQty(-1)" class="h-11 w-11 rounded-xl bg-brand-surface border border-brand-border text-white text-lg font-bold">−</button>
+                <input type="number" id="enroll-qty" min="1" max="50" step="1" value="1" oninput="updateEnrollSummary()" class="flex-1 text-center bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-brand-yellow" />
+                <button type="button" onclick="stepEnrollQty(1)" class="h-11 w-11 rounded-xl bg-brand-surface border border-brand-border text-white text-lg font-bold">+</button>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-brand-surface border border-brand-border p-3">
+              <div class="flex justify-between items-center text-xs"><span class="text-zinc-400">Total a pagar</span><strong id="enroll-total" class="text-brand-yellow text-lg font-extrabold"></strong></div>
+              <div id="enroll-info" class="text-[10px] text-zinc-400 mt-1"></div>
+            </div>
+
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Método de pago</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="cursor-pointer"><input type="radio" name="enroll-method" value="CASH" onchange="updateEnrollMethod()" class="peer sr-only" />
+                  <span class="block text-center rounded-xl border border-brand-border bg-brand-surface py-3 text-xs font-bold text-zinc-300 peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/15 peer-checked:text-brand-yellow"><i class="fa-solid fa-money-bill-wave mr-1.5"></i>Efectivo</span></label>
+                <label class="cursor-pointer"><input type="radio" name="enroll-method" value="TRANSFER" onchange="updateEnrollMethod()" class="peer sr-only" />
+                  <span class="block text-center rounded-xl border border-brand-border bg-brand-surface py-3 text-xs font-bold text-zinc-300 peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/15 peer-checked:text-brand-yellow"><i class="fa-solid fa-building-columns mr-1.5"></i>Transferencia</span></label>
+              </div>
+            </div>
+
+            <div id="enroll-cash-note" class="hidden rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 text-[11px] text-amber-200">
+              Pagás en recepción. Al enviar, tu solicitud queda <strong>pendiente</strong> hasta que el Staff la confirme.
+            </div>
+
+            <div id="enroll-transfer-block" class="hidden space-y-2.5">
+              <div class="rounded-xl border border-brand-border bg-brand-surface p-3 space-y-2 text-xs">
+                <div class="flex justify-between items-center gap-2"><div class="min-w-0"><span class="text-[9px] text-zinc-500 uppercase block">Alias</span><strong id="enroll-alias" class="text-white break-all"></strong></div><button type="button" onclick="copyEnrollField('enroll-alias')" class="text-[10px] text-brand-yellow font-bold px-2 py-1.5">Copiar</button></div>
+                <div class="flex justify-between items-center gap-2"><div class="min-w-0"><span class="text-[9px] text-zinc-500 uppercase block">CBU</span><strong id="enroll-cbu" class="text-white break-all"></strong></div><button type="button" onclick="copyEnrollField('enroll-cbu')" class="text-[10px] text-brand-yellow font-bold px-2 py-1.5">Copiar</button></div>
+                <div><span class="text-[9px] text-zinc-500 uppercase block">Titular</span><strong id="enroll-holder" class="text-white"></strong></div>
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Comprobante (imagen o captura)</label>
+                <input type="file" id="enroll-file" accept="image/*" onchange="handleEnrollFile(this)" class="w-full text-xs text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-yellow file:px-3 file:py-2 file:text-xs file:font-bold file:text-zinc-950" />
+                <img id="enroll-preview" alt="Vista previa del comprobante" class="hidden mt-2 max-h-40 rounded-lg border border-brand-border" />
+              </div>
+            </div>
+
+            <p id="enroll-error" class="hidden text-[11px] text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg px-3 py-2"></p>
+
+            <button type="submit" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-paper-plane mr-1.5"></i>Enviar solicitud</button>
+          </form>
+        </div>
+
+        <!-- SCREEN MIS PAGOS -->
+        <div id="student-pagos-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
+          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <h3 class="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight mb-3">Mis pagos</h3>
+          <div id="pagos-summary" class="rounded-2xl border border-brand-yellow/50 p-3.5 mb-3"></div>
+          <div id="pagos-actions" class="grid grid-cols-2 gap-2.5 mb-4"></div>
+          <h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Historial</h4>
+          <div id="pagos-history" class="space-y-2"></div>
         </div>
 
         <!-- Aviso "Próximamente" -->
@@ -879,6 +961,12 @@
 
   </main>
 
+  <!-- MODAL: COMPROBANTE DE TRANSFERENCIA (vista ampliada) -->
+  <div id="modal-receipt" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4" onclick="closeReceipt()">
+    <img id="receipt-img" alt="Comprobante" class="max-h-full max-w-full rounded-lg shadow-2xl" />
+    <button class="absolute top-4 right-4 text-white text-2xl h-10 w-10 rounded-full bg-black/60" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
   <!-- MODAL: AJUSTES DE EJERCICIOS Y PLANTILLAS (COG MODAL) -->
   <div id="modal-config" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 hidden transition-opacity duration-300">
     <div class="glass-surface rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl p-4 sm:p-6 transform scale-95 transition-transform duration-300">
@@ -908,6 +996,52 @@
         <button id="tab-btn-plans" onclick="switchConfigTab('plans')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
           <i class="fa-solid fa-id-card mr-1"></i> Planes
         </button>
+        <button id="tab-btn-payments" onclick="switchConfigTab('payments')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
+          <i class="fa-solid fa-money-bill-transfer mr-1"></i> Pagos
+          <span id="pay-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
+        </button>
+      </div>
+
+      <!-- Pestaña: Pagos (solicitudes, datos de transferencia, historial) -->
+      <div id="tab-content-payments" class="space-y-4 hidden max-h-[500px] overflow-y-auto pr-1">
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2.5">
+          <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-hourglass-half"></i> Solicitudes pendientes</h4>
+          <div id="payments-pending-list" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-building-columns text-brand-yellow"></i> Datos para transferencias y créditos</h4>
+          <p class="text-[10px] text-zinc-500">Son valores de ejemplo: reemplazalos por los reales del gimnasio.</p>
+          <form id="form-gym-settings" onsubmit="handleSaveGymSettings(event)" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Alias</label>
+                <input type="text" id="gym-alias" maxlength="40" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">CBU (22 dígitos)</label>
+                <input type="text" id="gym-cbu" inputmode="numeric" maxlength="26" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Titular</label>
+                <input type="text" id="gym-holder" maxlength="60" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Precio por crédito (ARS)</label>
+                <input type="number" id="gym-credit-price" min="0" step="1" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs">Guardar datos</button>
+              <span id="gym-settings-msg" class="text-[10px]"></span>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-brand-yellow"></i> Historial (últimas 20)</h4>
+          <div id="payments-history-list" class="space-y-1.5"></div>
+        </div>
       </div>
 
       <!-- Pestaña: Planes de membresía -->
@@ -945,6 +1079,16 @@
                   <option value="MONTH">Por mes</option>
                 </select>
               </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Vigencia (días)</label>
+                <input type="number" id="plan-duration" min="1" max="365" step="1" value="30" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Qué incluye (opcional, un ítem por línea)</label>
+              <textarea id="plan-features" rows="4" placeholder="Ej:&#10;Clase de funcional&#10;Full body&#10;Hyrox" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></textarea>
             </div>
             <p id="plan-form-hint" class="text-[10px] text-zinc-500"></p>
             <div class="flex gap-2">
@@ -2494,6 +2638,10 @@
       const contentPlans = document.getElementById('tab-content-plans');
       if (tabPlans) tabPlans.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
       if (contentPlans) contentPlans.classList.add('hidden');
+      const tabPay = document.getElementById('tab-btn-payments');
+      const contentPay = document.getElementById('tab-content-payments');
+      if (tabPay) tabPay.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
+      if (contentPay) contentPay.classList.add('hidden');
 
       // Restablecer estilos de botones de pestañas
       if (tabSettings) tabSettings.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
@@ -2528,6 +2676,11 @@
         if (contentPlans) contentPlans.classList.remove('hidden');
         resetPlanForm();
         renderPlansAdmin();
+      } else if (tabName === 'payments') {
+        if (tabPay) tabPay.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
+        if (contentPay) contentPay.classList.remove('hidden');
+        fillGymSettingsForm();
+        renderPaymentsAdmin();
       }
     }
 
@@ -3783,6 +3936,8 @@
         registerScreen.classList.toggle('hidden', studentAuthMode !== 'register');
         forgotScreen.classList.toggle('hidden', studentAuthMode !== 'forgot');
         noaccessScreen.classList.add('hidden');
+        document.getElementById('student-enroll-screen').classList.add('hidden');
+        document.getElementById('student-pagos-screen').classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -3810,20 +3965,27 @@
       }
 
       // Tablero, Precios y aviso sin acceso (nuevas pantallas): la rutina no se toca
-      if (studentScreen === 'home' || studentScreen === 'precios' || studentScreen === 'noaccess') {
+      const enrollScreen = document.getElementById('student-enroll-screen');
+      const pagosScreen = document.getElementById('student-pagos-screen');
+      if (['home', 'precios', 'noaccess', 'enroll', 'pagos'].indexOf(studentScreen) !== -1) {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
         preciosScreen.classList.toggle('hidden', studentScreen !== 'precios');
         noaccessScreen.classList.toggle('hidden', studentScreen !== 'noaccess');
+        enrollScreen.classList.toggle('hidden', studentScreen !== 'enroll');
+        pagosScreen.classList.toggle('hidden', studentScreen !== 'pagos');
         if (studentScreen === 'home') renderStudentHome(user);
         else if (studentScreen === 'precios') renderStudentPrecios();
-        return;
+        else if (studentScreen === 'pagos') renderPagos();
+        return; // 'enroll' conserva lo que el alumno ya cargó en el formulario
       }
 
       homeScreen.classList.add('hidden');
       preciosScreen.classList.add('hidden');
       noaccessScreen.classList.add('hidden');
+      enrollScreen.classList.add('hidden');
+      pagosScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -4565,15 +4727,15 @@
       if (localStorage.getItem('cambioz_plans_db') !== null) return;
       // Datos de ejemplo para la demo; la dueña los edita o desactiva desde Ajustes > Planes.
       const seed = [
-        { id: 'p-seed-1', name: 'Musculación Mensual', includes_musculacion: true, includes_grupales: false, class_limit: null, limit_period: null, price: 28000, active: true },
-        { id: 'p-seed-2', name: 'Grupales 2 por semana', includes_musculacion: false, includes_grupales: true, class_limit: 2, limit_period: 'WEEK', price: 24000, active: true },
-        { id: 'p-seed-3', name: 'Full Libre', includes_musculacion: true, includes_grupales: true, class_limit: null, limit_period: null, price: 38000, active: true }
+        { id: 'p-seed-1', name: 'Musculación Libre', includes_musculacion: true, includes_grupales: false, class_limit: null, limit_period: null, price: 40000, duration_days: 30, features: [], active: true },
+        { id: 'p-seed-2', name: 'Mini Tramp', includes_musculacion: false, includes_grupales: true, class_limit: null, limit_period: null, price: 38000, duration_days: 30, features: [], active: true },
+        { id: 'p-seed-3', name: 'Salón de Entrenamiento', includes_musculacion: true, includes_grupales: true, class_limit: null, limit_period: null, price: 50000, duration_days: 30, features: ['Clase de funcional', 'Full body', 'Mini tramp', 'Hyrox', 'Musculación libre'], active: true }
       ];
       savePlans(seed);
       const today = isoToday();
       saveUserPlans([
-        { username: 'franco.zappetti', plan_id: 'p-seed-3', start_date: isoAddDays(today, -10), end_date: isoAddDays(today, 20), credits_used: 0, status: 'ACTIVE' },
-        { username: 'carolina.olivi', plan_id: 'p-seed-1', start_date: isoAddDays(today, -45), end_date: isoAddDays(today, -15), credits_used: 0, status: 'EXPIRED' }
+        { username: 'franco.zappetti', plan_id: 'p-seed-3', start_date: isoAddDays(today, -10), end_date: isoAddDays(today, 20), credits_used: 0, credits_total: null, credits_extra: 0, status: 'ACTIVE' },
+        { username: 'carolina.olivi', plan_id: 'p-seed-1', start_date: isoAddDays(today, -45), end_date: isoAddDays(today, -15), credits_used: 0, credits_total: null, credits_extra: 0, status: 'EXPIRED' }
       ]);
     }
 
@@ -4603,6 +4765,17 @@
         }
         limitPeriod = input.limit_period === 'MONTH' ? 'MONTH' : 'WEEK';
       }
+      let duration = 30;
+      if (input.duration_days !== undefined && input.duration_days !== null && input.duration_days !== '') {
+        duration = Number(input.duration_days);
+        if (!Number.isInteger(duration) || duration < 1 || duration > 365) {
+          return { ok: false, error: 'La vigencia debe ser un entero de 1 a 365 días.' };
+        }
+      }
+      const rawFeatures = Array.isArray(input.features) ? input.features : String(input.features || '').split(/\r?\n/);
+      const features = rawFeatures.map(s => String(s).trim()).filter(Boolean);
+      if (features.length > 8) return { ok: false, error: 'Podés cargar hasta 8 ítems en "Qué incluye".' };
+      if (features.some(s => s.length > 40)) return { ok: false, error: 'Cada ítem de "Qué incluye" admite hasta 40 caracteres.' };
       const dup = loadPlans().some(p => p.id !== excludeId && p.name.toLowerCase() === name.toLowerCase());
       if (dup) return { ok: false, error: 'Ya existe un plan con ese nombre.' };
       return {
@@ -4614,9 +4787,24 @@
           class_limit: classLimit,
           limit_period: limitPeriod,
           price,
+          duration_days: duration,
+          features,
           active: input.active !== false
         }
       };
+    }
+
+    // Días de vigencia de un plan (los planes cargados antes de existir el campo valen 30).
+    function getPlanDuration(plan) {
+      const d = Number(plan && plan.duration_days);
+      return Number.isInteger(d) && d >= 1 ? d : 30;
+    }
+
+    // Texto corto de precio como en el flyer: 40000 -> "$ 40 MIL"; si no es múltiplo de mil, importe completo.
+    function formatPriceShort(n) {
+      const v = Number(n);
+      if (v >= 1000 && v % 1000 === 0) return '$ ' + (v / 1000) + ' MIL';
+      return formatPrice(v);
     }
 
     // Crea (editId vacío) o edita un plan. Devuelve { ok, error, plan }.
@@ -4668,7 +4856,13 @@
       const start = startIso || isoToday();
       const list = loadUserPlans();
       list.forEach(up => { if (up.username === username && up.status === 'ACTIVE') up.status = 'EXPIRED'; });
-      list.push({ username, plan_id: planId, start_date: start, end_date: isoAddDays(start, d), credits_used: 0, status: 'ACTIVE' });
+      list.push({
+        username, plan_id: planId, start_date: start, end_date: isoAddDays(start, d),
+        credits_used: 0,
+        credits_total: plan.includes_grupales ? plan.class_limit : null, // según el límite del plan (null = ilimitado)
+        credits_extra: 0,
+        status: 'ACTIVE'
+      });
       saveUserPlans(list);
       return { ok: true };
     }
@@ -4713,6 +4907,8 @@
       document.getElementById('plan-active').checked = true;
       document.getElementById('plan-class-limit').value = '';
       document.getElementById('plan-limit-period').value = 'WEEK';
+      document.getElementById('plan-duration').value = '30';
+      document.getElementById('plan-features').value = '';
       document.getElementById('plan-form-title').innerHTML = '<i class="fa-solid fa-plus text-brand-yellow"></i> Nuevo Plan';
       document.getElementById('plan-cancel-btn').classList.add('hidden');
       updatePlanFormState();
@@ -4729,6 +4925,8 @@
       document.getElementById('plan-active').checked = p.active !== false;
       document.getElementById('plan-class-limit').value = p.class_limit === null || p.class_limit === undefined ? '' : p.class_limit;
       document.getElementById('plan-limit-period').value = p.limit_period || 'WEEK';
+      document.getElementById('plan-duration').value = getPlanDuration(p);
+      document.getElementById('plan-features').value = (p.features || []).join('\n');
       document.getElementById('plan-form-title').innerHTML = '<i class="fa-solid fa-pen text-brand-yellow"></i> Editar Plan';
       document.getElementById('plan-cancel-btn').classList.remove('hidden');
       updatePlanFormState();
@@ -4743,6 +4941,8 @@
         includes_grupales: document.getElementById('plan-grupales').checked,
         class_limit: document.getElementById('plan-class-limit').value,
         limit_period: document.getElementById('plan-limit-period').value,
+        duration_days: document.getElementById('plan-duration').value,
+        features: document.getElementById('plan-features').value,
         active: document.getElementById('plan-active').checked
       }, document.getElementById('plan-edit-id').value);
       if (!res.ok) { alert('⚠️ ' + res.error); return; }
@@ -4766,7 +4966,7 @@
         const limitTxt = describePlanLimit(p);
         row.innerHTML = `
           <div class="min-w-0">
-            <div class="font-bold text-white text-xs">${escHtml(p.name)} <span class="text-brand-yellow font-semibold">${formatPrice(p.price)}</span></div>
+            <div class="font-bold text-white text-xs">${escHtml(p.name)} <span class="text-brand-yellow font-semibold">${formatPrice(p.price)}</span> <span class="text-zinc-500 font-normal">· ${getPlanDuration(p)} días</span></div>
             <div class="flex flex-wrap gap-1 mt-1">${planChipsHtml(p)}${p.active ? '' : '<span class="px-1.5 py-0.5 rounded text-[8px] font-bold border bg-zinc-800 text-zinc-400 border-zinc-700">Inactivo</span>'}</div>
             ${limitTxt ? `<div class="text-[9px] text-zinc-500 mt-1">${limitTxt}</div>` : ''}
           </div>
@@ -4856,6 +5056,21 @@
       const up = getActiveUserPlan(user.username);
       const plan = up ? loadPlans().find(p => p.id === up.plan_id) : null;
       const card = document.getElementById('home-plan-card');
+      // Sin plan pero con una inscripción enviada: se muestra su estado en lugar del botón
+      const pendingEnroll = up ? null : loadPayments().find(r => r.username === user.username && r.type === 'ENROLL' && r.status === 'PENDING');
+      if (pendingEnroll) {
+        const pl = loadPlans().find(p => p.id === pendingEnroll.plan_id);
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <span class="text-[9px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Tu inscripción</span>
+              <div class="text-xl leading-tight font-extrabold uppercase tracking-tight text-amber-300 mt-0.5">Pendiente</div>
+              <div class="text-brand-yellow text-xs font-semibold mt-0.5 truncate">${pl ? escHtml(pl.name) : 'Plan'} · a confirmar por el Staff</div>
+            </div>
+            <button onclick="goStudentScreen('pagos')" class="btn-glossy shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-xs font-bold">Ver</button>
+          </div>`;
+        return;
+      }
       if (up) {
         const subtitle = plan ? (plan.includes_grupales ? describePlanLimit(plan) : 'Acceso libre a sala de musculación') : '';
         const extra = plan && plan.includes_grupales && plan.includes_musculacion ? 'Incluye musculación' : '';
@@ -4880,7 +5095,7 @@
               <div class="text-xl leading-tight font-extrabold uppercase tracking-tight text-white mt-0.5">Sin plan activo</div>
               <div class="text-brand-yellow text-xs font-semibold mt-0.5">Sumate y empezá a entrenar</div>
             </div>
-            <button onclick="showSoon('Inscripción')" class="btn-glossy shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-xs font-bold">Inscribirme</button>
+            <button onclick="openEnroll('ENROLL', null, 'home')" class="btn-glossy shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-xs font-bold">Inscribirme</button>
           </div>`;
       }
     }
@@ -4914,21 +5129,611 @@
       }
     }
 
+    // Título de la tarjeta: la última palabra va en amarillo, como en el flyer ("MUSCULACIÓN LIBRE").
+    function planTitleHtml(name) {
+      const parts = String(name).trim().split(/\s+/);
+      if (parts.length < 2) return `<span class="text-white">${escHtml(parts[0] || '')}</span>`;
+      const last = parts.pop();
+      return `<span class="text-white">${escHtml(parts.join(' '))}</span> <span class="text-brand-yellow">${escHtml(last)}</span>`;
+    }
+
+    function planIconClass(p) {
+      if (p.includes_musculacion && p.includes_grupales) return 'fa-fire';
+      return p.includes_musculacion ? 'fa-dumbbell' : 'fa-person-running';
+    }
+
+    // Líneas de "qué incluye": las cargadas por la dueña o, si no hay, las derivadas de los casilleros.
+    function planIncludesList(p) {
+      if (p.features && p.features.length) return p.features;
+      const out = [];
+      if (p.includes_musculacion) out.push('Musculación libre');
+      if (p.includes_grupales) out.push(describePlanLimit(p));
+      return out;
+    }
+
+    // Precios: tarjetas con el formato del flyer. Tocar una tarjeta abre la inscripción a ese plan.
     function renderStudentPrecios() {
       const el = document.getElementById('precios-list');
       const plans = loadPlans().filter(p => p.active);
-      if (!plans.length) { el.innerHTML = '<p class="text-xs text-zinc-500">No hay planes disponibles por el momento.</p>'; return; }
+      if (!plans.length) { el.innerHTML = '<p class="text-xs text-zinc-300 text-center">No hay planes disponibles por el momento.</p>'; return; }
       el.innerHTML = plans.map(p => {
-        const limitTxt = describePlanLimit(p);
-        return `<div class="bg-brand-surface border border-brand-border rounded-2xl p-4">
-          <div class="flex items-start justify-between gap-2">
-            <div class="font-bold text-white text-sm">${escHtml(p.name)}</div>
-            <div class="font-display font-black text-brand-yellow text-base whitespace-nowrap">${formatPrice(p.price)}</div>
+        const hasList = !!(p.features && p.features.length);
+        const lines = planIncludesList(p);
+        const detail = hasList
+          ? `<div class="text-[10px] font-extrabold uppercase tracking-wider text-white mt-1.5">Incluye:</div>
+             <ul class="mt-1 space-y-0.5">${lines.map(t => `<li class="flex items-center gap-1.5 text-[11px] font-semibold uppercase text-zinc-100"><i class="fa-solid fa-circle-check text-brand-yellow text-[11px] shrink-0"></i><span>${escHtml(t)}</span></li>`).join('')}</ul>`
+          : (p.includes_grupales ? `<div class="text-[11px] font-semibold uppercase text-brand-yellow mt-0.5">${escHtml(describePlanLimit(p))}</div>` : '');
+        return `<button type="button" onclick="onPlanCardTap('${escHtml(p.id)}')" class="w-full text-left rounded-2xl border-2 border-brand-yellow bg-black/65 p-3 flex items-center gap-3 shadow-[0_0_14px_rgba(251,191,36,.15)] hover:bg-black/80 active:scale-[.99] transition-all">
+          <div class="max-[359px]:hidden h-10 w-10 shrink-0 rounded-full border-2 border-brand-yellow/80 flex items-center justify-center text-brand-yellow"><i class="fa-solid ${planIconClass(p)} text-base"></i></div>
+          <div class="min-w-0 flex-1 break-words">
+            <div class="text-[14px] font-extrabold uppercase leading-tight tracking-tight">${planTitleHtml(p.name)}</div>
+            ${detail}
           </div>
-          <div class="flex flex-wrap gap-1 mt-2">${planChipsHtml(p)}</div>
-          ${limitTxt ? `<div class="text-[10px] text-zinc-400 mt-1.5">${limitTxt}</div>` : ''}
-        </div>`;
+          <div class="shrink-0 self-stretch flex items-center border-l-2 border-brand-yellow pl-2.5">
+            <div class="rounded-lg border-2 border-brand-yellow px-2 py-1.5 text-brand-yellow font-extrabold text-base leading-none whitespace-nowrap">${formatPriceShort(p.price)}</div>
+          </div>
+        </button>`;
       }).join('');
+    }
+
+    // Tocar una tarjeta de plan: abre la inscripción con ese plan elegido.
+    function onPlanCardTap(planId) {
+      openEnroll('ENROLL', planId, 'precios');
+    }
+
+    // ----------------------------------------------------
+    // PAGOS, INSCRIPCIONES Y CRÉDITOS
+    // El alumno envía una solicitud (cambioz_payment_requests) y el Staff la confirma o rechaza.
+    //   type:   'ENROLL' (alta de plan) | 'RENEW' (renovar el plan vigente) | 'CREDIT' (créditos extra)
+    //   method: 'CASH' | 'TRANSFER' (con comprobante de imagen guardado en base64)
+    //   status: 'PENDING' -> 'CONFIRMED' | 'REJECTED'
+    // Los datos de transferencia y el precio por crédito se editan en Ajustes > Pagos (cambioz_gym_settings).
+    // NO se resuelve acá cómo se gasta el crédito entre musculación y grupales: eso queda para Presentismo.
+    // ----------------------------------------------------
+    const DEFAULT_GYM_SETTINGS = {
+      alias: 'CAMBIOZ.GYM.DEMO',
+      cbu: '0000003100000000000001',
+      holder: 'Gimnasio CAMBIOZ (dato de ejemplo)',
+      credit_price: 4000
+    };
+    const MAX_RECEIPT_CHARS = 1500000;
+    const RECEIPT_REGEX = /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/;
+
+    function loadGymSettings() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem('cambioz_gym_settings') || '{}') || {}; } catch (e) { saved = {}; }
+      return Object.assign({}, DEFAULT_GYM_SETTINGS, saved);
+    }
+
+    // Valida y guarda alias, CBU, titular y precio por crédito. Devuelve { ok, error, settings }.
+    function saveGymSettings(input) {
+      const alias = String(input.alias || '').trim();
+      const cbu = String(input.cbu || '').replace(/\s/g, '');
+      const holder = String(input.holder || '').trim();
+      if (!alias) return { ok: false, error: 'Ingresá el alias.' };
+      if (!/^\d{22}$/.test(cbu)) return { ok: false, error: 'El CBU debe tener 22 dígitos.' };
+      if (input.credit_price === '' || input.credit_price === null || input.credit_price === undefined ||
+          !isFinite(Number(input.credit_price)) || Number(input.credit_price) < 0) {
+        return { ok: false, error: 'Ingresá un precio por crédito válido (0 o mayor).' };
+      }
+      const settings = { alias, cbu, holder, credit_price: Number(input.credit_price) };
+      localStorage.setItem('cambioz_gym_settings', JSON.stringify(settings));
+      return { ok: true, settings };
+    }
+
+    function loadPayments() {
+      try { return JSON.parse(localStorage.getItem('cambioz_payment_requests') || '[]'); } catch (e) { return []; }
+    }
+    function savePayments(list) { localStorage.setItem('cambioz_payment_requests', JSON.stringify(list)); }
+
+    function paymentTypeLabel(r) {
+      if (r.type === 'CREDIT') return 'Crédito x' + r.credits;
+      return r.type === 'RENEW' ? 'Cuota (renovación)' : 'Inscripción';
+    }
+    function paymentMethodLabel(m) { return m === 'TRANSFER' ? 'Transferencia' : 'Efectivo'; }
+
+    function hasPendingPayment(username, type) {
+      return loadPayments().some(r => r.username === username && r.type === type && r.status === 'PENDING');
+    }
+    function pendingPaymentCount() {
+      return loadPayments().filter(r => r.status === 'PENDING').length;
+    }
+    function paymentsForUser(username) {
+      return loadPayments().filter(r => r.username === username)
+        .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    }
+
+    // Crea una solicitud en estado PENDING. Devuelve { ok, error, request }.
+    // input: { username, type, plan_id, qty, method, receipt, receipt_name }
+    function createPaymentRequest(input) {
+      const username = String(input.username || '');
+      const student = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').find(s => s.username === username);
+      if (!student) return { ok: false, error: 'Alumno no encontrado.' };
+      const type = input.type;
+      if (['ENROLL', 'RENEW', 'CREDIT'].indexOf(type) === -1) return { ok: false, error: 'Tipo de solicitud inválido.' };
+      const method = input.method;
+      if (method !== 'CASH' && method !== 'TRANSFER') return { ok: false, error: 'Elegí un método de pago.' };
+
+      const plans = loadPlans();
+      const active = getActiveUserPlan(username);
+      let plan = null, amount = 0, credits = 0;
+
+      if (type === 'ENROLL') {
+        if (active) return { ok: false, error: 'Ya tenés un plan activo.' };
+        plan = plans.find(p => p.id === input.plan_id && p.active);
+        if (!plan) return { ok: false, error: 'Elegí un plan disponible.' };
+        if (hasPendingPayment(username, 'ENROLL')) return { ok: false, error: 'Ya tenés una inscripción pendiente de confirmación.' };
+        amount = plan.price;
+      } else if (type === 'RENEW') {
+        if (!active) return { ok: false, error: 'Necesitás un plan activo para informar un pago. Inscribite a un plan.' };
+        plan = plans.find(p => p.id === active.plan_id) || null;
+        if (hasPendingPayment(username, 'RENEW')) return { ok: false, error: 'Ya informaste un pago pendiente de confirmación.' };
+        amount = plan ? plan.price : 0;
+      } else {
+        if (!active) return { ok: false, error: 'Necesitás un plan activo para comprar crédito.' };
+        credits = Number(input.qty);
+        if (!Number.isInteger(credits) || credits < 1 || credits > 50) return { ok: false, error: 'La cantidad de créditos debe ser un entero de 1 a 50.' };
+        plan = plans.find(p => p.id === active.plan_id) || null;
+        amount = credits * loadGymSettings().credit_price;
+      }
+
+      let receipt = null, receiptName = '';
+      if (method === 'TRANSFER') {
+        receipt = String(input.receipt || '');
+        if (!RECEIPT_REGEX.test(receipt)) return { ok: false, error: 'Adjuntá el comprobante de la transferencia (imagen).' };
+        if (receipt.length > MAX_RECEIPT_CHARS) return { ok: false, error: 'El comprobante es muy pesado. Probá con una captura más liviana.' };
+        receiptName = String(input.receipt_name || 'comprobante').slice(0, 60);
+      }
+
+      const request = {
+        id: 'pay-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        username,
+        name: student.name,
+        type,
+        plan_id: plan ? plan.id : null,
+        credits,
+        amount,
+        method,
+        receipt,
+        receipt_name: receiptName,
+        status: 'PENDING',
+        created_at: new Date().toISOString(),
+        resolved_at: null,
+        note: ''
+      };
+      try {
+        const list = loadPayments();
+        list.push(request);
+        savePayments(list);
+      } catch (e) {
+        return { ok: false, error: 'No se pudo guardar la solicitud (el navegador no tiene espacio). Probá con un comprobante más liviano.' };
+      }
+      return { ok: true, request };
+    }
+
+    // Staff confirma una solicitud pendiente y aplica su efecto. Devuelve { ok, error, request }.
+    //   ENROLL: crea la membresía (inicio hoy, vence hoy + vigencia del plan, créditos según su límite).
+    //   RENEW:  extiende el vencimiento del plan vigente por la vigencia del plan.
+    //   CREDIT: suma créditos extra al plan vigente, sin tocar plan ni vencimiento.
+    function confirmPaymentRequest(id) {
+      const payments = loadPayments();
+      const req = payments.find(r => r.id === id);
+      if (!req || req.status !== 'PENDING') return { ok: false, error: 'La solicitud ya no está pendiente.' };
+      const today = isoToday();
+      const plan = loadPlans().find(p => p.id === req.plan_id) || null;
+      const active = getActiveUserPlan(req.username); // también marca vencidos
+      const userPlans = loadUserPlans();
+      const mine = userPlans.find(up => up.username === req.username && up.status === 'ACTIVE') || null;
+
+      const startMembership = () => {
+        const dur = getPlanDuration(plan);
+        userPlans.forEach(up => { if (up.username === req.username && up.status === 'ACTIVE') up.status = 'EXPIRED'; });
+        userPlans.push({
+          username: req.username, plan_id: plan.id, start_date: today, end_date: isoAddDays(today, dur),
+          credits_used: 0, credits_total: plan.includes_grupales ? plan.class_limit : null, credits_extra: 0, status: 'ACTIVE'
+        });
+        req.period_start = today;
+        req.period_end = isoAddDays(today, dur);
+      };
+
+      if (req.type === 'ENROLL') {
+        if (active) return { ok: false, error: 'El alumno ya tiene un plan activo. Rechazá la solicitud o quitale el plan primero.' };
+        if (!plan) return { ok: false, error: 'El plan de la solicitud ya no existe.' };
+        startMembership();
+      } else if (req.type === 'RENEW') {
+        if (!plan) return { ok: false, error: 'El plan de la solicitud ya no existe.' };
+        if (mine) {
+          const dur = getPlanDuration(plan);
+          req.period_start = mine.end_date;
+          mine.end_date = isoAddDays(mine.end_date, dur);
+          req.period_end = mine.end_date;
+        } else {
+          startMembership(); // el plan venció mientras esperaba: arranca hoy
+        }
+      } else {
+        if (!mine) return { ok: false, error: 'El alumno ya no tiene un plan activo para sumar créditos. Rechazá la solicitud.' };
+        mine.credits_extra = (mine.credits_extra || 0) + req.credits;
+      }
+
+      req.status = 'CONFIRMED';
+      req.resolved_at = new Date().toISOString();
+      saveUserPlans(userPlans);
+      savePayments(payments);
+      return { ok: true, request: req };
+    }
+
+    // Staff rechaza: queda registrada como rechazada y no activa nada.
+    function rejectPaymentRequest(id, note) {
+      const payments = loadPayments();
+      const req = payments.find(r => r.id === id);
+      if (!req || req.status !== 'PENDING') return { ok: false, error: 'La solicitud ya no está pendiente.' };
+      req.status = 'REJECTED';
+      req.resolved_at = new Date().toISOString();
+      req.note = String(note || '').trim().slice(0, 120);
+      savePayments(payments);
+      return { ok: true, request: req };
+    }
+
+    // ---------- Imagen del comprobante: se reduce y comprime para no llenar el almacenamiento ----------
+    function compressReceipt(file) {
+      return new Promise((resolve, reject) => {
+        if (!file || !/^image\//.test(file.type)) { reject(new Error('El comprobante debe ser una imagen.')); return; }
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('No se pudo abrir la imagen.'));
+          img.onload = () => {
+            const max = 1000;
+            const scale = Math.min(1, max / Math.max(img.width, img.height));
+            const w = Math.max(1, Math.round(img.width * scale));
+            const h = Math.max(1, Math.round(img.height * scale));
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.72));
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ---------- UI alumno: formulario de inscripción / pago / crédito ----------
+    let enrollCtx = { type: 'ENROLL', planId: null, back: 'home' };
+    let enrollReceipt = null; // { data, name }
+
+    function getCurrentStudent() {
+      const s = localStorage.getItem('cambioz_student_user') || sessionStorage.getItem('cambioz_student_user');
+      try { return s ? JSON.parse(s) : null; } catch (e) { return null; }
+    }
+
+    // Abre el formulario. type: 'ENROLL' | 'RENEW' | 'CREDIT'. back: pantalla a la que vuelve ('home'|'precios'|'pagos').
+    function openEnroll(type, planId, back) {
+      const user = getCurrentStudent();
+      if (!user) return;
+      const active = getActiveUserPlan(user.username);
+      if (type === 'ENROLL' && active) {
+        if (planId && planId === active.plan_id) {
+          type = 'RENEW'; // tocó la tarjeta de su propio plan: es una renovación
+        } else {
+          const cur = loadPlans().find(p => p.id === active.plan_id);
+          showToast(`Ya tenés el plan <strong class="text-brand-yellow">${escHtml(cur ? cur.name : 'vigente')}</strong>. Para cambiar de plan consultá en recepción.`, 3500);
+          return;
+        }
+      }
+      if (type === 'ENROLL' && hasPendingPayment(user.username, 'ENROLL')) {
+        showToast('Ya tenés una inscripción pendiente de confirmación.', 3000);
+        goStudentScreen('pagos');
+        return;
+      }
+      if (type === 'RENEW' && !active) { showToast('Necesitás un plan activo para informar un pago. Inscribite a un plan.', 3500); return; }
+      if (type === 'RENEW' && hasPendingPayment(user.username, 'RENEW')) {
+        showToast('Ya informaste un pago pendiente de confirmación.', 3000);
+        goStudentScreen('pagos');
+        return;
+      }
+      if (type === 'CREDIT' && !active) { showToast('Necesitás un plan activo para comprar crédito.', 3500); return; }
+
+      enrollCtx = { type, planId: planId || null, back: back || 'home' };
+      enrollReceipt = null;
+      renderEnrollForm();
+      goStudentScreen('enroll');
+    }
+
+    function closeEnroll() { goStudentScreen(enrollCtx.back || 'home'); }
+
+    function renderEnrollForm() {
+      const $ = id => document.getElementById(id);
+      const user = getCurrentStudent();
+      const t = enrollCtx.type;
+      const active = user ? getActiveUserPlan(user.username) : null;
+      const activePlan = active ? loadPlans().find(p => p.id === active.plan_id) : null;
+
+      $('enroll-title').innerText = t === 'ENROLL' ? 'Inscripción' : (t === 'RENEW' ? 'Informar pago' : 'Comprar crédito');
+      $('enroll-sub').innerText = t === 'ENROLL' ? 'Elegí tu plan y cómo vas a pagar.'
+        : (t === 'RENEW' ? 'Renová tu plan vigente informando tu pago.' : 'Sumá créditos extra a tu plan vigente.');
+
+      // Plan
+      const planBlock = $('enroll-plan-block');
+      const sel = $('enroll-plan');
+      const fixed = $('enroll-plan-fixed');
+      planBlock.classList.toggle('hidden', t === 'CREDIT');
+      sel.classList.toggle('hidden', t !== 'ENROLL');
+      fixed.classList.toggle('hidden', t !== 'RENEW');
+      if (t === 'ENROLL') {
+        const plans = loadPlans().filter(p => p.active);
+        sel.innerHTML = plans.map(p => `<option value="${escHtml(p.id)}">${escHtml(p.name)} — ${formatPrice(p.price)}</option>`).join('');
+        if (enrollCtx.planId && plans.some(p => p.id === enrollCtx.planId)) sel.value = enrollCtx.planId;
+      } else if (t === 'RENEW') {
+        fixed.innerText = activePlan ? `${activePlan.name} — ${formatPrice(activePlan.price)}` : 'Plan vigente';
+      }
+
+      // Créditos
+      $('enroll-credit-block').classList.toggle('hidden', t !== 'CREDIT');
+      $('enroll-qty').value = '1';
+
+      // Método
+      document.querySelectorAll('input[name="enroll-method"]').forEach(r => { r.checked = false; });
+      $('enroll-cash-note').classList.add('hidden');
+      $('enroll-transfer-block').classList.add('hidden');
+
+      // Comprobante
+      $('enroll-file').value = '';
+      $('enroll-preview').classList.add('hidden');
+      $('enroll-preview').removeAttribute('src');
+
+      const gs = loadGymSettings();
+      $('enroll-alias').innerText = gs.alias;
+      $('enroll-cbu').innerText = gs.cbu;
+      $('enroll-holder').innerText = gs.holder;
+      showEnrollError('');
+      updateEnrollSummary();
+    }
+
+    function showEnrollError(msg) {
+      const el = document.getElementById('enroll-error');
+      if (!el) return;
+      el.innerText = msg || '';
+      el.classList.toggle('hidden', !msg);
+    }
+
+    function computeEnrollAmount() {
+      const t = enrollCtx.type;
+      const user = getCurrentStudent();
+      if (t === 'CREDIT') {
+        const q = Number(document.getElementById('enroll-qty').value);
+        return (Number.isInteger(q) && q >= 1 ? q : 0) * loadGymSettings().credit_price;
+      }
+      let plan = null;
+      if (t === 'ENROLL') plan = loadPlans().find(p => p.id === document.getElementById('enroll-plan').value);
+      else { const a = user ? getActiveUserPlan(user.username) : null; plan = a ? loadPlans().find(p => p.id === a.plan_id) : null; }
+      return plan ? plan.price : 0;
+    }
+
+    function updateEnrollSummary() {
+      const $ = id => document.getElementById(id);
+      const t = enrollCtx.type;
+      $('enroll-total').innerText = formatPrice(computeEnrollAmount());
+      let info = '';
+      if (t === 'CREDIT') {
+        info = `${formatPrice(loadGymSettings().credit_price)} por crédito. No cambia tu plan ni tu vencimiento.`;
+      } else if (t === 'ENROLL') {
+        const p = loadPlans().find(x => x.id === $('enroll-plan').value);
+        info = p ? `Vigencia: ${getPlanDuration(p)} días desde la confirmación.` : '';
+      } else {
+        const user = getCurrentStudent();
+        const a = user ? getActiveUserPlan(user.username) : null;
+        const p = a ? loadPlans().find(x => x.id === a.plan_id) : null;
+        if (a && p) info = `Tu vencimiento pasa del ${formatDateAR(a.end_date)} al ${formatDateAR(isoAddDays(a.end_date, getPlanDuration(p)))}.`;
+      }
+      $('enroll-info').innerText = info;
+    }
+
+    function stepEnrollQty(delta) {
+      const el = document.getElementById('enroll-qty');
+      let v = Number(el.value);
+      if (!Number.isInteger(v)) v = 1;
+      el.value = Math.min(50, Math.max(1, v + delta));
+      updateEnrollSummary();
+    }
+
+    function updateEnrollMethod() {
+      const m = (document.querySelector('input[name="enroll-method"]:checked') || {}).value;
+      document.getElementById('enroll-cash-note').classList.toggle('hidden', m !== 'CASH');
+      document.getElementById('enroll-transfer-block').classList.toggle('hidden', m !== 'TRANSFER');
+      showEnrollError('');
+    }
+
+    function copyEnrollField(id) {
+      const txt = document.getElementById(id).innerText;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(() => showToast('Copiado: ' + escHtml(txt), 1800)).catch(() => {});
+      }
+    }
+
+    async function handleEnrollFile(input) {
+      const file = input.files && input.files[0];
+      enrollReceipt = null;
+      const prev = document.getElementById('enroll-preview');
+      prev.classList.add('hidden');
+      if (!file) return;
+      try {
+        const data = await compressReceipt(file);
+        enrollReceipt = { data, name: file.name };
+        prev.src = data;
+        prev.classList.remove('hidden');
+        showEnrollError('');
+      } catch (e) {
+        input.value = '';
+        showEnrollError(e.message || 'No se pudo cargar el comprobante.');
+      }
+    }
+
+    function submitEnroll(e) {
+      if (e) e.preventDefault();
+      const user = getCurrentStudent();
+      if (!user) return;
+      const method = (document.querySelector('input[name="enroll-method"]:checked') || {}).value;
+      const res = createPaymentRequest({
+        username: user.username,
+        type: enrollCtx.type,
+        plan_id: enrollCtx.type === 'ENROLL' ? document.getElementById('enroll-plan').value : null,
+        qty: document.getElementById('enroll-qty').value,
+        method,
+        receipt: enrollReceipt ? enrollReceipt.data : null,
+        receipt_name: enrollReceipt ? enrollReceipt.name : ''
+      });
+      if (!res.ok) { showEnrollError(res.error); return; }
+      enrollReceipt = null;
+      updateResetBadges();
+      goStudentScreen('pagos');
+      showToast('✅ Solicitud enviada. Queda <strong class="text-brand-yellow">pendiente</strong> hasta que el Staff la confirme.', 3800);
+    }
+
+    // ---------- UI alumno: Mis pagos ----------
+    function paymentStatusChip(status) {
+      const map = {
+        CONFIRMED: ['Pagada', 'bg-emerald-950/50 text-emerald-400 border-emerald-500/40'],
+        PENDING: ['Pendiente', 'bg-amber-950/50 text-amber-300 border-amber-500/40'],
+        REJECTED: ['Rechazada', 'bg-red-950/50 text-red-300 border-red-500/40']
+      };
+      const [txt, cls] = map[status] || ['—', 'bg-zinc-800 text-zinc-400 border-zinc-700'];
+      return `<span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border ${cls}">${txt}</span>`;
+    }
+
+    function renderPagos() {
+      const $ = id => document.getElementById(id);
+      const user = getCurrentStudent();
+      if (!user) return;
+      const active = getActiveUserPlan(user.username);
+      const plan = active ? loadPlans().find(p => p.id === active.plan_id) : null;
+
+      const credits = active ? (active.credits_extra || 0) : 0;
+      $('pagos-summary').innerHTML = active
+        ? `<span class="text-[9px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Plan vigente</span>
+           <div class="flex items-start justify-between gap-3 mt-0.5">
+             <div class="min-w-0"><div class="text-lg leading-tight font-extrabold uppercase text-white break-words">${plan ? escHtml(plan.name) : 'Plan'}</div>
+             <div class="text-[11px] text-zinc-300 mt-0.5">Vigente hasta ${formatDateAR(active.end_date)}</div></div>
+             <div class="text-right shrink-0"><div class="text-[10px] text-zinc-400">Créditos extra</div><div class="text-lg font-extrabold text-brand-yellow leading-tight">${credits}</div></div>
+           </div>`
+        : `<span class="text-[9px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Plan</span>
+           <div class="text-lg font-extrabold uppercase text-white mt-0.5">Sin plan activo</div>
+           <div class="text-[11px] text-zinc-300 mt-0.5">Inscribite para empezar a entrenar.</div>`;
+
+      $('pagos-actions').innerHTML = active
+        ? `<button onclick="openEnroll('RENEW', null, 'pagos')" class="btn-glossy rounded-xl py-3 text-xs font-bold"><i class="fa-solid fa-receipt mr-1.5"></i>Informar pago</button>
+           <button onclick="openEnroll('CREDIT', null, 'pagos')" class="btn-glossy rounded-xl py-3 text-xs font-bold"><i class="fa-solid fa-cart-plus mr-1.5"></i>Comprar crédito</button>`
+        : `<button onclick="openEnroll('ENROLL', null, 'pagos')" class="btn-glossy col-span-2 rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme</button>`;
+
+      const list = paymentsForUser(user.username);
+      const plans = loadPlans();
+      $('pagos-history').innerHTML = list.length ? list.map(r => {
+        const pl = plans.find(p => p.id === r.plan_id);
+        const label = r.type === 'CREDIT' ? paymentTypeLabel(r) : `${paymentTypeLabel(r)}${pl ? ' · ' + escHtml(pl.name) : ''}`;
+        const date = new Date(r.created_at).toLocaleDateString('es-AR');
+        const extra = r.status === 'CONFIRMED' && r.period_end ? ` · cubre hasta ${formatDateAR(r.period_end)}`
+          : (r.status === 'REJECTED' && r.note ? ` · ${escHtml(r.note)}` : '');
+        return `<div class="rounded-xl border border-brand-border bg-brand-surface p-3 flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <div class="text-xs font-bold text-white">${label}</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">${date} · ${paymentMethodLabel(r.method)}${extra}</div>
+          </div>
+          <div class="text-right shrink-0"><div class="text-xs font-extrabold text-white mb-0.5">${formatPrice(r.amount)}</div>${paymentStatusChip(r.status)}</div>
+        </div>`;
+      }).join('') : '<p class="text-xs text-zinc-500">Todavía no hay pagos registrados.</p>';
+    }
+
+    // ---------- UI Staff: Ajustes > Pagos ----------
+    function fillGymSettingsForm() {
+      const s = loadGymSettings();
+      document.getElementById('gym-alias').value = s.alias;
+      document.getElementById('gym-cbu').value = s.cbu;
+      document.getElementById('gym-holder').value = s.holder;
+      document.getElementById('gym-credit-price').value = s.credit_price;
+      document.getElementById('gym-settings-msg').innerText = '';
+    }
+
+    function handleSaveGymSettings(e) {
+      if (e) e.preventDefault();
+      const res = saveGymSettings({
+        alias: document.getElementById('gym-alias').value,
+        cbu: document.getElementById('gym-cbu').value,
+        holder: document.getElementById('gym-holder').value,
+        credit_price: document.getElementById('gym-credit-price').value
+      });
+      const msg = document.getElementById('gym-settings-msg');
+      msg.className = 'text-[10px] ' + (res.ok ? 'text-emerald-400' : 'text-red-300');
+      msg.innerText = res.ok ? '✓ Datos guardados.' : res.error;
+    }
+
+    function renderPaymentsAdmin() {
+      const plans = loadPlans();
+      const all = loadPayments();
+      const pending = all.filter(r => r.status === 'PENDING').sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+      const pendEl = document.getElementById('payments-pending-list');
+      pendEl.innerHTML = pending.length ? '' : '<p class="text-[11px] text-zinc-500">No hay solicitudes pendientes.</p>';
+      pending.forEach(r => {
+        const pl = plans.find(p => p.id === r.plan_id);
+        const when = new Date(r.created_at).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
+        const row = document.createElement('div');
+        row.className = 'border border-amber-500/30 rounded-xl p-2.5 bg-brand-canvas/60';
+        row.innerHTML = `
+          <div class="flex justify-between items-start gap-2">
+            <div class="min-w-0">
+              <div class="font-bold text-white text-xs">${escHtml(r.name)} <span class="text-zinc-500 font-normal">· ${escHtml(r.username)}</span></div>
+              <div class="text-[10px] text-zinc-300 mt-0.5">${escHtml(paymentTypeLabel(r))}${pl ? ' · ' + escHtml(pl.name) : ''}</div>
+              <div class="text-[9px] text-zinc-500">${when} · ${paymentMethodLabel(r.method)}</div>
+            </div>
+            <div class="text-brand-yellow font-extrabold text-sm whitespace-nowrap">${formatPrice(r.amount)}</div>
+          </div>
+          ${r.receipt ? `<button onclick="openReceipt('${r.id}')" class="mt-2 flex items-center gap-2 text-[10px] text-brand-yellow hover:underline"><img src="${r.receipt}" alt="Comprobante" class="h-14 w-14 object-cover rounded-lg border border-brand-border" /> Ver comprobante</button>` : ''}
+          <div class="flex gap-1.5 mt-2.5">
+            <button onclick="handleConfirmPayment('${r.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 text-[11px] font-bold">Confirmar</button>
+            <button onclick="handleRejectPayment('${r.id}')" class="px-3 py-1.5 rounded-lg border border-red-500/50 text-red-300 hover:bg-red-500/10 text-[11px] font-bold">Rechazar</button>
+          </div>`;
+        pendEl.appendChild(row);
+      });
+
+      const done = all.filter(r => r.status !== 'PENDING').sort((a, b) => ((a.resolved_at || '') < (b.resolved_at || '') ? 1 : -1)).slice(0, 20);
+      const histEl = document.getElementById('payments-history-list');
+      histEl.innerHTML = done.length ? done.map(r => {
+        const pl = plans.find(p => p.id === r.plan_id);
+        const when = r.resolved_at ? new Date(r.resolved_at).toLocaleDateString('es-AR') : '';
+        return `<div class="flex justify-between items-start gap-2 border-b border-brand-border/40 pb-1.5">
+          <div class="min-w-0"><div class="text-[11px] text-white"><strong>${escHtml(r.name)}</strong> · ${escHtml(paymentTypeLabel(r))}${pl ? ' · ' + escHtml(pl.name) : ''}</div>
+          <div class="text-[9px] text-zinc-500">${when} · ${paymentMethodLabel(r.method)} · ${formatPrice(r.amount)}${r.note ? ' · ' + escHtml(r.note) : ''}</div></div>
+          <div class="shrink-0">${paymentStatusChip(r.status)}</div></div>`;
+      }).join('') : '<p class="text-[11px] text-zinc-500">Todavía no hay solicitudes resueltas.</p>';
+      updateResetBadges();
+    }
+
+    function handleConfirmPayment(id) {
+      const res = confirmPaymentRequest(id);
+      if (!res.ok) { alert('⚠️ ' + res.error); renderPaymentsAdmin(); return; }
+      renderPaymentsAdmin();
+      if (typeof renderPlansAdmin === 'function') renderPlansAdmin();
+    }
+
+    function handleRejectPayment(id) {
+      const note = prompt('Motivo del rechazo (opcional):', '');
+      if (note === null) return;
+      const res = rejectPaymentRequest(id, note);
+      if (!res.ok) { alert('⚠️ ' + res.error); }
+      renderPaymentsAdmin();
+    }
+
+    function openReceipt(id) {
+      const r = loadPayments().find(x => x.id === id);
+      if (!r || !r.receipt) return;
+      document.getElementById('receipt-img').src = r.receipt;
+      document.getElementById('modal-receipt').classList.remove('hidden');
+    }
+    function closeReceipt() {
+      document.getElementById('modal-receipt').classList.add('hidden');
+      document.getElementById('receipt-img').removeAttribute('src');
     }
 
     // ----------------------------------------------------
@@ -5236,9 +6041,11 @@
     }
 
     // ---------- UI administrador ----------
+    // Contadores rojos del Staff: engranaje = contraseñas + pagos pendientes; cada pestaña, lo suyo.
     function updateResetBadges() {
-      const n = pendingResetCount();
-      ['reset-badge-gear', 'reset-badge-tab'].forEach(id => {
+      const resets = pendingResetCount();
+      const pays = pendingPaymentCount();
+      [['reset-badge-gear', resets + pays], ['reset-badge-tab', resets], ['pay-badge-tab', pays]].forEach(([id, n]) => {
         const el = document.getElementById(id);
         if (!el) return;
         el.innerText = n;

@@ -722,8 +722,8 @@
             <button onclick="openRoutineEntry()" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-dumbbell text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mi rutina</span></button>
             <button onclick="goStudentScreen('pagos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-wallet text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis pagos</span></button>
             <button onclick="goStudentScreen('precios')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-tag text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Precios</span></button>
-            <button onclick="showSoon('Nueva Reserva')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
-            <button onclick="showSoon('Mis Reservas')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis reservas</span></button>
+            <button onclick="openReservas('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
+            <button onclick="openMisReservas('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis reservas</span></button>
             <button onclick="showSoon('Presentismo')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-user-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Presentismo</span></button>
             <button onclick="showSoon('Mis Packs')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-layer-group text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis packs</span></button>
             <button onclick="openPacks('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-ticket text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar pack</span></button>
@@ -760,6 +760,26 @@
             <img src="logo.webp" alt="CAMBIOZ GYM" class="h-14 w-14 object-contain" />
             <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
           </div>
+        </div>
+
+        <!-- SCREEN RESERVAR CLASE: grilla de los próximos días, con lugares disponibles -->
+        <div id="student-reservas-screen" class="hidden flex-grow flex flex-col overflow-y-auto relative scrollbar-none bg-black">
+          <div class="sticky top-0 z-10 bg-zinc-900 px-4 py-3 flex items-center justify-between gap-3 border-b border-zinc-800">
+            <select id="reservas-filter" onchange="setReservasFilter(this.value)" class="bg-transparent text-white font-extrabold uppercase text-sm tracking-wide focus:outline-none min-w-0 flex-1 truncate"></select>
+            <button onclick="closeReservas()" class="shrink-0 text-xs font-bold text-zinc-300 border border-zinc-600 rounded-full px-3.5 py-2">Volver</button>
+          </div>
+          <div class="px-3 pb-6">
+            <p id="reservas-rule-note" class="text-[11px] text-zinc-400 pt-3 px-1"></p>
+            <div id="reservas-list"></div>
+          </div>
+        </div>
+
+        <!-- SCREEN MIS RESERVAS -->
+        <div id="student-misreservas-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
+          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <h3 class="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight mb-3">Mis reservas</h3>
+          <button onclick="openReservas('misreservas')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold mb-4"><i class="fa-solid fa-calendar-plus mr-1.5"></i>Reservar una clase</button>
+          <div id="misreservas-list" class="space-y-2"></div>
         </div>
 
         <!-- SCREEN PRESENTISMO: panel intermedio de "Mi rutina" (valida la asistencia con el QR de la zona) -->
@@ -869,6 +889,16 @@
           <div id="pagos-actions" class="grid grid-cols-2 gap-2.5 mb-4"></div>
           <h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Historial</h4>
           <div id="pagos-history" class="space-y-2"></div>
+        </div>
+
+        <!-- Hoja de reservas: confirmar o explicar por qué no se puede reservar -->
+        <div id="reserva-sheet" class="hidden absolute inset-0 z-50 bg-black/75 flex items-center justify-center p-4">
+          <div class="w-full rounded-2xl bg-zinc-900 border border-brand-border p-5 text-center">
+            <i id="reserva-sheet-icon" class="fa-solid fa-circle-info text-2xl"></i>
+            <h4 id="reserva-sheet-title" class="text-lg font-extrabold text-white mt-2"></h4>
+            <p id="reserva-sheet-text" class="text-xs text-zinc-300 mt-2 whitespace-pre-line leading-relaxed"></p>
+            <div id="reserva-sheet-actions" class="flex gap-2 mt-4"></div>
+          </div>
         </div>
 
         <!-- Aviso "Próximamente" -->
@@ -1066,10 +1096,71 @@
           <i class="fa-solid fa-money-bill-transfer mr-1"></i> Pagos
           <span id="pay-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
         </button>
+        <button id="tab-btn-reservations" onclick="switchConfigTab('reservations')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
+          <i class="fa-solid fa-calendar-days mr-1"></i> Reservas
+        </button>
         <button id="tab-btn-attendance" onclick="switchConfigTab('attendance')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
           <i class="fa-solid fa-user-check mr-1"></i> Presentismo
           <span id="att-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
         </button>
+      </div>
+
+      <!-- Pestaña: Reservas (regla de plazo, horarios y cupos) -->
+      <div id="tab-content-reservations" class="space-y-4 hidden max-h-[500px] overflow-y-auto pr-1">
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock text-brand-yellow"></i> Regla de reservas</h4>
+          <p class="text-[10px] text-zinc-500">El alumno puede reservar hasta esta cantidad de minutos antes del inicio de la clase. Después, el sistema no lo deja y le explica el motivo.</p>
+          <form id="form-rules" onsubmit="handleSaveReservationRules(event)" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Cierre de reservas (minutos antes)</label>
+                <input type="number" id="rules-cutoff" min="0" max="240" step="1" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Días a mostrar al alumno</label>
+                <input type="number" id="rules-days" min="1" max="30" step="1" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs">Guardar regla</button>
+              <span id="rules-msg" class="text-[10px]"></span>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-calendar-week text-brand-yellow"></i> Horarios de clases</h4>
+          <p class="text-[10px] text-zinc-500">Cada bloque genera las clases de una actividad: días, primer y último horario, cada cuántos minutos y cuántos lugares tiene cada clase.</p>
+          <div id="timetable-list" class="space-y-2"></div>
+          <form id="form-timetable" onsubmit="handleAddBlock(event)" class="space-y-2.5 border-t border-brand-border/40 pt-3">
+            <span class="block text-[10px] font-bold text-brand-yellow uppercase tracking-wider">Agregar bloque</span>
+            <select id="tt-activity" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
+            <div class="flex flex-wrap gap-x-3 gap-y-1.5 text-xs text-zinc-300">
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-1" checked class="accent-brand-yellow" /> Lun</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-2" checked class="accent-brand-yellow" /> Mar</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-3" checked class="accent-brand-yellow" /> Mie</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-4" checked class="accent-brand-yellow" /> Jue</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-5" checked class="accent-brand-yellow" /> Vie</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-6" class="accent-brand-yellow" /> Sab</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="tt-day-0" class="accent-brand-yellow" /> Dom</label>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Primera</label><input type="time" id="tt-from" value="07:00" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Última</label><input type="time" id="tt-to" value="20:00" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Cada (min)</label><input type="number" id="tt-step" value="60" min="15" max="240" step="5" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Lugares</label><input type="number" id="tt-capacity" value="18" min="1" max="500" step="1" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="bg-brand-card hover:bg-zinc-800 border border-brand-border text-brand-yellow font-bold px-4 py-2 rounded-xl text-xs">Agregar bloque</button>
+              <span id="tt-msg" class="text-[10px]"></span>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-users text-brand-yellow"></i> Ocupación de hoy</h4>
+          <div id="res-occupancy-list" class="space-y-1.5"></div>
+        </div>
       </div>
 
       <!-- Pestaña: Presentismo (reservas de hoy, validación por recepción, QR de zonas) -->
@@ -1924,6 +2015,7 @@
       initPlansDB();
       initPacksDB();
       initActivitiesDB();
+      initTimetableDB();
       loadCatalogAndTemplates();
 
       // 2. Detectar si hay rutina codificada en URL (?r=...)
@@ -2797,6 +2889,10 @@
       const contentAtt = document.getElementById('tab-content-attendance');
       if (tabAtt) tabAtt.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
       if (contentAtt) contentAtt.classList.add('hidden');
+      const tabRes = document.getElementById('tab-btn-reservations');
+      const contentRes = document.getElementById('tab-content-reservations');
+      if (tabRes) tabRes.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
+      if (contentRes) contentRes.classList.add('hidden');
 
       // Restablecer estilos de botones de pestañas
       if (tabSettings) tabSettings.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
@@ -2838,6 +2934,11 @@
         if (contentPay) contentPay.classList.remove('hidden');
         fillGymSettingsForm();
         renderPaymentsAdmin();
+      } else if (tabName === 'reservations') {
+        if (tabRes) tabRes.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
+        if (contentRes) contentRes.classList.remove('hidden');
+        fillReservationRulesForm();
+        renderReservationsAdmin();
       } else if (tabName === 'attendance') {
         if (tabAtt) tabAtt.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
         if (contentAtt) contentAtt.classList.remove('hidden');
@@ -4101,6 +4202,8 @@
         document.getElementById('student-pagos-screen').classList.add('hidden');
         document.getElementById('student-packs-screen').classList.add('hidden');
         document.getElementById('student-checkin-screen').classList.add('hidden');
+        document.getElementById('student-reservas-screen').classList.add('hidden');
+        document.getElementById('student-misreservas-screen').classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -4147,7 +4250,9 @@
       const pagosScreen = document.getElementById('student-pagos-screen');
       const packsScreen = document.getElementById('student-packs-screen');
       const checkinScreen = document.getElementById('student-checkin-screen');
-      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin'].indexOf(studentScreen) !== -1) {
+      const reservasScreen = document.getElementById('student-reservas-screen');
+      const misReservasScreen = document.getElementById('student-misreservas-screen');
+      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin', 'reservas', 'misreservas'].indexOf(studentScreen) !== -1) {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
@@ -4157,6 +4262,11 @@
         pagosScreen.classList.toggle('hidden', studentScreen !== 'pagos');
         packsScreen.classList.toggle('hidden', studentScreen !== 'packs');
         checkinScreen.classList.toggle('hidden', studentScreen !== 'checkin');
+        reservasScreen.classList.toggle('hidden', studentScreen !== 'reservas');
+        misReservasScreen.classList.toggle('hidden', studentScreen !== 'misreservas');
+        if (studentScreen !== 'reservas') closeReservaSheet();
+        if (studentScreen === 'reservas') renderReservas();
+        if (studentScreen === 'misreservas') renderMisReservas();
         if (studentScreen === 'checkin') renderCheckin();
         if (studentScreen === 'home') renderStudentHome(user);
         else if (studentScreen === 'precios') renderStudentPrecios();
@@ -4172,6 +4282,8 @@
       pagosScreen.classList.add('hidden');
       packsScreen.classList.add('hidden');
       checkinScreen.classList.add('hidden');
+      reservasScreen.classList.add('hidden');
+      misReservasScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -4879,8 +4991,18 @@
       return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
+    // Hora actual de la demo. Para mostrar las reglas de horario se puede simular con
+    // localStorage.setItem('cambioz_demo_now', '2026-11-18T18:45:00') y volver a la real con removeItem.
+    function nowDate() {
+      try {
+        const s = localStorage.getItem('cambioz_demo_now');
+        if (s) { const d = new Date(s); if (!isNaN(d.getTime())) return d; }
+      } catch (e) { /* sin almacenamiento: hora real */ }
+      return new Date();
+    }
+
     function isoToday() {
-      const d = new Date();
+      const d = nowDate();
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
@@ -5225,6 +5347,8 @@
       const t = document.getElementById('soon-toast');
       if (!t) return;
       t.innerHTML = html;
+      // En la grilla de reservas el aviso baja para no tapar el filtro de actividades
+      t.style.top = studentScreen === 'reservas' ? '76px' : '';
       t.classList.remove('hidden');
       clearTimeout(soonToastTimer);
       soonToastTimer = setTimeout(() => t.classList.add('hidden'), ms || 2200);
@@ -5378,12 +5502,10 @@
 
     function initActivitiesDB() {
       if (localStorage.getItem('cambioz_activities_db') !== null) return;
-      // Códigos fijos de ejemplo: los QR impresos de la demo siguen siendo válidos.
+      // Las dos salas del gimnasio, con códigos fijos de ejemplo (los QR impresos de la demo siguen siendo válidos).
       saveActivities([
-        { id: 'a-seed-1', name: 'Sala de musculación', kind: 'MUSCULACION', qr_token: 'ZONA-SALA-4F7K', active: true },
-        { id: 'a-seed-2', name: 'Funcional', kind: 'GRUPAL', qr_token: 'ZONA-FUNC-9Q2M', active: true },
-        { id: 'a-seed-3', name: 'Hyrox', kind: 'GRUPAL', qr_token: 'ZONA-HYRX-3T8D', active: true },
-        { id: 'a-seed-4', name: 'Mini Tramp', kind: 'GRUPAL', qr_token: 'ZONA-TRAM-6B1X', active: true }
+        { id: 'a-seed-1', name: 'Salón de musculación', kind: 'MUSCULACION', qr_token: 'ZONA-SALA-4F7K', active: true },
+        { id: 'a-seed-2', name: 'Salón de entrenamiento', kind: 'GRUPAL', qr_token: 'ZONA-ENTR-9Q2M', active: true }
       ]);
     }
 
@@ -5465,7 +5587,7 @@
 
     function reservationsToday(username) {
       const today = isoToday();
-      return loadReservations().filter(r => r.username === username && r.date === today);
+      return loadReservations().filter(r => r.username === username && r.date === today && r.status !== 'CANCELLED');
     }
 
     function hasAttendanceToday(username) {
@@ -5511,7 +5633,7 @@
 
     function markAttended(list, reservation, method) {
       reservation.status = 'ATTENDED';
-      reservation.attended_at = new Date().toISOString();
+      reservation.attended_at = nowDate().toISOString();
       reservation.method = method;
       reservation.help_requested = false;
       saveReservations(list);
@@ -5527,8 +5649,13 @@
       if (!act.active) return { ok: false, error: `La actividad ${act.name} no está disponible hoy.` };
       const list = loadReservations();
       const today = isoToday();
-      const mine = list.filter(r => r.username === username && r.date === today);
-      const match = mine.find(r => r.activity_id === act.id);
+      const mine = list.filter(r => r.username === username && r.date === today && r.status !== 'CANCELLED');
+      // Si hay varias clases de la misma actividad hoy, se valida la pendiente más cercana a la hora actual.
+      const nowMin = nowDate().getHours() * 60 + nowDate().getMinutes();
+      const sameActivity = mine.filter(r => r.activity_id === act.id);
+      const match = sameActivity.filter(r => r.status === 'RESERVED')
+        .sort((a, b) => Math.abs((timeToMinutes(a.time) === null ? nowMin : timeToMinutes(a.time)) - nowMin) - Math.abs((timeToMinutes(b.time) === null ? nowMin : timeToMinutes(b.time)) - nowMin))[0]
+        || sameActivity[0];
       if (!match) {
         if (!mine.length) return { ok: false, error: `No tenés una reserva hoy para ${act.name}. Reservala primero.`, activity: act };
         const others = mine.map(r => r.activity_name).join(', ');
@@ -5620,7 +5747,7 @@
           const done = r.status === 'ATTENDED';
           const time = r.attended_at ? new Date(r.attended_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '';
           return `<div class="rounded-xl border ${done ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-brand-border bg-brand-surface'} p-3 flex items-center justify-between gap-2">
-            <div class="min-w-0"><div class="text-sm font-bold text-white">${escHtml(r.activity_name)}</div>
+            <div class="min-w-0"><div class="text-sm font-bold text-white">${r.time ? escHtml(r.time) + ' · ' : ''}${escHtml(r.activity_name)}</div>
             <div class="text-[10px] text-zinc-400 mt-0.5">${activityKindLabel(r.kind)}${done ? ' · ' + attendanceMethodLabel(r.method) + (time ? ' · ' + time : '') : ''}${!done && r.help_requested ? ' · recepción avisada' : ''}</div></div>
             ${done ? '<span class="shrink-0 inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border bg-emerald-950/50 text-emerald-400 border-emerald-500/40"><i class="fa-solid fa-check mr-1"></i>Presente</span>'
                    : '<span class="shrink-0 inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border bg-amber-950/50 text-amber-300 border-amber-500/40">Por validar</span>'}
@@ -5630,14 +5757,8 @@
         html += '<div class="rounded-xl border border-dashed border-brand-border p-3 text-xs text-zinc-300 mb-3">No tenés una actividad reservada para hoy. Reservá una para poder validar tu asistencia.</div>';
       }
 
-      if (options.length) {
-        html += `<div class="rounded-2xl border border-brand-border bg-brand-surface p-3.5 mb-3 space-y-2.5">
-          <h4 class="text-xs font-bold text-white">${today.length ? 'Reservar otra actividad' : 'Reservar para hoy'}</h4>
-          <select id="checkin-activity" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow">${options.map(a => `<option value="${escHtml(a.id)}">${escHtml(a.name)} — ${activityKindLabel(a.kind)}</option>`).join('')}</select>
-          <button onclick="handleQuickReserve()" class="btn-glossy w-full rounded-xl py-2.5 text-xs font-bold"><i class="fa-solid fa-calendar-plus mr-1.5"></i>Reservar</button>
-        </div>`;
-      } else if (!today.length) {
-        html += '<div class="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-200 mb-3">Tu plan no tiene actividades disponibles para reservar hoy.</div>';
+      if (!today.length) {
+        html += `<button onclick="openReservas('checkin')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold mb-3"><i class="fa-solid fa-calendar-plus mr-1.5"></i>Reservar una clase</button>`;
       }
 
       if (attended.length) {
@@ -5647,15 +5768,6 @@
 
       document.getElementById('checkin-scan-card').classList.toggle('hidden', pending.length === 0);
       document.getElementById('checkin-help-btn').classList.toggle('hidden', pending.length === 0 || pending.every(r => r.help_requested));
-    }
-
-    function handleQuickReserve() {
-      const user = getCurrentStudent();
-      const sel = document.getElementById('checkin-activity');
-      if (!user || !sel) return;
-      const res = createReservation(user.username, sel.value, 'STUDENT');
-      if (!res.ok) { showCheckinMessage('error', res.error); return; }
-      showCheckinMessage('ok', `Reservaste ${res.reservation.activity_name} para hoy. Ahora validá tu asistencia en la zona.`);
     }
 
     // Resultado de validar (por QR de la app, enlace, o código).
@@ -5861,6 +5973,501 @@
       regenerateActivityToken(zoneQrActivityId);
       renderZoneQr(loadActivities().find(x => x.id === zoneQrActivityId));
       renderAttendanceAdmin();
+    }
+
+    // ----------------------------------------------------
+    // RESERVAS DE CLASES
+    // La dueña carga los horarios (bloques por actividad: días, primer y último horario, cada cuántos minutos,
+    // cupos). El alumno elige una clase de la grilla de los próximos días y reserva.
+    // Regla: se puede reservar hasta N minutos antes del inicio (por defecto 30). Pasado ese plazo, o con la
+    // clase ya iniciada, el sistema no deja y muestra el motivo en pantalla.
+    //   cambioz_timetable_db        -> [{ id, activity_id, weekdays[0=Dom..6=Sab], from, to, step, capacity, active }]
+    //   cambioz_reservation_rules   -> { cutoff_minutes, days_ahead }
+    //   cambioz_reservations_db     -> (ver Presentismo) + time, status 'CANCELLED', cancelled_at
+    // Para mostrar la regla en una demo se puede simular la hora:
+    //   localStorage.setItem('cambioz_demo_now', '2026-11-18T18:45:00')  (y removeItem para volver a la real)
+    // ----------------------------------------------------
+    const WEEKDAY_SHORT = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+    const WEEKDAY_LONG = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const MONTH_LONG = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const DEFAULT_RESERVATION_RULES = { cutoff_minutes: 30, days_ahead: 7 };
+
+    function loadReservationRules() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem('cambioz_reservation_rules') || '{}') || {}; } catch (e) { saved = {}; }
+      return Object.assign({}, DEFAULT_RESERVATION_RULES, saved);
+    }
+
+    // Valida y guarda las reglas. Devuelve { ok, error, rules }.
+    function saveReservationRules(input) {
+      const cutoff = Number(input.cutoff_minutes);
+      const days = Number(input.days_ahead);
+      if (input.cutoff_minutes === '' || !Number.isInteger(cutoff) || cutoff < 0 || cutoff > 240) {
+        return { ok: false, error: 'El plazo de cierre debe ser un entero de 0 a 240 minutos.' };
+      }
+      if (input.days_ahead === '' || !Number.isInteger(days) || days < 1 || days > 30) {
+        return { ok: false, error: 'Los días a mostrar deben ser un entero de 1 a 30.' };
+      }
+      const rules = { cutoff_minutes: cutoff, days_ahead: days };
+      localStorage.setItem('cambioz_reservation_rules', JSON.stringify(rules));
+      return { ok: true, rules };
+    }
+
+    function loadTimetable() {
+      try { return JSON.parse(localStorage.getItem('cambioz_timetable_db') || '[]'); } catch (e) { return []; }
+    }
+    function saveTimetable(list) { localStorage.setItem('cambioz_timetable_db', JSON.stringify(list)); }
+
+    function initTimetableDB() {
+      if (localStorage.getItem('cambioz_timetable_db') !== null) return;
+      // Ejemplo: horarios de la primera sala de musculación y de la primera sala de clases (editables en Ajustes > Reservas).
+      const acts = loadActivities().filter(a => a.active);
+      const musc = acts.find(a => a.kind === 'MUSCULACION');
+      const grup = acts.find(a => a.kind === 'GRUPAL');
+      const blocks = [];
+      const add = (act, capacity) => {
+        if (!act) return;
+        blocks.push({ id: 't-seed-' + act.id + '-sem', activity_id: act.id, weekdays: [1, 2, 3, 4, 5], from: '07:00', to: '20:00', step: 60, capacity, active: true });
+        blocks.push({ id: 't-seed-' + act.id + '-sab', activity_id: act.id, weekdays: [6], from: '09:00', to: '12:00', step: 60, capacity, active: true });
+      };
+      add(musc, 60);
+      add(grup, 18);
+      saveTimetable(blocks);
+    }
+
+    // ---------- Fechas y horas ----------
+    function timeToMinutes(t) {
+      const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(t || ''));
+      return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+    }
+    function minutesToTime(n) {
+      return String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+    }
+    function dateFromIso(iso) {
+      const [y, m, d] = String(iso).split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+    function sessionStart(dateIso, time) {
+      const [y, m, d] = String(dateIso).split('-').map(Number);
+      const mins = timeToMinutes(time);
+      return new Date(y, m - 1, d, Math.floor(mins / 60), mins % 60, 0, 0);
+    }
+    function formatDayLong(iso) {
+      const d = dateFromIso(iso);
+      return `${WEEKDAY_LONG[d.getDay()]} ${d.getDate()} ${MONTH_LONG[d.getMonth()]} ${d.getFullYear()}`;
+    }
+    function hhmm(date) {
+      return minutesToTime(date.getHours() * 60 + date.getMinutes());
+    }
+
+    // ---------- Horarios (bloques) ----------
+    // Valida un bloque de horarios. Devuelve { ok, error, block }.
+    function validateTimetableInput(input) {
+      const act = loadActivities().find(a => a.id === input.activity_id);
+      if (!act) return { ok: false, error: 'Elegí una actividad.' };
+      const days = Array.from(new Set((input.weekdays || []).map(Number))).filter(d => Number.isInteger(d) && d >= 0 && d <= 6).sort();
+      if (!days.length) return { ok: false, error: 'Elegí al menos un día de la semana.' };
+      const from = timeToMinutes(input.from);
+      const to = timeToMinutes(input.to);
+      if (from === null || to === null) return { ok: false, error: 'Ingresá horarios válidos (HH:MM).' };
+      if (to < from) return { ok: false, error: 'El último horario no puede ser anterior al primero.' };
+      const step = input.step === undefined || input.step === '' ? 60 : Number(input.step);
+      if (!Number.isInteger(step) || step < 15 || step > 240) return { ok: false, error: 'Las clases se repiten cada 15 a 240 minutos.' };
+      const capacity = Number(input.capacity);
+      if (input.capacity === '' || !Number.isInteger(capacity) || capacity < 1 || capacity > 500) return { ok: false, error: 'Los lugares deben ser un entero de 1 a 500.' };
+      return { ok: true, block: { activity_id: act.id, weekdays: days, from: minutesToTime(from), to: minutesToTime(to), step, capacity, active: input.active !== false } };
+    }
+
+    function saveTimetableBlock(input, editId) {
+      const res = validateTimetableInput(input);
+      if (!res.ok) return res;
+      const list = loadTimetable();
+      if (editId) {
+        const idx = list.findIndex(b => b.id === editId);
+        if (idx === -1) return { ok: false, error: 'El bloque ya no existe.' };
+        list[idx] = Object.assign({ id: editId }, res.block);
+        res.block = list[idx];
+      } else {
+        res.block = Object.assign({ id: 't-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5) }, res.block);
+        list.push(res.block);
+      }
+      saveTimetable(list);
+      return res;
+    }
+
+    function toggleTimetableBlock(id) {
+      const list = loadTimetable();
+      const b = list.find(x => x.id === id);
+      if (!b) return false;
+      b.active = !b.active;
+      saveTimetable(list);
+      return b.active;
+    }
+
+    function deleteTimetableBlock(id) {
+      const list = loadTimetable();
+      const next = list.filter(b => b.id !== id);
+      saveTimetable(next);
+      return list.length - next.length;
+    }
+
+    // Clases de un día (generadas desde los bloques activos). activityId opcional filtra por actividad.
+    function sessionsForDate(dateIso, activityId) {
+      const wd = dateFromIso(dateIso).getDay();
+      const byId = {};
+      loadActivities().forEach(a => { byId[a.id] = a; });
+      const map = {};
+      loadTimetable().forEach(b => {
+        const act = byId[b.activity_id];
+        if (!b.active || !act || !act.active) return;
+        if (activityId && b.activity_id !== activityId) return;
+        if (b.weekdays.indexOf(wd) === -1) return;
+        for (let m = timeToMinutes(b.from); m <= timeToMinutes(b.to); m += b.step) {
+          const time = minutesToTime(m);
+          const key = act.id + '|' + dateIso + '|' + time;
+          if (!map[key]) map[key] = { key, activity_id: act.id, activity_name: act.name, kind: act.kind, date: dateIso, time, capacity: b.capacity };
+          else map[key].capacity = Math.max(map[key].capacity, b.capacity);
+        }
+      });
+      return Object.keys(map).map(k => map[k]).sort((a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : (a.activity_name < b.activity_name ? -1 : 1)));
+    }
+
+    function reservationSessionKey(r) { return r.activity_id + '|' + r.date + '|' + r.time; }
+
+    function bookedCount(session) {
+      return loadReservations().filter(r => r.status !== 'CANCELLED' && r.time && reservationSessionKey(r) === session.key).length;
+    }
+    function availableSeats(session) { return Math.max(0, session.capacity - bookedCount(session)); }
+
+    // ¿Puede el alumno reservar esta clase ahora? Devuelve { ok, code, message }.
+    // Códigos: OPEN, NO_STUDENT, NO_PLAN, NOT_ALLOWED, PLAN_EXPIRES, RESERVED, STARTED, CLOSED, FULL.
+    function checkReservable(username, session, now) {
+      const n = now || nowDate();
+      const student = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').find(s => s.username === username);
+      if (!student) return { ok: false, code: 'NO_STUDENT', message: 'Alumno no encontrado.' };
+      const up = getActiveUserPlan(username);
+      if (!up) return { ok: false, code: 'NO_PLAN', message: 'Necesitás un plan activo para reservar una clase. Inscribite a un plan.' };
+      const plan = loadPlans().find(p => p.id === up.plan_id);
+      const act = loadActivities().find(a => a.id === session.activity_id);
+      if (!act || !act.active) return { ok: false, code: 'NOT_ALLOWED', message: 'Esa actividad no está disponible.' };
+      if (!activityAllowedForPlan(act, plan)) {
+        return { ok: false, code: 'NOT_ALLOWED', message: `Tu plan no incluye ${act.kind === 'MUSCULACION' ? 'musculación' : 'clases grupales'}.` };
+      }
+      if (session.date > up.end_date) {
+        return { ok: false, code: 'PLAN_EXPIRES', message: `Tu plan vence el ${formatDateAR(up.end_date)}: no podés reservar para el ${formatDateAR(session.date)}. Renovalo para seguir reservando.` };
+      }
+      if (loadReservations().some(r => r.username === username && r.status !== 'CANCELLED' && r.time && reservationSessionKey(r) === session.key)) {
+        return { ok: false, code: 'RESERVED', message: 'Ya reservaste esta clase.' };
+      }
+      const minutes = loadReservationRules().cutoff_minutes;
+      const start = sessionStart(session.date, session.time);
+      const cutoff = new Date(start.getTime() - minutes * 60000);
+      if (n >= start) {
+        return { ok: false, code: 'STARTED', message: `${session.activity_name} de las ${session.time} ya comenzó. Las reservas se cierran ${minutes} minutos antes del inicio de la clase.` };
+      }
+      if (n > cutoff) {
+        return { ok: false, code: 'CLOSED', message: `El plazo para reservar terminó. Las reservas se cierran ${minutes} minutos antes de la clase: ${session.activity_name} de las ${session.time} cerró a las ${hhmm(cutoff)}.` };
+      }
+      if (bookedCount(session) >= session.capacity) {
+        return { ok: false, code: 'FULL', message: 'No quedan lugares disponibles en esta clase.' };
+      }
+      return { ok: true, code: 'OPEN', message: '' };
+    }
+
+    // Reserva una clase del horario. Devuelve { ok, code, error, reservation }.
+    function reserveSession(username, activityId, date, time, now) {
+      const session = sessionsForDate(date, activityId).find(s => s.time === time);
+      if (!session) return { ok: false, code: 'NO_SESSION', error: 'Esa clase no existe en el horario.' };
+      const chk = checkReservable(username, session, now);
+      if (!chk.ok) return { ok: false, code: chk.code, error: chk.message };
+      const student = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').find(s => s.username === username);
+      const reservation = {
+        id: 'res-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        username, name: student.name, date: session.date, time: session.time,
+        activity_id: session.activity_id, activity_name: session.activity_name, kind: session.kind,
+        status: 'RESERVED', attended_at: null, method: null, created_by: 'STUDENT', help_requested: false
+      };
+      const list = loadReservations();
+      list.push(reservation);
+      saveReservations(list);
+      return { ok: true, code: 'OPEN', reservation };
+    }
+
+    // Cancela una reserva propia (hasta el mismo plazo de cierre). Devuelve { ok, error }.
+    function cancelReservation(id, username, now) {
+      const list = loadReservations();
+      const r = list.find(x => x.id === id && x.username === username);
+      if (!r) return { ok: false, error: 'La reserva no existe.' };
+      if (r.status === 'ATTENDED') return { ok: false, error: 'No se puede cancelar una clase a la que ya asististe.' };
+      if (r.status === 'CANCELLED') return { ok: false, error: 'La reserva ya estaba cancelada.' };
+      if (r.time) {
+        const minutes = loadReservationRules().cutoff_minutes;
+        const cutoff = new Date(sessionStart(r.date, r.time).getTime() - minutes * 60000);
+        if ((now || nowDate()) > cutoff) {
+          return { ok: false, error: `Solo podés cancelar hasta ${minutes} minutos antes de la clase. Para ${r.activity_name} de las ${r.time} el plazo cerró a las ${hhmm(cutoff)}.` };
+        }
+      }
+      r.status = 'CANCELLED';
+      r.cancelled_at = (now || nowDate()).toISOString();
+      saveReservations(list);
+      return { ok: true };
+    }
+
+    // Reservas vigentes (hoy en adelante, sin canceladas) del alumno, ordenadas por fecha y hora.
+    function upcomingReservations(username) {
+      const today = isoToday();
+      return loadReservations().filter(r => r.username === username && r.status !== 'CANCELLED' && r.date >= today)
+        .sort((a, b) => ((a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1));
+    }
+
+    // ---------- UI alumno: grilla de clases ----------
+    let reservasFilter = '';
+    let reservasBack = 'home';
+    let pendingSession = null;
+
+    function openReservas(back) {
+      const user = getCurrentStudent();
+      if (!user) return;
+      if (!getActiveUserPlan(user.username)) {
+        showToast('Necesitás un plan activo para reservar una clase. Inscribite primero.', 3500);
+        return;
+      }
+      reservasBack = back || 'home';
+      goStudentScreen('reservas');
+    }
+    function closeReservas() { closeReservaSheet(); goStudentScreen(reservasBack || 'home'); }
+
+    function setReservasFilter(val) { reservasFilter = val; renderReservas(); }
+
+    function renderReservas() {
+      const user = getCurrentStudent();
+      const listEl = document.getElementById('reservas-list');
+      if (!user || !listEl) return;
+      const sel = document.getElementById('reservas-filter');
+      const acts = loadActivities().filter(a => a.active);
+      sel.innerHTML = '<option value="">Todas las actividades</option>' + acts.map(a => `<option value="${escHtml(a.id)}">${escHtml(a.name)}</option>`).join('');
+      sel.value = acts.some(a => a.id === reservasFilter) ? reservasFilter : '';
+      reservasFilter = sel.value;
+
+      const now = nowDate();
+      const rules = loadReservationRules();
+      const days = rules.days_ahead;
+      document.getElementById('reservas-rule-note').innerText = `Podés reservar hasta ${rules.cutoff_minutes} minutos antes de cada clase.`;
+      let html = '';
+      for (let i = 0; i < days; i++) {
+        const iso = isoAddDays(isoToday(), i);
+        // Las clases que terminaron hace más de una hora ya no se muestran (como en la agenda del gimnasio)
+        const sessions = sessionsForDate(iso, reservasFilter || undefined)
+          .filter(s => now < new Date(sessionStart(s.date, s.time).getTime() + 60 * 60000));
+        if (!sessions.length) continue;
+        const d = dateFromIso(iso);
+        html += `<h4 class="text-[15px] font-extrabold text-white px-1 pt-3 pb-2">${formatDayLong(iso)}</h4><div class="space-y-1.5">`;
+        sessions.forEach(s => {
+          const chk = checkReservable(user.username, s, now);
+          const left = availableSeats(s);
+          let label, tone, cardCls;
+          if (chk.code === 'RESERVED') { label = 'Reservada'; tone = 'text-emerald-400'; cardCls = 'border-emerald-500/60 bg-emerald-950/30'; }
+          else if (chk.ok) { label = `Disponible (${left})`; tone = 'text-brand-yellow'; cardCls = 'border-brand-yellow/60 bg-zinc-900 hover:bg-zinc-800'; }
+          else if (chk.code === 'FULL') { label = 'Completo'; tone = 'text-red-300'; cardCls = 'border-red-500/40 bg-zinc-900/60'; }
+          else if (chk.code === 'STARTED') { label = 'En curso'; tone = 'text-zinc-500'; cardCls = 'border-zinc-700 bg-zinc-900/40 opacity-60'; }
+          else if (chk.code === 'CLOSED') { label = 'Reservas cerradas'; tone = 'text-amber-300'; cardCls = 'border-amber-500/40 bg-zinc-900/50 opacity-80'; }
+          else { label = 'No incluida en tu plan'; tone = 'text-zinc-500'; cardCls = 'border-zinc-700 bg-zinc-900/40 opacity-60'; }
+          html += `<button type="button" onclick="onSessionTap('${escHtml(s.activity_id)}','${s.date}','${s.time}')" class="w-full flex items-stretch gap-2 text-left border border-zinc-700/70 rounded-lg p-1.5">
+            <div class="w-14 shrink-0 flex flex-col items-center justify-center text-zinc-400 font-bold leading-tight"><span class="text-[11px]">${WEEKDAY_SHORT[d.getDay()]}</span><span class="text-[14px] text-zinc-300">${d.getDate()}</span><span class="text-[13px] text-zinc-300">${s.time}</span></div>
+            <div class="flex-1 min-w-0 rounded-md border ${cardCls} px-3 py-2.5 transition-all">
+              <div class="text-[15px] font-extrabold text-white leading-tight break-words">${escHtml(s.activity_name)}</div>
+              <div class="text-[13px] font-bold ${tone} mt-1">${label}</div>
+            </div>
+          </button>`;
+        });
+        html += '</div>';
+      }
+      listEl.innerHTML = html || '<p class="text-xs text-zinc-300 text-center py-6">No hay clases cargadas para los próximos días.</p>';
+    }
+
+    // Tocar una clase: si no se puede reservar, se explica el motivo en pantalla; si se puede, se pide confirmar.
+    function onSessionTap(activityId, date, time) {
+      const user = getCurrentStudent();
+      if (!user) return;
+      const s = sessionsForDate(date, activityId).find(x => x.time === time);
+      if (!s) return;
+      const chk = checkReservable(user.username, s, nowDate());
+      pendingSession = null;
+      if (!chk.ok) {
+        const info = chk.code === 'RESERVED';
+        openReservaSheet(info ? 'Ya la reservaste' : 'No se puede reservar', chk.message, info ? 'cancel' : null, info ? s : null);
+        return;
+      }
+      pendingSession = s;
+      openReservaSheet('Confirmar reserva', `${s.activity_name}\n${formatDayLong(s.date)} · ${s.time}\nLugares disponibles: ${availableSeats(s)}`, 'confirm', s);
+    }
+
+    function openReservaSheet(title, text, mode, session) {
+      const sheet = document.getElementById('reserva-sheet');
+      const bad = title === 'No se puede reservar';
+      document.getElementById('reserva-sheet-icon').className = 'fa-solid ' + (bad ? 'fa-circle-exclamation text-red-400' : (mode === 'confirm' ? 'fa-calendar-check text-brand-yellow' : 'fa-circle-info text-emerald-400')) + ' text-2xl';
+      document.getElementById('reserva-sheet-title').innerText = title;
+      document.getElementById('reserva-sheet-text').innerText = text;
+      const actions = document.getElementById('reserva-sheet-actions');
+      if (mode === 'confirm') {
+        actions.innerHTML = '<button onclick="confirmReserva()" class="btn-glossy rounded-xl py-3 text-sm font-bold flex-1">Confirmar</button><button onclick="closeReservaSheet()" class="rounded-xl py-3 text-sm font-bold flex-1 border border-brand-border text-zinc-300">Volver</button>';
+      } else if (mode === 'cancel' && session) {
+        actions.innerHTML = '<button onclick="cancelSessionReserva()" class="rounded-xl py-3 text-sm font-bold flex-1 border border-red-500/50 text-red-300">Cancelar reserva</button><button onclick="closeReservaSheet()" class="btn-glossy rounded-xl py-3 text-sm font-bold flex-1">Entendido</button>';
+        pendingSession = session;
+      } else {
+        actions.innerHTML = '<button onclick="closeReservaSheet()" class="btn-glossy rounded-xl py-3 text-sm font-bold flex-1">Entendido</button>';
+      }
+      sheet.classList.remove('hidden');
+    }
+
+    function closeReservaSheet() {
+      const sheet = document.getElementById('reserva-sheet');
+      if (sheet) sheet.classList.add('hidden');
+    }
+
+    function confirmReserva() {
+      const user = getCurrentStudent();
+      const s = pendingSession;
+      if (!user || !s) { closeReservaSheet(); return; }
+      const res = reserveSession(user.username, s.activity_id, s.date, s.time, nowDate());
+      pendingSession = null;
+      if (!res.ok) { openReservaSheet('No se puede reservar', res.error, null); renderReservas(); return; }
+      closeReservaSheet();
+      renderReservas();
+      showToast(`✅ Reservaste <strong class="text-brand-yellow">${escHtml(s.activity_name)}</strong> · ${s.time}`, 3000);
+    }
+
+    function cancelSessionReserva() {
+      const user = getCurrentStudent();
+      const s = pendingSession;
+      if (!user || !s) { closeReservaSheet(); return; }
+      const mine = loadReservations().find(r => r.username === user.username && r.status !== 'CANCELLED' && r.time && reservationSessionKey(r) === s.key);
+      closeReservaSheet();
+      if (!mine) return;
+      const res = cancelReservation(mine.id, user.username, nowDate());
+      if (!res.ok) { openReservaSheet('No se puede cancelar', res.error, null); return; }
+      renderReservas();
+      if (studentScreen === 'misreservas') renderMisReservas();
+      showToast('Reserva cancelada.', 2200);
+    }
+
+    // ---------- UI alumno: Mis reservas ----------
+    function openMisReservas(back) {
+      reservasBack = back || 'home';
+      goStudentScreen('misreservas');
+    }
+
+    function renderMisReservas() {
+      const user = getCurrentStudent();
+      const el = document.getElementById('misreservas-list');
+      if (!user || !el) return;
+      const list = upcomingReservations(user.username);
+      el.innerHTML = list.length ? list.map(r => {
+        const done = r.status === 'ATTENDED';
+        return `<div class="rounded-xl border ${done ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-brand-border bg-brand-surface'} p-3 flex items-center justify-between gap-2">
+          <div class="min-w-0"><div class="text-sm font-bold text-white">${escHtml(r.activity_name)}</div>
+          <div class="text-[11px] text-zinc-300 mt-0.5">${formatDayLong(r.date)}${r.time ? ' · ' + r.time : ''}</div></div>
+          ${done ? '<span class="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold border bg-emerald-950/50 text-emerald-400 border-emerald-500/40">Presente</span>'
+                 : `<button onclick="handleCancelFromList('${r.id}')" class="shrink-0 px-3 py-2 rounded-lg border border-red-500/50 text-red-300 text-[11px] font-bold">Cancelar</button>`}
+        </div>`;
+      }).join('') : '<p class="text-xs text-zinc-300">No tenés reservas próximas. Tocá "Reservar una clase" para elegir una.</p>';
+    }
+
+    function handleCancelFromList(id) {
+      const user = getCurrentStudent();
+      if (!user) return;
+      const res = cancelReservation(id, user.username, nowDate());
+      if (!res.ok) { openReservaSheet('No se puede cancelar', res.error, null); return; }
+      renderMisReservas();
+      showToast('Reserva cancelada.', 2200);
+    }
+
+    // ---------- UI Staff: Ajustes > Reservas ----------
+    function weekdaysLabel(days) {
+      const d = days.slice().sort();
+      if (d.length === 7) return 'Todos los días';
+      const order = [1, 2, 3, 4, 5, 6, 0];
+      const idx = order.filter(x => d.indexOf(x) !== -1);
+      const consecutive = idx.length > 2 && idx.every((x, i) => i === 0 || order.indexOf(x) === order.indexOf(idx[i - 1]) + 1);
+      return consecutive ? `${WEEKDAY_SHORT[idx[0]]} a ${WEEKDAY_SHORT[idx[idx.length - 1]]}` : idx.map(x => WEEKDAY_SHORT[x]).join(', ');
+    }
+
+    function fillReservationRulesForm() {
+      const r = loadReservationRules();
+      document.getElementById('rules-cutoff').value = r.cutoff_minutes;
+      document.getElementById('rules-days').value = r.days_ahead;
+      document.getElementById('rules-msg').innerText = '';
+    }
+
+    function handleSaveReservationRules(e) {
+      if (e) e.preventDefault();
+      const res = saveReservationRules({ cutoff_minutes: document.getElementById('rules-cutoff').value, days_ahead: document.getElementById('rules-days').value });
+      const msg = document.getElementById('rules-msg');
+      msg.className = 'text-[10px] ' + (res.ok ? 'text-emerald-400' : 'text-red-300');
+      msg.innerText = res.ok ? '✓ Regla guardada.' : res.error;
+    }
+
+    function renderReservationsAdmin() {
+      const acts = loadActivities();
+      const byId = {};
+      acts.forEach(a => { byId[a.id] = a; });
+      const sel = document.getElementById('tt-activity');
+      const prev = sel.value;
+      sel.innerHTML = acts.filter(a => a.active).map(a => `<option value="${escHtml(a.id)}">${escHtml(a.name)}</option>`).join('');
+      if (prev) sel.value = prev;
+
+      const listEl = document.getElementById('timetable-list');
+      const blocks = loadTimetable();
+      listEl.innerHTML = blocks.length ? '' : '<p class="text-[11px] text-zinc-500">Todavía no hay horarios cargados: los alumnos no verán clases para reservar.</p>';
+      blocks.forEach(b => {
+        const act = byId[b.activity_id];
+        const row = document.createElement('div');
+        row.className = 'flex items-start justify-between gap-2 border border-brand-border/50 rounded-xl p-2.5 ' + (b.active ? '' : 'opacity-50');
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="font-bold text-white text-xs">${act ? escHtml(act.name) : '(actividad eliminada)'}</div>
+            <div class="text-[10px] text-zinc-300 mt-0.5">${weekdaysLabel(b.weekdays)} · ${b.from} a ${b.to} cada ${b.step} min</div>
+            <div class="text-[9px] text-zinc-500">${b.capacity} lugares por clase${b.active ? '' : ' · inactivo'}</div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <button onclick="handleToggleBlock('${b.id}')" class="${b.active ? 'text-amber-400' : 'text-emerald-400'} font-bold text-[9px] uppercase tracking-wider">${b.active ? 'Desactivar' : 'Activar'}</button>
+            <button onclick="handleDeleteBlock('${b.id}')" class="text-zinc-500 hover:text-red-400" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+
+      // Ocupación de hoy
+      const today = isoToday();
+      const sessions = sessionsForDate(today);
+      const occ = document.getElementById('res-occupancy-list');
+      occ.innerHTML = sessions.length ? sessions.map(s => {
+        const booked = bookedCount(s);
+        return `<div class="flex justify-between gap-2 text-[11px] border-b border-brand-border/30 pb-1"><span class="text-zinc-300">${s.time} · ${escHtml(s.activity_name)}</span><span class="${booked >= s.capacity ? 'text-red-300' : 'text-zinc-400'} font-semibold whitespace-nowrap">${booked} / ${s.capacity}</span></div>`;
+      }).join('') : '<p class="text-[11px] text-zinc-500">No hay clases programadas para hoy.</p>';
+    }
+
+    function handleAddBlock(e) {
+      if (e) e.preventDefault();
+      const days = [0, 1, 2, 3, 4, 5, 6].filter(d => document.getElementById('tt-day-' + d).checked);
+      const res = saveTimetableBlock({
+        activity_id: document.getElementById('tt-activity').value,
+        weekdays: days,
+        from: document.getElementById('tt-from').value,
+        to: document.getElementById('tt-to').value,
+        step: document.getElementById('tt-step').value,
+        capacity: document.getElementById('tt-capacity').value
+      });
+      const msg = document.getElementById('tt-msg');
+      msg.className = 'text-[10px] ' + (res.ok ? 'text-emerald-400' : 'text-red-300');
+      msg.innerText = res.ok ? '✓ Horario agregado.' : res.error;
+      if (res.ok) renderReservationsAdmin();
+    }
+
+    function handleToggleBlock(id) { toggleTimetableBlock(id); renderReservationsAdmin(); }
+    function handleDeleteBlock(id) {
+      if (!confirm('¿Eliminar este bloque de horarios? Las reservas ya hechas se conservan.')) return;
+      deleteTimetableBlock(id);
+      renderReservationsAdmin();
     }
 
     // ----------------------------------------------------

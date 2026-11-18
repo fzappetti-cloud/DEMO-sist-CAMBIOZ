@@ -109,6 +109,9 @@
       #student-home-screen .home-btn span { font-size: 11.5px; }
       #student-home-screen .home-install { padding: 0.5rem 0.75rem; }
       #student-home-screen .home-install p { display: none; }
+      /* El nombre del plan y su detalle ocupan menos alto (el subtítulo se recorta a una línea) */
+      #student-home-screen .plan-name { font-size: 1.0625rem; }
+      #student-home-screen .plan-sub { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
     }
     @media (max-width: 1023px) and (max-height: 600px) {
       #student-home-screen .home-grid-wrap { min-height: 200px; }
@@ -688,7 +691,7 @@
           </div>
           <div class="space-y-3">
             <button onclick="openEnroll('ENROLL', null, 'home')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme a un plan</button>
-            <button onclick="openEnroll('CREDIT', null, 'home')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-cart-plus mr-1.5"></i>Comprar crédito</button>
+            <button onclick="openPacks('home')" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-ticket mr-1.5"></i>Comprar pack</button>
             <button onclick="goStudentScreen('precios')" class="w-full rounded-xl py-3 text-sm font-bold border border-brand-yellow/50 text-brand-yellow hover:bg-brand-yellow/10"><i class="fa-solid fa-tag mr-1.5"></i>Ver planes y precios</button>
           </div>
         </div>
@@ -715,8 +718,8 @@
             <button onclick="showSoon('Nueva Reserva')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
             <button onclick="showSoon('Mis Reservas')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis reservas</span></button>
             <button onclick="showSoon('Presentismo')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-user-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Presentismo</span></button>
-            <button onclick="showSoon('Mis Créditos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-coins text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis créditos</span></button>
-            <button onclick="openEnroll('CREDIT', null, 'home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-cart-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar crédito</span></button>
+            <button onclick="showSoon('Mis Packs')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-layer-group text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis packs</span></button>
+            <button onclick="openPacks('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-ticket text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar pack</span></button>
             <button onclick="showSoon('Reprogramar clase')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-days text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Reprogramar clase</span></button>
               <button onclick="showSoon('Más funciones')" class="btn-glossy-off rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-hourglass-half text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Próximamente</span></button>
             </div>
@@ -752,7 +755,27 @@
           </div>
         </div>
 
-        <!-- SCREEN INSCRIPCIÓN / INFORMAR PAGO / COMPRAR CRÉDITO (mismo formulario) -->
+        <!-- SCREEN COMPRAR PACK: una tarjeta por pack; elegir una pasa al pago -->
+        <div id="student-packs-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none" style="background: linear-gradient(rgba(0,0,0,.78), rgba(0,0,0,.9)), url('background.png') center / cover;">
+          <button onclick="closePacks()" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Volver</button>
+          <div class="text-center mb-4">
+            <div class="flex items-center gap-3 justify-center">
+              <span class="h-0.5 flex-1 bg-brand-yellow"></span>
+              <h3 class="text-base font-extrabold uppercase tracking-wide text-white whitespace-nowrap">Packs de clases</h3>
+              <span class="h-0.5 flex-1 bg-brand-yellow"></span>
+            </div>
+            <div class="mt-1 text-[34px] leading-none font-black uppercase tracking-tight"><span class="text-brand-yellow">CAMBIOZ</span><span class="text-white">GYM</span></div>
+            <p class="text-[10px] text-zinc-300 mt-1.5">Elegí tu pack para continuar al pago</p>
+          </div>
+          <div id="packs-list" class="space-y-3"></div>
+          <div class="flex items-center gap-3 justify-center mt-5">
+            <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
+            <img src="logo.webp" alt="CAMBIOZ GYM" class="h-14 w-14 object-contain" />
+            <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
+          </div>
+        </div>
+
+        <!-- SCREEN INSCRIPCIÓN / INFORMAR PAGO / COMPRAR PACK (mismo formulario) -->
         <div id="student-enroll-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
           <button onclick="closeEnroll()" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Volver</button>
           <h3 id="enroll-title" class="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">Inscripción</h3>
@@ -760,18 +783,9 @@
 
           <form id="enroll-form" onsubmit="submitEnroll(event)" class="space-y-3">
             <div id="enroll-plan-block">
-              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Plan</label>
+              <label id="enroll-plan-label" class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Plan</label>
               <select id="enroll-plan" onchange="updateEnrollSummary()" class="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
               <div id="enroll-plan-fixed" class="hidden w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white"></div>
-            </div>
-
-            <div id="enroll-credit-block" class="hidden">
-              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Cantidad de créditos</label>
-              <div class="flex items-center gap-2">
-                <button type="button" onclick="stepEnrollQty(-1)" class="h-11 w-11 rounded-xl bg-brand-surface border border-brand-border text-white text-lg font-bold">−</button>
-                <input type="number" id="enroll-qty" min="1" max="50" step="1" value="1" oninput="updateEnrollSummary()" class="flex-1 text-center bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-brand-yellow" />
-                <button type="button" onclick="stepEnrollQty(1)" class="h-11 w-11 rounded-xl bg-brand-surface border border-brand-border text-white text-lg font-bold">+</button>
-              </div>
             </div>
 
             <div class="rounded-xl bg-brand-surface border border-brand-border p-3">
@@ -994,7 +1008,7 @@
           <span id="reset-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
         </button>
         <button id="tab-btn-plans" onclick="switchConfigTab('plans')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
-          <i class="fa-solid fa-id-card mr-1"></i> Planes
+          <i class="fa-solid fa-id-card mr-1"></i> Planes y packs
         </button>
         <button id="tab-btn-payments" onclick="switchConfigTab('payments')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
           <i class="fa-solid fa-money-bill-transfer mr-1"></i> Pagos
@@ -1010,7 +1024,7 @@
         </div>
 
         <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
-          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-building-columns text-brand-yellow"></i> Datos para transferencias y créditos</h4>
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-building-columns text-brand-yellow"></i> Datos para transferencias</h4>
           <p class="text-[10px] text-zinc-500">Son valores de ejemplo: reemplazalos por los reales del gimnasio.</p>
           <form id="form-gym-settings" onsubmit="handleSaveGymSettings(event)" class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1025,10 +1039,6 @@
               <div>
                 <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Titular</label>
                 <input type="text" id="gym-holder" maxlength="60" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
-              </div>
-              <div>
-                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Precio por crédito (ARS)</label>
-                <input type="number" id="gym-credit-price" min="0" step="1" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -1101,6 +1111,47 @@
         <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl">
           <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i class="fa-solid fa-list text-brand-yellow"></i> Planes cargados</h4>
           <div id="plans-admin-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Packs de clases (se ofrecen en "Comprar pack") -->
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
+          <h4 id="pack-form-title" class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-plus text-brand-yellow"></i> Nuevo Pack</h4>
+          <p class="text-[10px] text-zinc-500">Son las opciones que ve el alumno en "Comprar pack". Los de abajo son de ejemplo: editalos o creá los tuyos.</p>
+          <form id="form-pack" onsubmit="handlePackSubmit(event)" class="space-y-3">
+            <input type="hidden" id="pack-edit-id" value="" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Nombre del pack</label>
+                <input type="text" id="pack-name" maxlength="40" required placeholder="Ej: Pack 8 Clases" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Precio (ARS)</label>
+                <input type="number" id="pack-price" min="0" step="1" required placeholder="Ej: 30000" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Cantidad de clases</label>
+                <input type="number" id="pack-classes" min="1" max="100" step="1" required placeholder="Ej: 8" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Vigencia (días)</label>
+                <input type="number" id="pack-validity" min="1" max="365" step="1" value="30" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Qué incluye (opcional, un ítem por línea)</label>
+              <textarea id="pack-features" rows="3" placeholder="Vacío = se muestran las clases y la vigencia" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></textarea>
+            </div>
+            <label class="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer"><input type="checkbox" id="pack-active" checked class="accent-brand-yellow" /> Activo</label>
+            <div class="flex gap-2">
+              <button type="submit" class="flex-grow bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold py-2 rounded-xl text-xs transition-all">Guardar pack</button>
+              <button type="button" id="pack-cancel-btn" onclick="resetPackForm()" class="hidden px-4 bg-brand-card hover:bg-zinc-800 text-zinc-300 border border-brand-border rounded-xl text-xs font-semibold">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 flex items-center gap-1.5"><i class="fa-solid fa-ticket text-brand-yellow"></i> Packs cargados</h4>
+          <div id="packs-admin-list" class="space-y-2"></div>
         </div>
 
         <!-- Ayudante de demo: asignar plan a un alumno (la inscripción real es la próxima entrega) -->
@@ -1779,6 +1830,7 @@
       initStudentsDB();
       initTurnosDB();
       initPlansDB();
+      initPacksDB();
       loadCatalogAndTemplates();
 
       // 2. Detectar si hay rutina codificada en URL (?r=...)
@@ -2676,6 +2728,8 @@
         if (contentPlans) contentPlans.classList.remove('hidden');
         resetPlanForm();
         renderPlansAdmin();
+        resetPackForm();
+        renderPacksAdmin();
       } else if (tabName === 'payments') {
         if (tabPay) tabPay.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
         if (contentPay) contentPay.classList.remove('hidden');
@@ -3938,6 +3992,7 @@
         noaccessScreen.classList.add('hidden');
         document.getElementById('student-enroll-screen').classList.add('hidden');
         document.getElementById('student-pagos-screen').classList.add('hidden');
+        document.getElementById('student-packs-screen').classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -3967,7 +4022,8 @@
       // Tablero, Precios y aviso sin acceso (nuevas pantallas): la rutina no se toca
       const enrollScreen = document.getElementById('student-enroll-screen');
       const pagosScreen = document.getElementById('student-pagos-screen');
-      if (['home', 'precios', 'noaccess', 'enroll', 'pagos'].indexOf(studentScreen) !== -1) {
+      const packsScreen = document.getElementById('student-packs-screen');
+      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs'].indexOf(studentScreen) !== -1) {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
@@ -3975,9 +4031,11 @@
         noaccessScreen.classList.toggle('hidden', studentScreen !== 'noaccess');
         enrollScreen.classList.toggle('hidden', studentScreen !== 'enroll');
         pagosScreen.classList.toggle('hidden', studentScreen !== 'pagos');
+        packsScreen.classList.toggle('hidden', studentScreen !== 'packs');
         if (studentScreen === 'home') renderStudentHome(user);
         else if (studentScreen === 'precios') renderStudentPrecios();
         else if (studentScreen === 'pagos') renderPagos();
+        else if (studentScreen === 'packs') renderPacks();
         return; // 'enroll' conserva lo que el alumno ya cargó en el formulario
       }
 
@@ -3986,6 +4044,7 @@
       noaccessScreen.classList.add('hidden');
       enrollScreen.classList.add('hidden');
       pagosScreen.classList.add('hidden');
+      packsScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -4734,7 +4793,7 @@
       savePlans(seed);
       const today = isoToday();
       saveUserPlans([
-        { username: 'franco.zappetti', plan_id: 'p-seed-3', start_date: isoAddDays(today, -10), end_date: isoAddDays(today, 20), credits_used: 0, credits_total: null, credits_extra: 0, status: 'ACTIVE' },
+        { username: 'franco.zappetti', plan_id: 'p-seed-3', start_date: isoAddDays(today, -10), end_date: isoAddDays(today, 20), credits_used: 0, credits_total: 30, credits_extra: 0, status: 'ACTIVE' },
         { username: 'carolina.olivi', plan_id: 'p-seed-1', start_date: isoAddDays(today, -45), end_date: isoAddDays(today, -15), credits_used: 0, credits_total: null, credits_extra: 0, status: 'EXPIRED' }
       ]);
     }
@@ -4800,6 +4859,17 @@
       return Number.isInteger(d) && d >= 1 ? d : 30;
     }
 
+    // Clases que se cuentan en un plan de clases ilimitadas: un promedio de 30 por mes (criterio de la dueña).
+    const UNLIMITED_CLASSES_PER_MONTH = 30;
+
+    // Clases que trae un plan al activarse: su límite si tiene; si incluye grupales sin límite, el promedio
+    // mensual proporcional a su vigencia (30 días = 30 clases); null si no incluye clases grupales.
+    function planClassAllowance(plan) {
+      if (!plan || !plan.includes_grupales) return null;
+      if (plan.class_limit !== null && plan.class_limit !== undefined) return plan.class_limit;
+      return Math.max(1, Math.round(UNLIMITED_CLASSES_PER_MONTH * getPlanDuration(plan) / 30));
+    }
+
     // Texto corto de precio como en el flyer: 40000 -> "$ 40 MIL"; si no es múltiplo de mil, importe completo.
     function formatPriceShort(n) {
       const v = Number(n);
@@ -4859,7 +4929,7 @@
       list.push({
         username, plan_id: planId, start_date: start, end_date: isoAddDays(start, d),
         credits_used: 0,
-        credits_total: plan.includes_grupales ? plan.class_limit : null, // según el límite del plan (null = ilimitado)
+        credits_total: planClassAllowance(plan), // límite del plan o, si es ilimitado, promedio de 30 clases por mes
         credits_extra: 0,
         status: 'ACTIVE'
       });
@@ -5075,13 +5145,13 @@
         const subtitle = plan ? (plan.includes_grupales ? describePlanLimit(plan) : 'Acceso libre a sala de musculación') : '';
         const extra = plan && plan.includes_grupales && plan.includes_musculacion ? 'Incluye musculación' : '';
         card.innerHTML = `
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
+          <div class="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+            <div class="min-w-[9rem] flex-1">
               <span class="text-[9px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Tu plan vigente</span>
-              <div class="text-xl leading-tight font-extrabold uppercase tracking-tight text-white mt-0.5 break-words">${plan ? escHtml(plan.name) : 'Plan'}</div>
-              ${subtitle ? `<div class="text-brand-yellow text-xs font-semibold mt-0.5">${subtitle}${extra ? ' · ' + extra : ''}</div>` : ''}
+              <div class="plan-name text-xl leading-tight font-extrabold uppercase tracking-tight text-white mt-0.5 break-words">${plan ? escHtml(plan.name) : 'Plan'}</div>
+              ${subtitle ? `<div class="plan-sub text-brand-yellow text-xs font-semibold mt-0.5">${subtitle}${extra ? ' · ' + extra : ''}</div>` : ''}
             </div>
-            <div class="text-right shrink-0">
+            <div class="text-right shrink-0 ml-auto">
               ${plan ? `<div class="text-base font-extrabold text-white leading-tight">${formatPrice(plan.price)}</div>` : ''}
               <div class="text-[10px] text-zinc-300 mt-0.5">Vigente hasta ${formatDateAR(up.end_date)}</div>
               <div class="text-[10px] font-bold text-emerald-400 mt-0.5"><i class="fa-solid fa-circle-check mr-0.5"></i>Plan vigente</div>
@@ -5119,13 +5189,13 @@
       const text = document.getElementById('noaccess-text');
       if (access.reason === 'expired') {
         title.innerText = 'Tu plan venció';
-        text.innerText = `Tu plan venció el ${formatDateAR(access.endDate)}. Renovalo o comprá crédito para volver a ver tu rutina y entrenar.`;
+        text.innerText = `Tu plan venció el ${formatDateAR(access.endDate)}. Renovalo o comprá un pack para volver a ver tu rutina y entrenar.`;
       } else if (access.reason === 'no_musculacion') {
         title.innerText = 'Tu plan no incluye musculación';
-        text.innerText = `Tu plan "${access.plan.name}" no incluye la sala de musculación. Para ver tu rutina necesitás un plan que la incluya o comprar crédito.`;
+        text.innerText = `Tu plan "${access.plan.name}" no incluye la sala de musculación. Para ver tu rutina necesitás un plan que la incluya.`;
       } else {
         title.innerText = 'Sin plan activo';
-        text.innerText = 'No tenés un plan activo, por eso no podés ver tu rutina. Inscribite a un plan o comprá crédito para entrenar.';
+        text.innerText = 'No tenés un plan activo, por eso no podés ver tu rutina. Inscribite a un plan para entrenar.';
       }
     }
 
@@ -5142,38 +5212,20 @@
       return p.includes_musculacion ? 'fa-dumbbell' : 'fa-person-running';
     }
 
-    // Líneas de "qué incluye": las cargadas por la dueña o, si no hay, las derivadas de los casilleros.
-    function planIncludesList(p) {
-      if (p.features && p.features.length) return p.features;
-      const out = [];
-      if (p.includes_musculacion) out.push('Musculación libre');
-      if (p.includes_grupales) out.push(describePlanLimit(p));
-      return out;
-    }
-
     // Precios: tarjetas con el formato del flyer. Tocar una tarjeta abre la inscripción a ese plan.
     function renderStudentPrecios() {
       const el = document.getElementById('precios-list');
       const plans = loadPlans().filter(p => p.active);
       if (!plans.length) { el.innerHTML = '<p class="text-xs text-zinc-300 text-center">No hay planes disponibles por el momento.</p>'; return; }
-      el.innerHTML = plans.map(p => {
-        const hasList = !!(p.features && p.features.length);
-        const lines = planIncludesList(p);
-        const detail = hasList
-          ? `<div class="text-[10px] font-extrabold uppercase tracking-wider text-white mt-1.5">Incluye:</div>
-             <ul class="mt-1 space-y-0.5">${lines.map(t => `<li class="flex items-center gap-1.5 text-[11px] font-semibold uppercase text-zinc-100"><i class="fa-solid fa-circle-check text-brand-yellow text-[11px] shrink-0"></i><span>${escHtml(t)}</span></li>`).join('')}</ul>`
-          : (p.includes_grupales ? `<div class="text-[11px] font-semibold uppercase text-brand-yellow mt-0.5">${escHtml(describePlanLimit(p))}</div>` : '');
-        return `<button type="button" onclick="onPlanCardTap('${escHtml(p.id)}')" class="w-full text-left rounded-2xl border-2 border-brand-yellow bg-black/65 p-3 flex items-center gap-3 shadow-[0_0_14px_rgba(251,191,36,.15)] hover:bg-black/80 active:scale-[.99] transition-all">
-          <div class="max-[359px]:hidden h-10 w-10 shrink-0 rounded-full border-2 border-brand-yellow/80 flex items-center justify-center text-brand-yellow"><i class="fa-solid ${planIconClass(p)} text-base"></i></div>
-          <div class="min-w-0 flex-1 break-words">
-            <div class="text-[14px] font-extrabold uppercase leading-tight tracking-tight">${planTitleHtml(p.name)}</div>
-            ${detail}
-          </div>
-          <div class="shrink-0 self-stretch flex items-center border-l-2 border-brand-yellow pl-2.5">
-            <div class="rounded-lg border-2 border-brand-yellow px-2 py-1.5 text-brand-yellow font-extrabold text-base leading-none whitespace-nowrap">${formatPriceShort(p.price)}</div>
-          </div>
-        </button>`;
-      }).join('');
+      el.innerHTML = plans.map(p => offerCardHtml({
+        title: planTitleHtml(p.name),
+        icon: planIconClass(p),
+        heading: true,
+        lines: p.features && p.features.length ? p.features : [],
+        subtitle: p.includes_grupales ? describePlanLimit(p) : '',
+        price: formatPriceShort(p.price),
+        onclick: `onPlanCardTap('${escHtml(p.id)}')`
+      })).join('');
     }
 
     // Tocar una tarjeta de plan: abre la inscripción con ese plan elegido.
@@ -5182,19 +5234,221 @@
     }
 
     // ----------------------------------------------------
-    // PAGOS, INSCRIPCIONES Y CRÉDITOS
+    // PACKS DE CLASES (cambioz_packs_db)
+    // La dueña carga los packs que ofrece (nombre, texto "Incluye", cantidad de clases, vigencia y precio aparte).
+    // Al tocar "Comprar pack" el alumno ve una tarjeta por pack; al elegir una pasa al proceso de pago.
+    //   { id, name, classes, validity_days, price, features: [texto...], active }
+    // ----------------------------------------------------
+    function loadPacks() {
+      try { return JSON.parse(localStorage.getItem('cambioz_packs_db') || '[]'); } catch (e) { return []; }
+    }
+    function savePacks(list) { localStorage.setItem('cambioz_packs_db', JSON.stringify(list)); }
+
+    function initPacksDB() {
+      if (localStorage.getItem('cambioz_packs_db') !== null) return;
+      // Datos de ejemplo para la demo; la dueña los edita desde Ajustes > Planes y packs.
+      savePacks([
+        { id: 'k-seed-1', name: 'Pack 4 Clases', classes: 4, validity_days: 30, price: 16000, features: [], active: true },
+        { id: 'k-seed-2', name: 'Pack 8 Clases', classes: 8, validity_days: 45, price: 30000, features: [], active: true },
+        { id: 'k-seed-3', name: 'Pack 12 Clases', classes: 12, validity_days: 60, price: 42000, features: [], active: true }
+      ]);
+    }
+
+    // Líneas de la tarjeta: las que escribió la dueña o, si no hay, las derivadas de clases y vigencia.
+    function packLines(pk) {
+      if (pk.features && pk.features.length) return pk.features;
+      return [`${pk.classes} clase${pk.classes === 1 ? '' : 's'}`, `Válido ${pk.validity_days} días`];
+    }
+
+    // Valida y normaliza el formulario de packs. Devuelve { ok, error, pack }.
+    function validatePackInput(input, excludeId) {
+      const name = String(input.name || '').trim();
+      if (name.length < 3) return { ok: false, error: 'El nombre debe tener al menos 3 caracteres.' };
+      const price = Number(input.price);
+      if (input.price === '' || input.price === null || input.price === undefined || !isFinite(price) || price < 0) {
+        return { ok: false, error: 'Ingresá un precio válido (0 o mayor).' };
+      }
+      const classes = Number(input.classes);
+      if (!Number.isInteger(classes) || classes < 1 || classes > 100) return { ok: false, error: 'La cantidad de clases debe ser un entero de 1 a 100.' };
+      const validity = Number(input.validity_days);
+      if (!Number.isInteger(validity) || validity < 1 || validity > 365) return { ok: false, error: 'La vigencia debe ser un entero de 1 a 365 días.' };
+      const raw = Array.isArray(input.features) ? input.features : String(input.features || '').split(/\r?\n/);
+      const features = raw.map(s => String(s).trim()).filter(Boolean);
+      if (features.length > 8) return { ok: false, error: 'Podés cargar hasta 8 ítems en "Incluye".' };
+      if (features.some(s => s.length > 40)) return { ok: false, error: 'Cada ítem de "Incluye" admite hasta 40 caracteres.' };
+      if (loadPacks().some(p => p.id !== excludeId && p.name.toLowerCase() === name.toLowerCase())) {
+        return { ok: false, error: 'Ya existe un pack con ese nombre.' };
+      }
+      return { ok: true, pack: { name, classes, validity_days: validity, price, features, active: input.active !== false } };
+    }
+
+    // Crea (editId vacío) o edita un pack. Devuelve { ok, error, pack }.
+    function savePack(input, editId) {
+      const res = validatePackInput(input, editId || null);
+      if (!res.ok) return res;
+      const packs = loadPacks();
+      if (editId) {
+        const idx = packs.findIndex(p => p.id === editId);
+        if (idx === -1) return { ok: false, error: 'El pack que intentás editar ya no existe.' };
+        packs[idx] = Object.assign({ id: editId }, res.pack);
+        res.pack = packs[idx];
+      } else {
+        res.pack = Object.assign({ id: 'k-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5) }, res.pack);
+        packs.push(res.pack);
+      }
+      savePacks(packs);
+      return res;
+    }
+
+    function togglePackActive(id) {
+      const packs = loadPacks();
+      const p = packs.find(x => x.id === id);
+      if (!p) return false;
+      p.active = !p.active;
+      savePacks(packs);
+      return p.active;
+    }
+
+    // ---------- Tarjeta de oferta (la usan Precios y Packs; mismo diseño del flyer) ----------
+    // o: { title (HTML), icon, heading (bool), lines [texto], subtitle, price (texto corto), onclick }
+    function offerCardHtml(o) {
+      let detail = '';
+      if (o.lines && o.lines.length) {
+        detail = `${o.heading ? '<div class="text-[10px] font-extrabold uppercase tracking-wider text-white mt-1.5">Incluye:</div>' : ''}
+          <ul class="mt-1 space-y-0.5">${o.lines.map(t => `<li class="flex items-center gap-1.5 text-[11px] font-semibold uppercase text-zinc-100"><i class="fa-solid fa-circle-check text-brand-yellow text-[11px] shrink-0"></i><span>${escHtml(t)}</span></li>`).join('')}</ul>`;
+      } else if (o.subtitle) {
+        detail = `<div class="text-[11px] font-semibold uppercase text-brand-yellow mt-0.5">${escHtml(o.subtitle)}</div>`;
+      }
+      return `<button type="button" onclick="${o.onclick}" class="w-full text-left rounded-2xl border-2 border-brand-yellow bg-black/65 p-3 flex items-center gap-3 shadow-[0_0_14px_rgba(251,191,36,.15)] hover:bg-black/80 active:scale-[.99] transition-all">
+          <div class="max-[359px]:hidden h-10 w-10 shrink-0 rounded-full border-2 border-brand-yellow/80 flex items-center justify-center text-brand-yellow"><i class="fa-solid ${o.icon} text-base"></i></div>
+          <div class="min-w-0 flex-1 break-words">
+            <div class="text-[14px] font-extrabold uppercase leading-tight tracking-tight">${o.title}</div>
+            ${detail}
+          </div>
+          <div class="shrink-0 self-stretch flex items-center border-l-2 border-brand-yellow pl-2.5">
+            <div class="rounded-lg border-2 border-brand-yellow px-2 py-1.5 text-brand-yellow font-extrabold text-base leading-none whitespace-nowrap">${escHtml(o.price)}</div>
+          </div>
+        </button>`;
+    }
+
+    // ---------- UI alumno: Comprar pack ----------
+    let packsBack = 'home';
+
+    // "Comprar pack": muestra las tarjetas de packs (requiere un plan activo al que sumar las clases).
+    function openPacks(back) {
+      const user = getCurrentStudent();
+      if (!user) return;
+      if (!getActiveUserPlan(user.username)) {
+        showToast('Necesitás un plan activo para comprar un pack. Inscribite primero.', 3500);
+        return;
+      }
+      packsBack = back || 'home';
+      goStudentScreen('packs');
+    }
+
+    function closePacks() { goStudentScreen(packsBack || 'home'); }
+
+    function renderPacks() {
+      const el = document.getElementById('packs-list');
+      const packs = loadPacks().filter(p => p.active);
+      if (!packs.length) { el.innerHTML = '<p class="text-xs text-zinc-300 text-center">No hay packs disponibles por el momento.</p>'; return; }
+      el.innerHTML = packs.map(pk => offerCardHtml({
+        title: planTitleHtml(pk.name),
+        icon: 'fa-ticket',
+        heading: true,
+        lines: packLines(pk),
+        price: formatPriceShort(pk.price),
+        onclick: `onPackCardTap('${escHtml(pk.id)}')`
+      })).join('');
+    }
+
+    // Elegir un pack: queda asignado ese pack y se pasa al proceso de pago.
+    function onPackCardTap(packId) {
+      openEnroll('PACK', packId, 'packs');
+    }
+
+    // ---------- UI Staff: Ajustes > Planes y packs ----------
+    function resetPackForm() {
+      document.getElementById('pack-edit-id').value = '';
+      document.getElementById('pack-name').value = '';
+      document.getElementById('pack-price').value = '';
+      document.getElementById('pack-classes').value = '';
+      document.getElementById('pack-validity').value = '30';
+      document.getElementById('pack-features').value = '';
+      document.getElementById('pack-active').checked = true;
+      document.getElementById('pack-form-title').innerHTML = '<i class="fa-solid fa-plus text-brand-yellow"></i> Nuevo Pack';
+      document.getElementById('pack-cancel-btn').classList.add('hidden');
+    }
+
+    function editPack(id) {
+      const p = loadPacks().find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('pack-edit-id').value = p.id;
+      document.getElementById('pack-name').value = p.name;
+      document.getElementById('pack-price').value = p.price;
+      document.getElementById('pack-classes').value = p.classes;
+      document.getElementById('pack-validity').value = p.validity_days;
+      document.getElementById('pack-features').value = (p.features || []).join('\n');
+      document.getElementById('pack-active').checked = p.active !== false;
+      document.getElementById('pack-form-title').innerHTML = '<i class="fa-solid fa-pen text-brand-yellow"></i> Editar Pack';
+      document.getElementById('pack-cancel-btn').classList.remove('hidden');
+    }
+
+    function handlePackSubmit(e) {
+      if (e) e.preventDefault();
+      const res = savePack({
+        name: document.getElementById('pack-name').value,
+        price: document.getElementById('pack-price').value,
+        classes: document.getElementById('pack-classes').value,
+        validity_days: document.getElementById('pack-validity').value,
+        features: document.getElementById('pack-features').value,
+        active: document.getElementById('pack-active').checked
+      }, document.getElementById('pack-edit-id').value);
+      if (!res.ok) { alert('⚠️ ' + res.error); return; }
+      resetPackForm();
+      renderPacksAdmin();
+    }
+
+    function handleTogglePack(id) {
+      togglePackActive(id);
+      renderPacksAdmin();
+    }
+
+    function renderPacksAdmin() {
+      const listEl = document.getElementById('packs-admin-list');
+      if (!listEl) return;
+      const packs = loadPacks();
+      listEl.innerHTML = packs.length ? '' : '<p class="text-[11px] text-zinc-500">Todavía no hay packs cargados.</p>';
+      packs.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'flex items-start justify-between gap-2 border border-brand-border/50 rounded-xl p-2.5 ' + (p.active ? '' : 'opacity-50');
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="font-bold text-white text-xs">${escHtml(p.name)} <span class="text-brand-yellow font-semibold">${formatPrice(p.price)}</span></div>
+            <div class="text-[9px] text-zinc-500 mt-0.5">${p.classes} clase${p.classes === 1 ? '' : 's'} · ${p.validity_days} días${p.active ? '' : ' · Inactivo'}</div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <button onclick="editPack('${p.id}')" class="text-brand-yellow hover:text-brand-gold"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button onclick="handleTogglePack('${p.id}')" class="${p.active ? 'text-amber-400 hover:text-amber-300' : 'text-emerald-400 hover:text-emerald-300'} font-bold text-[9px] uppercase tracking-wider">${p.active ? 'Desactivar' : 'Activar'}</button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+    }
+
+    // ----------------------------------------------------
+    // PAGOS, INSCRIPCIONES Y PACKS
     // El alumno envía una solicitud (cambioz_payment_requests) y el Staff la confirma o rechaza.
-    //   type:   'ENROLL' (alta de plan) | 'RENEW' (renovar el plan vigente) | 'CREDIT' (créditos extra)
+    //   type:   'ENROLL' (alta de plan) | 'RENEW' (renovar el plan vigente) | 'PACK' (pack de clases)
+    //           ('CREDIT' es el nombre anterior de PACK y se sigue leyendo en solicitudes viejas)
     //   method: 'CASH' | 'TRANSFER' (con comprobante de imagen guardado en base64)
     //   status: 'PENDING' -> 'CONFIRMED' | 'REJECTED'
-    // Los datos de transferencia y el precio por crédito se editan en Ajustes > Pagos (cambioz_gym_settings).
-    // NO se resuelve acá cómo se gasta el crédito entre musculación y grupales: eso queda para Presentismo.
+    // Los datos de transferencia se editan en Ajustes > Pagos (cambioz_gym_settings) y los packs en Ajustes > Planes y packs.
+    // NO se resuelve acá cómo se gastan las clases entre musculación y grupales: eso queda para Presentismo.
     // ----------------------------------------------------
     const DEFAULT_GYM_SETTINGS = {
       alias: 'CAMBIOZ.GYM.DEMO',
       cbu: '0000003100000000000001',
-      holder: 'Gimnasio CAMBIOZ (dato de ejemplo)',
-      credit_price: 4000
+      holder: 'Gimnasio CAMBIOZ (dato de ejemplo)'
     };
     const MAX_RECEIPT_CHARS = 1500000;
     const RECEIPT_REGEX = /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/;
@@ -5205,18 +5459,14 @@
       return Object.assign({}, DEFAULT_GYM_SETTINGS, saved);
     }
 
-    // Valida y guarda alias, CBU, titular y precio por crédito. Devuelve { ok, error, settings }.
+    // Valida y guarda alias, CBU y titular. Devuelve { ok, error, settings }.
     function saveGymSettings(input) {
       const alias = String(input.alias || '').trim();
       const cbu = String(input.cbu || '').replace(/\s/g, '');
       const holder = String(input.holder || '').trim();
       if (!alias) return { ok: false, error: 'Ingresá el alias.' };
       if (!/^\d{22}$/.test(cbu)) return { ok: false, error: 'El CBU debe tener 22 dígitos.' };
-      if (input.credit_price === '' || input.credit_price === null || input.credit_price === undefined ||
-          !isFinite(Number(input.credit_price)) || Number(input.credit_price) < 0) {
-        return { ok: false, error: 'Ingresá un precio por crédito válido (0 o mayor).' };
-      }
-      const settings = { alias, cbu, holder, credit_price: Number(input.credit_price) };
+      const settings = { alias, cbu, holder };
       localStorage.setItem('cambioz_gym_settings', JSON.stringify(settings));
       return { ok: true, settings };
     }
@@ -5226,8 +5476,10 @@
     }
     function savePayments(list) { localStorage.setItem('cambioz_payment_requests', JSON.stringify(list)); }
 
+    function isPackType(t) { return t === 'PACK' || t === 'CREDIT'; }
+
     function paymentTypeLabel(r) {
-      if (r.type === 'CREDIT') return 'Crédito x' + r.credits;
+      if (isPackType(r.type)) return r.pack_name ? 'Pack · ' + r.pack_name : 'Pack x' + r.credits + ' clases';
       return r.type === 'RENEW' ? 'Cuota (renovación)' : 'Inscripción';
     }
     function paymentMethodLabel(m) { return m === 'TRANSFER' ? 'Transferencia' : 'Efectivo'; }
@@ -5244,19 +5496,19 @@
     }
 
     // Crea una solicitud en estado PENDING. Devuelve { ok, error, request }.
-    // input: { username, type, plan_id, qty, method, receipt, receipt_name }
+    // input: { username, type, plan_id, pack_id, method, receipt, receipt_name }
     function createPaymentRequest(input) {
       const username = String(input.username || '');
       const student = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').find(s => s.username === username);
       if (!student) return { ok: false, error: 'Alumno no encontrado.' };
       const type = input.type;
-      if (['ENROLL', 'RENEW', 'CREDIT'].indexOf(type) === -1) return { ok: false, error: 'Tipo de solicitud inválido.' };
+      if (['ENROLL', 'RENEW', 'PACK'].indexOf(type) === -1) return { ok: false, error: 'Tipo de solicitud inválido.' };
       const method = input.method;
       if (method !== 'CASH' && method !== 'TRANSFER') return { ok: false, error: 'Elegí un método de pago.' };
 
       const plans = loadPlans();
       const active = getActiveUserPlan(username);
-      let plan = null, amount = 0, credits = 0;
+      let plan = null, amount = 0, credits = 0, pack = null;
 
       if (type === 'ENROLL') {
         if (active) return { ok: false, error: 'Ya tenés un plan activo.' };
@@ -5270,11 +5522,12 @@
         if (hasPendingPayment(username, 'RENEW')) return { ok: false, error: 'Ya informaste un pago pendiente de confirmación.' };
         amount = plan ? plan.price : 0;
       } else {
-        if (!active) return { ok: false, error: 'Necesitás un plan activo para comprar crédito.' };
-        credits = Number(input.qty);
-        if (!Number.isInteger(credits) || credits < 1 || credits > 50) return { ok: false, error: 'La cantidad de créditos debe ser un entero de 1 a 50.' };
+        if (!active) return { ok: false, error: 'Necesitás un plan activo para comprar un pack.' };
+        pack = loadPacks().find(p => p.id === input.pack_id && p.active);
+        if (!pack) return { ok: false, error: 'Elegí un pack disponible.' };
+        credits = pack.classes;
         plan = plans.find(p => p.id === active.plan_id) || null;
-        amount = credits * loadGymSettings().credit_price;
+        amount = pack.price;
       }
 
       let receipt = null, receiptName = '';
@@ -5291,7 +5544,10 @@
         name: student.name,
         type,
         plan_id: plan ? plan.id : null,
-        credits,
+        pack_id: pack ? pack.id : null,
+        pack_name: pack ? pack.name : '',
+        pack_validity_days: pack ? pack.validity_days : null,
+        credits, // clases que suma el pack
         amount,
         method,
         receipt,
@@ -5314,7 +5570,8 @@
     // Staff confirma una solicitud pendiente y aplica su efecto. Devuelve { ok, error, request }.
     //   ENROLL: crea la membresía (inicio hoy, vence hoy + vigencia del plan, créditos según su límite).
     //   RENEW:  extiende el vencimiento del plan vigente por la vigencia del plan.
-    //   CREDIT: suma créditos extra al plan vigente, sin tocar plan ni vencimiento.
+    //   PACK:   suma las clases del pack al plan vigente (credits_extra) y lo registra en su lista de packs,
+    //           sin tocar el plan ni su vencimiento.
     function confirmPaymentRequest(id) {
       const payments = loadPayments();
       const req = payments.find(r => r.id === id);
@@ -5330,7 +5587,7 @@
         userPlans.forEach(up => { if (up.username === req.username && up.status === 'ACTIVE') up.status = 'EXPIRED'; });
         userPlans.push({
           username: req.username, plan_id: plan.id, start_date: today, end_date: isoAddDays(today, dur),
-          credits_used: 0, credits_total: plan.includes_grupales ? plan.class_limit : null, credits_extra: 0, status: 'ACTIVE'
+          credits_used: 0, credits_total: planClassAllowance(plan), credits_extra: 0, status: 'ACTIVE'
         });
         req.period_start = today;
         req.period_end = isoAddDays(today, dur);
@@ -5351,8 +5608,14 @@
           startMembership(); // el plan venció mientras esperaba: arranca hoy
         }
       } else {
-        if (!mine) return { ok: false, error: 'El alumno ya no tiene un plan activo para sumar créditos. Rechazá la solicitud.' };
+        if (!mine) return { ok: false, error: 'El alumno ya no tiene un plan activo para sumar el pack. Rechazá la solicitud.' };
         mine.credits_extra = (mine.credits_extra || 0) + req.credits;
+        const validUntil = req.pack_validity_days ? isoAddDays(today, req.pack_validity_days) : null;
+        mine.packs = (mine.packs || []).concat([{
+          pack_id: req.pack_id || null, name: req.pack_name || '', classes: req.credits,
+          purchased_at: today, valid_until: validUntil
+        }]);
+        req.period_end = validUntil;
       }
 
       req.status = 'CONFIRMED';
@@ -5410,8 +5673,11 @@
       try { return s ? JSON.parse(s) : null; } catch (e) { return null; }
     }
 
-    // Abre el formulario. type: 'ENROLL' | 'RENEW' | 'CREDIT'. back: pantalla a la que vuelve ('home'|'precios'|'pagos').
-    function openEnroll(type, planId, back) {
+    // Abre el formulario. type: 'ENROLL' | 'RENEW' | 'PACK'. itemId: plan (ENROLL) o pack (PACK) elegido.
+    // back: pantalla a la que vuelve ('home'|'precios'|'packs'|'pagos').
+    function openEnroll(type, itemId, back) {
+      const planId = type === 'ENROLL' ? itemId : null;
+      const packId = type === 'PACK' ? itemId : null;
       const user = getCurrentStudent();
       if (!user) return;
       const active = getActiveUserPlan(user.username);
@@ -5435,9 +5701,12 @@
         goStudentScreen('pagos');
         return;
       }
-      if (type === 'CREDIT' && !active) { showToast('Necesitás un plan activo para comprar crédito.', 3500); return; }
+      if (type === 'PACK') {
+        if (!active) { showToast('Necesitás un plan activo para comprar un pack.', 3500); return; }
+        if (!loadPacks().some(p => p.id === packId && p.active)) { showToast('Ese pack ya no está disponible.', 3000); return; }
+      }
 
-      enrollCtx = { type, planId: planId || null, back: back || 'home' };
+      enrollCtx = { type, planId: planId || null, packId: packId || null, back: back || 'home' };
       enrollReceipt = null;
       renderEnrollForm();
       goStudentScreen('enroll');
@@ -5452,28 +5721,26 @@
       const active = user ? getActiveUserPlan(user.username) : null;
       const activePlan = active ? loadPlans().find(p => p.id === active.plan_id) : null;
 
-      $('enroll-title').innerText = t === 'ENROLL' ? 'Inscripción' : (t === 'RENEW' ? 'Informar pago' : 'Comprar crédito');
+      $('enroll-title').innerText = t === 'ENROLL' ? 'Inscripción' : (t === 'RENEW' ? 'Informar pago' : 'Comprar pack');
       $('enroll-sub').innerText = t === 'ENROLL' ? 'Elegí tu plan y cómo vas a pagar.'
-        : (t === 'RENEW' ? 'Renová tu plan vigente informando tu pago.' : 'Sumá créditos extra a tu plan vigente.');
+        : (t === 'RENEW' ? 'Renová tu plan vigente informando tu pago.' : 'Elegiste tu pack. Ahora elegí cómo vas a pagar.');
 
-      // Plan
-      const planBlock = $('enroll-plan-block');
+      // Plan (ENROLL: lista) o ítem fijo (RENEW: plan vigente; PACK: pack elegido)
       const sel = $('enroll-plan');
       const fixed = $('enroll-plan-fixed');
-      planBlock.classList.toggle('hidden', t === 'CREDIT');
+      $('enroll-plan-label').innerText = t === 'PACK' ? 'Pack elegido' : 'Plan';
       sel.classList.toggle('hidden', t !== 'ENROLL');
-      fixed.classList.toggle('hidden', t !== 'RENEW');
+      fixed.classList.toggle('hidden', t === 'ENROLL');
       if (t === 'ENROLL') {
         const plans = loadPlans().filter(p => p.active);
         sel.innerHTML = plans.map(p => `<option value="${escHtml(p.id)}">${escHtml(p.name)} — ${formatPrice(p.price)}</option>`).join('');
         if (enrollCtx.planId && plans.some(p => p.id === enrollCtx.planId)) sel.value = enrollCtx.planId;
       } else if (t === 'RENEW') {
         fixed.innerText = activePlan ? `${activePlan.name} — ${formatPrice(activePlan.price)}` : 'Plan vigente';
+      } else {
+        const pk = loadPacks().find(p => p.id === enrollCtx.packId);
+        fixed.innerText = pk ? `${pk.name} — ${pk.classes} clase${pk.classes === 1 ? '' : 's'} — ${formatPrice(pk.price)}` : 'Pack';
       }
-
-      // Créditos
-      $('enroll-credit-block').classList.toggle('hidden', t !== 'CREDIT');
-      $('enroll-qty').value = '1';
 
       // Método
       document.querySelectorAll('input[name="enroll-method"]').forEach(r => { r.checked = false; });
@@ -5503,9 +5770,9 @@
     function computeEnrollAmount() {
       const t = enrollCtx.type;
       const user = getCurrentStudent();
-      if (t === 'CREDIT') {
-        const q = Number(document.getElementById('enroll-qty').value);
-        return (Number.isInteger(q) && q >= 1 ? q : 0) * loadGymSettings().credit_price;
+      if (t === 'PACK') {
+        const pk = loadPacks().find(p => p.id === enrollCtx.packId);
+        return pk ? pk.price : 0;
       }
       let plan = null;
       if (t === 'ENROLL') plan = loadPlans().find(p => p.id === document.getElementById('enroll-plan').value);
@@ -5518,8 +5785,9 @@
       const t = enrollCtx.type;
       $('enroll-total').innerText = formatPrice(computeEnrollAmount());
       let info = '';
-      if (t === 'CREDIT') {
-        info = `${formatPrice(loadGymSettings().credit_price)} por crédito. No cambia tu plan ni tu vencimiento.`;
+      if (t === 'PACK') {
+        const pk = loadPacks().find(p => p.id === enrollCtx.packId);
+        info = pk ? `Suma ${pk.classes} clase${pk.classes === 1 ? '' : 's'} a tu plan, válidas ${pk.validity_days} días. No cambia tu plan ni tu vencimiento.` : '';
       } else if (t === 'ENROLL') {
         const p = loadPlans().find(x => x.id === $('enroll-plan').value);
         info = p ? `Vigencia: ${getPlanDuration(p)} días desde la confirmación.` : '';
@@ -5530,14 +5798,6 @@
         if (a && p) info = `Tu vencimiento pasa del ${formatDateAR(a.end_date)} al ${formatDateAR(isoAddDays(a.end_date, getPlanDuration(p)))}.`;
       }
       $('enroll-info').innerText = info;
-    }
-
-    function stepEnrollQty(delta) {
-      const el = document.getElementById('enroll-qty');
-      let v = Number(el.value);
-      if (!Number.isInteger(v)) v = 1;
-      el.value = Math.min(50, Math.max(1, v + delta));
-      updateEnrollSummary();
     }
 
     function updateEnrollMethod() {
@@ -5581,7 +5841,7 @@
         username: user.username,
         type: enrollCtx.type,
         plan_id: enrollCtx.type === 'ENROLL' ? document.getElementById('enroll-plan').value : null,
-        qty: document.getElementById('enroll-qty').value,
+        pack_id: enrollCtx.type === 'PACK' ? enrollCtx.packId : null,
         method,
         receipt: enrollReceipt ? enrollReceipt.data : null,
         receipt_name: enrollReceipt ? enrollReceipt.name : ''
@@ -5604,6 +5864,13 @@
       return `<span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border ${cls}">${txt}</span>`;
     }
 
+    // Línea "Clases del plan": para planes ilimitados muestra el promedio mensual que se cuenta (30).
+    function planClassesLine(plan, active) {
+      if (!plan || !active || !active.credits_total) return '';
+      const unlimited = plan.class_limit === null || plan.class_limit === undefined;
+      return `<div class="text-[11px] text-zinc-300">Clases del plan: <strong class="text-white">${active.credits_total}</strong>${unlimited ? ' (promedio mensual)' : ''}</div>`;
+    }
+
     function renderPagos() {
       const $ = id => document.getElementById(id);
       const user = getCurrentStudent();
@@ -5616,8 +5883,9 @@
         ? `<span class="text-[9px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Plan vigente</span>
            <div class="flex items-start justify-between gap-3 mt-0.5">
              <div class="min-w-0"><div class="text-lg leading-tight font-extrabold uppercase text-white break-words">${plan ? escHtml(plan.name) : 'Plan'}</div>
-             <div class="text-[11px] text-zinc-300 mt-0.5">Vigente hasta ${formatDateAR(active.end_date)}</div></div>
-             <div class="text-right shrink-0"><div class="text-[10px] text-zinc-400">Créditos extra</div><div class="text-lg font-extrabold text-brand-yellow leading-tight">${credits}</div></div>
+             <div class="text-[11px] text-zinc-300 mt-0.5">Vigente hasta ${formatDateAR(active.end_date)}</div>
+             ${planClassesLine(plan, active)}</div>
+             <div class="text-right shrink-0"><div class="text-[10px] text-zinc-400">Clases de packs</div><div class="text-lg font-extrabold text-brand-yellow leading-tight">${credits}</div></div>
            </div>`
         : `<span class="text-[9px] text-zinc-300 uppercase tracking-[0.18em] font-semibold block">Plan</span>
            <div class="text-lg font-extrabold uppercase text-white mt-0.5">Sin plan activo</div>
@@ -5625,16 +5893,16 @@
 
       $('pagos-actions').innerHTML = active
         ? `<button onclick="openEnroll('RENEW', null, 'pagos')" class="btn-glossy rounded-xl py-3 text-xs font-bold"><i class="fa-solid fa-receipt mr-1.5"></i>Informar pago</button>
-           <button onclick="openEnroll('CREDIT', null, 'pagos')" class="btn-glossy rounded-xl py-3 text-xs font-bold"><i class="fa-solid fa-cart-plus mr-1.5"></i>Comprar crédito</button>`
+           <button onclick="openPacks('pagos')" class="btn-glossy rounded-xl py-3 text-xs font-bold"><i class="fa-solid fa-ticket mr-1.5"></i>Comprar pack</button>`
         : `<button onclick="openEnroll('ENROLL', null, 'pagos')" class="btn-glossy col-span-2 rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Inscribirme</button>`;
 
       const list = paymentsForUser(user.username);
       const plans = loadPlans();
       $('pagos-history').innerHTML = list.length ? list.map(r => {
         const pl = plans.find(p => p.id === r.plan_id);
-        const label = r.type === 'CREDIT' ? paymentTypeLabel(r) : `${paymentTypeLabel(r)}${pl ? ' · ' + escHtml(pl.name) : ''}`;
+        const label = isPackType(r.type) ? escHtml(paymentTypeLabel(r)) : `${escHtml(paymentTypeLabel(r))}${pl ? ' · ' + escHtml(pl.name) : ''}`;
         const date = new Date(r.created_at).toLocaleDateString('es-AR');
-        const extra = r.status === 'CONFIRMED' && r.period_end ? ` · cubre hasta ${formatDateAR(r.period_end)}`
+        const extra = r.status === 'CONFIRMED' && r.period_end ? (isPackType(r.type) ? ` · válido hasta ${formatDateAR(r.period_end)}` : ` · cubre hasta ${formatDateAR(r.period_end)}`)
           : (r.status === 'REJECTED' && r.note ? ` · ${escHtml(r.note)}` : '');
         return `<div class="rounded-xl border border-brand-border bg-brand-surface p-3 flex items-start justify-between gap-2">
           <div class="min-w-0">
@@ -5652,7 +5920,6 @@
       document.getElementById('gym-alias').value = s.alias;
       document.getElementById('gym-cbu').value = s.cbu;
       document.getElementById('gym-holder').value = s.holder;
-      document.getElementById('gym-credit-price').value = s.credit_price;
       document.getElementById('gym-settings-msg').innerText = '';
     }
 
@@ -5661,8 +5928,7 @@
       const res = saveGymSettings({
         alias: document.getElementById('gym-alias').value,
         cbu: document.getElementById('gym-cbu').value,
-        holder: document.getElementById('gym-holder').value,
-        credit_price: document.getElementById('gym-credit-price').value
+        holder: document.getElementById('gym-holder').value
       });
       const msg = document.getElementById('gym-settings-msg');
       msg.className = 'text-[10px] ' + (res.ok ? 'text-emerald-400' : 'text-red-300');
@@ -5684,7 +5950,7 @@
           <div class="flex justify-between items-start gap-2">
             <div class="min-w-0">
               <div class="font-bold text-white text-xs">${escHtml(r.name)} <span class="text-zinc-500 font-normal">· ${escHtml(r.username)}</span></div>
-              <div class="text-[10px] text-zinc-300 mt-0.5">${escHtml(paymentTypeLabel(r))}${pl ? ' · ' + escHtml(pl.name) : ''}</div>
+              <div class="text-[10px] text-zinc-300 mt-0.5">${escHtml(paymentTypeLabel(r))}${pl && !isPackType(r.type) ? ' · ' + escHtml(pl.name) : ''}</div>
               <div class="text-[9px] text-zinc-500">${when} · ${paymentMethodLabel(r.method)}</div>
             </div>
             <div class="text-brand-yellow font-extrabold text-sm whitespace-nowrap">${formatPrice(r.amount)}</div>
@@ -5703,7 +5969,7 @@
         const pl = plans.find(p => p.id === r.plan_id);
         const when = r.resolved_at ? new Date(r.resolved_at).toLocaleDateString('es-AR') : '';
         return `<div class="flex justify-between items-start gap-2 border-b border-brand-border/40 pb-1.5">
-          <div class="min-w-0"><div class="text-[11px] text-white"><strong>${escHtml(r.name)}</strong> · ${escHtml(paymentTypeLabel(r))}${pl ? ' · ' + escHtml(pl.name) : ''}</div>
+          <div class="min-w-0"><div class="text-[11px] text-white"><strong>${escHtml(r.name)}</strong> · ${escHtml(paymentTypeLabel(r))}${pl && !isPackType(r.type) ? ' · ' + escHtml(pl.name) : ''}</div>
           <div class="text-[9px] text-zinc-500">${when} · ${paymentMethodLabel(r.method)} · ${formatPrice(r.amount)}${r.note ? ' · ' + escHtml(r.note) : ''}</div></div>
           <div class="shrink-0">${paymentStatusChip(r.status)}</div></div>`;
       }).join('') : '<p class="text-[11px] text-zinc-500">Todavía no hay solicitudes resueltas.</p>';

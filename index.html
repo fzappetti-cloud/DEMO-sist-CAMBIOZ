@@ -80,6 +80,13 @@
       box-shadow: 0 0 15px rgba(251, 191, 36, 0.12);
     }
 
+    /* Impresión del QR de zona: solo se imprime el cartel */
+    @media print {
+      body > *:not(#modal-zone-qr) { display: none !important; }
+      #modal-zone-qr { position: static !important; display: block !important; background: #fff !important; padding: 0 !important; }
+      #modal-zone-qr .no-print { display: none !important; }
+    }
+
     /* Celulares y tablets: los campos a 16px evitan el zoom automático de iOS al enfocar */
     @media (max-width: 1023px) {
       input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; }
@@ -712,7 +719,7 @@
           <!-- Grilla de accesos: reparte el alto disponible -->
           <div class="home-grid-wrap flex-1 min-h-[260px] mb-3">
             <div class="h-full grid grid-cols-2 auto-rows-fr gap-2.5">
-            <button onclick="goStudentScreen('routine')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-dumbbell text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mi rutina</span></button>
+            <button onclick="openRoutineEntry()" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-dumbbell text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mi rutina</span></button>
             <button onclick="goStudentScreen('pagos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-wallet text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis pagos</span></button>
             <button onclick="goStudentScreen('precios')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-tag text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Precios</span></button>
             <button onclick="showSoon('Nueva Reserva')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
@@ -752,6 +759,34 @@
             <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
             <img src="logo.webp" alt="CAMBIOZ GYM" class="h-14 w-14 object-contain" />
             <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
+          </div>
+        </div>
+
+        <!-- SCREEN PRESENTISMO: panel intermedio de "Mi rutina" (valida la asistencia con el QR de la zona) -->
+        <div id="student-checkin-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
+          <button onclick="stopScanner(); goStudentScreen('home')" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <h3 class="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">Presentismo</h3>
+          <p class="text-[11px] text-zinc-400 mb-3">Validá tu asistencia para ver tu rutina.</p>
+
+          <div id="checkin-body"></div>
+
+          <div id="checkin-scan-card" class="hidden rounded-2xl border border-brand-yellow/40 p-3.5 mb-3 space-y-2.5">
+            <h4 class="text-xs font-bold text-brand-yellow uppercase tracking-wider"><i class="fa-solid fa-qrcode mr-1.5"></i>Validá tu asistencia</h4>
+            <p class="text-[11px] text-zinc-300">Escaneá el QR pegado en la zona donde vas a entrenar.</p>
+            <button onclick="startScanner()" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-camera mr-1.5"></i>Escanear QR de la zona</button>
+            <div id="scanner-box" class="hidden space-y-2">
+              <video id="checkin-video" playsinline muted class="w-full rounded-xl bg-black max-h-56 object-cover"></video>
+              <p id="scanner-status" class="text-[11px] text-zinc-300"></p>
+              <button onclick="stopScanner()" class="text-[11px] text-zinc-400 hover:text-white font-semibold py-1">Cerrar cámara</button>
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">¿No podés escanear? Código de la zona</label>
+              <div class="flex gap-2">
+                <input type="text" id="checkin-code" autocapitalize="characters" placeholder="Ej: ZONA-FUNC-9Q2M" class="flex-1 min-w-0 bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+                <button onclick="submitCheckinCode()" class="shrink-0 px-4 rounded-xl bg-brand-card border border-brand-border text-brand-yellow text-xs font-bold">Validar</button>
+              </div>
+            </div>
+            <button id="checkin-help-btn" onclick="askAttendanceHelp()" class="w-full text-[11px] font-semibold text-zinc-300 hover:text-white border border-dashed border-brand-border rounded-xl py-2.5"><i class="fa-solid fa-hand mr-1.5"></i>No tengo celular o no puedo escanear: pedir validación a recepción</button>
           </div>
         </div>
 
@@ -975,6 +1010,23 @@
 
   </main>
 
+  <!-- MODAL: QR DE LA ZONA (para imprimir y pegar donde se entrena) -->
+  <div id="modal-zone-qr" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4">
+    <div class="bg-white text-zinc-900 rounded-3xl w-full max-w-sm p-6 text-center max-h-[95vh] overflow-y-auto">
+      <div class="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-bold">CAMBIOZ GYM · Zona</div>
+      <h3 id="zone-qr-title" class="text-2xl font-black uppercase mt-1 leading-tight"></h3>
+      <p class="text-[11px] text-zinc-600 mt-1">Escaneá este QR para validar tu asistencia</p>
+      <div id="zone-qr-canvas" class="my-4 flex justify-center"></div>
+      <div class="text-[11px] text-zinc-500">Código: <strong id="zone-qr-code" class="text-zinc-900"></strong></div>
+      <div id="zone-qr-url" class="no-print text-[8px] text-zinc-400 break-all mt-1"></div>
+      <div class="no-print flex flex-wrap gap-2 justify-center mt-4">
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-zinc-900 text-white text-xs font-bold"><i class="fa-solid fa-print mr-1.5"></i>Imprimir</button>
+        <button onclick="handleRegenerateZoneQr()" class="px-4 py-2 rounded-xl border border-zinc-300 text-zinc-700 text-xs font-bold">Código nuevo</button>
+        <button onclick="closeZoneQr()" class="px-4 py-2 rounded-xl border border-zinc-300 text-zinc-700 text-xs font-bold">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: COMPROBANTE DE TRANSFERENCIA (vista ampliada) -->
   <div id="modal-receipt" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4" onclick="closeReceipt()">
     <img id="receipt-img" alt="Comprobante" class="max-h-full max-w-full rounded-lg shadow-2xl" />
@@ -1014,6 +1066,46 @@
           <i class="fa-solid fa-money-bill-transfer mr-1"></i> Pagos
           <span id="pay-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
         </button>
+        <button id="tab-btn-attendance" onclick="switchConfigTab('attendance')" class="flex-grow py-2.5 text-center text-zinc-400 hover:text-white">
+          <i class="fa-solid fa-user-check mr-1"></i> Presentismo
+          <span id="att-badge-tab" class="hidden ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold inline-flex items-center justify-center">0</span>
+        </button>
+      </div>
+
+      <!-- Pestaña: Presentismo (reservas de hoy, validación por recepción, QR de zonas) -->
+      <div id="tab-content-attendance" class="space-y-4 hidden max-h-[500px] overflow-y-auto pr-1">
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2.5">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-calendar-day text-brand-yellow"></i> Reservas de hoy</h4>
+          <p class="text-[10px] text-zinc-500">Los alumnos sin celular o que pidieron ayuda aparecen primero. "Validar presente" certifica su asistencia desde recepción.</p>
+          <div id="att-today-list" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2.5">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-user-pen text-brand-yellow"></i> Registrar asistencia manual</h4>
+          <p class="text-[10px] text-zinc-500">Para un alumno sin celular que no reservó: se crea la reserva de hoy y queda validada. Requiere plan activo.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <select id="att-manual-student" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
+            <select id="att-manual-activity" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow"></select>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="handleAdminManual()" class="bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs">Registrar presente</button>
+            <span id="att-manual-msg" class="text-[10px]"></span>
+          </div>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2.5">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-qrcode text-brand-yellow"></i> Actividades y QR de zona</h4>
+          <p class="text-[10px] text-zinc-500">Imprimí el QR de cada zona y pegalo donde se entrena. El alumno lo escanea para certificar su presencia.</p>
+          <div id="att-activities-list" class="space-y-2"></div>
+          <form onsubmit="handleAddActivity(event)" class="flex flex-wrap gap-2 pt-1">
+            <input type="text" id="act-name" maxlength="40" required placeholder="Nueva actividad (ej: Spinning)" class="flex-1 min-w-[10rem] bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+            <select id="act-kind" class="bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow">
+              <option value="GRUPAL">Clase grupal</option>
+              <option value="MUSCULACION">Musculación</option>
+            </select>
+            <button type="submit" class="bg-brand-card hover:bg-zinc-800 border border-brand-border text-brand-yellow font-bold px-4 py-2 rounded-xl text-xs">Agregar</button>
+          </form>
+        </div>
       </div>
 
       <!-- Pestaña: Pagos (solicitudes, datos de transferencia, historial) -->
@@ -1831,12 +1923,19 @@
       initTurnosDB();
       initPlansDB();
       initPacksDB();
+      initActivitiesDB();
       loadCatalogAndTemplates();
 
       // 2. Detectar si hay rutina codificada en URL (?r=...)
       const urlParams = new URLSearchParams(window.location.search);
       const encodedRoutine = urlParams.get('r');
       const viewParam = urlParams.get('view');
+      // QR de una zona: se guarda el código y se valida la asistencia apenas el alumno inicie sesión
+      const checkinParam = urlParams.get('checkin');
+      if (checkinParam) {
+        sessionStorage.setItem('cambioz_pending_checkin', checkinParam);
+        if (window.history && window.history.replaceState) window.history.replaceState(null, '', window.location.pathname + '?view=alumno');
+      }
 
       if (encodedRoutine) {
         const hasSession = localStorage.getItem('cambioz_student_user') || sessionStorage.getItem('cambioz_student_user');
@@ -1865,7 +1964,7 @@
       updateResetBadges();
 
       // 4. Decidir vista a mostrar
-      const isStudentMode = (viewParam === 'alumno' || !!encodedRoutine);
+      const isStudentMode = (viewParam === 'alumno' || !!encodedRoutine || !!checkinParam);
       if (isStudentMode) {
         const switcher = document.getElementById('view-switcher-container');
         if (switcher) switcher.classList.add('hidden');
@@ -2694,6 +2793,10 @@
       const contentPay = document.getElementById('tab-content-payments');
       if (tabPay) tabPay.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
       if (contentPay) contentPay.classList.add('hidden');
+      const tabAtt = document.getElementById('tab-btn-attendance');
+      const contentAtt = document.getElementById('tab-content-attendance');
+      if (tabAtt) tabAtt.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
+      if (contentAtt) contentAtt.classList.add('hidden');
 
       // Restablecer estilos de botones de pestañas
       if (tabSettings) tabSettings.className = "flex-grow py-2.5 text-center text-zinc-400 hover:text-white";
@@ -2735,6 +2838,10 @@
         if (contentPay) contentPay.classList.remove('hidden');
         fillGymSettingsForm();
         renderPaymentsAdmin();
+      } else if (tabName === 'attendance') {
+        if (tabAtt) tabAtt.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
+        if (contentAtt) contentAtt.classList.remove('hidden');
+        renderAttendanceAdmin();
       }
     }
 
@@ -3993,6 +4100,7 @@
         document.getElementById('student-enroll-screen').classList.add('hidden');
         document.getElementById('student-pagos-screen').classList.add('hidden');
         document.getElementById('student-packs-screen').classList.add('hidden');
+        document.getElementById('student-checkin-screen').classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -4010,20 +4118,36 @@
       studentAuthMode = 'login';
       const user = JSON.parse(userStr);
 
-      // Acceso a la rutina: requiere plan activo que incluya musculación
+      // Un QR de zona abierto desde la cámara del celular: se valida la asistencia al iniciar sesión
+      const pendingCheckin = sessionStorage.getItem('cambioz_pending_checkin');
+      if (pendingCheckin) {
+        sessionStorage.removeItem('cambioz_pending_checkin');
+        const res = checkinWithToken(user.username, pendingCheckin);
+        checkinMessage = res.ok
+          ? { type: 'ok', text: res.status === 'ALREADY' ? `Ya estabas registrado en ${res.activity.name}.` : `¡Presente en ${res.activity.name}! Tu asistencia quedó validada.` }
+          : { type: 'error', text: res.error };
+        studentScreen = 'checkin';
+      }
+
+      // Acceso a la rutina: requiere plan activo que incluya musculación y la asistencia de hoy validada
       if (studentScreen === 'routine') {
         const access = getRoutineAccess(user.username);
         if (!access.ok) {
           studentScreen = 'noaccess';
           renderNoAccess(access);
+        } else if (!hasAttendanceToday(user.username)) {
+          checkinMessage = null;
+          studentScreen = 'checkin';
         }
       }
+      if (studentScreen !== 'checkin') stopScanner();
 
       // Tablero, Precios y aviso sin acceso (nuevas pantallas): la rutina no se toca
       const enrollScreen = document.getElementById('student-enroll-screen');
       const pagosScreen = document.getElementById('student-pagos-screen');
       const packsScreen = document.getElementById('student-packs-screen');
-      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs'].indexOf(studentScreen) !== -1) {
+      const checkinScreen = document.getElementById('student-checkin-screen');
+      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin'].indexOf(studentScreen) !== -1) {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
@@ -4032,6 +4156,8 @@
         enrollScreen.classList.toggle('hidden', studentScreen !== 'enroll');
         pagosScreen.classList.toggle('hidden', studentScreen !== 'pagos');
         packsScreen.classList.toggle('hidden', studentScreen !== 'packs');
+        checkinScreen.classList.toggle('hidden', studentScreen !== 'checkin');
+        if (studentScreen === 'checkin') renderCheckin();
         if (studentScreen === 'home') renderStudentHome(user);
         else if (studentScreen === 'precios') renderStudentPrecios();
         else if (studentScreen === 'pagos') renderPagos();
@@ -4045,6 +4171,7 @@
       enrollScreen.classList.add('hidden');
       pagosScreen.classList.add('hidden');
       packsScreen.classList.add('hidden');
+      checkinScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -5234,6 +5361,509 @@
     }
 
     // ----------------------------------------------------
+    // PRESENTISMO: actividades con QR de zona, reservas del día y asistencia
+    // "Mi rutina" pasa primero por un panel de validación. El alumno reserva su actividad de hoy y certifica
+    // que está presente escaneando el QR pegado en la zona donde entrena; si no tiene celular (o no puede
+    // escanear) administración lo valida desde Ajustes > Presentismo.
+    //   cambioz_activities_db    -> [{ id, name, kind: 'MUSCULACION'|'GRUPAL', qr_token, active }]
+    //   cambioz_reservations_db  -> [{ id, username, name, date, activity_id, activity_name, kind,
+    //                                  status: 'RESERVED'|'ATTENDED', attended_at, method: 'QR'|'ADMIN',
+    //                                  created_by: 'STUDENT'|'STAFF', help_requested }]
+    // Todavía NO descuenta clases ni controla cupos u horarios: solo registra la asistencia.
+    // ----------------------------------------------------
+    function loadActivities() {
+      try { return JSON.parse(localStorage.getItem('cambioz_activities_db') || '[]'); } catch (e) { return []; }
+    }
+    function saveActivities(list) { localStorage.setItem('cambioz_activities_db', JSON.stringify(list)); }
+
+    function initActivitiesDB() {
+      if (localStorage.getItem('cambioz_activities_db') !== null) return;
+      // Códigos fijos de ejemplo: los QR impresos de la demo siguen siendo válidos.
+      saveActivities([
+        { id: 'a-seed-1', name: 'Sala de musculación', kind: 'MUSCULACION', qr_token: 'ZONA-SALA-4F7K', active: true },
+        { id: 'a-seed-2', name: 'Funcional', kind: 'GRUPAL', qr_token: 'ZONA-FUNC-9Q2M', active: true },
+        { id: 'a-seed-3', name: 'Hyrox', kind: 'GRUPAL', qr_token: 'ZONA-HYRX-3T8D', active: true },
+        { id: 'a-seed-4', name: 'Mini Tramp', kind: 'GRUPAL', qr_token: 'ZONA-TRAM-6B1X', active: true }
+      ]);
+    }
+
+    function newZoneToken() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let s = '';
+      for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+      return 'ZONA-' + s.slice(0, 4) + '-' + s.slice(4);
+    }
+
+    function activityKindLabel(k) { return k === 'MUSCULACION' ? 'Musculación' : 'Clase grupal'; }
+
+    // Alta o edición de una actividad (zona). Devuelve { ok, error, activity }.
+    function saveActivity(input, editId) {
+      const name = String(input.name || '').trim();
+      if (name.length < 3) return { ok: false, error: 'El nombre debe tener al menos 3 caracteres.' };
+      const kind = input.kind === 'MUSCULACION' ? 'MUSCULACION' : (input.kind === 'GRUPAL' ? 'GRUPAL' : null);
+      if (!kind) return { ok: false, error: 'Elegí el tipo de actividad.' };
+      const list = loadActivities();
+      if (list.some(a => a.id !== editId && a.name.toLowerCase() === name.toLowerCase())) {
+        return { ok: false, error: 'Ya existe una actividad con ese nombre.' };
+      }
+      let act;
+      if (editId) {
+        act = list.find(a => a.id === editId);
+        if (!act) return { ok: false, error: 'La actividad ya no existe.' };
+        act.name = name; act.kind = kind;
+      } else {
+        act = { id: 'a-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), name, kind, qr_token: newZoneToken(), active: true };
+        list.push(act);
+      }
+      saveActivities(list);
+      return { ok: true, activity: act };
+    }
+
+    function toggleActivityActive(id) {
+      const list = loadActivities();
+      const a = list.find(x => x.id === id);
+      if (!a) return false;
+      a.active = !a.active;
+      saveActivities(list);
+      return a.active;
+    }
+
+    // Genera un código nuevo: el QR impreso anterior deja de servir.
+    function regenerateActivityToken(id) {
+      const list = loadActivities();
+      const a = list.find(x => x.id === id);
+      if (!a) return null;
+      a.qr_token = newZoneToken();
+      saveActivities(list);
+      return a.qr_token;
+    }
+
+    // Enlace que lleva el QR de la zona: al abrirlo con la cámara del celular, la demo valida la asistencia.
+    function checkinUrl(token) {
+      const base = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null')
+        ? window.location.origin + window.location.pathname : 'https://demo.cambioz.local/';
+      return base + '?view=alumno&checkin=' + encodeURIComponent(token);
+    }
+
+    // Acepta el enlace completo del QR o el código suelto.
+    function parseCheckinToken(text) {
+      const t = String(text || '').trim();
+      if (!t) return '';
+      const m = t.match(/[?&]checkin=([^&#\s]+)/i);
+      return (m ? decodeURIComponent(m[1]) : t).trim().toUpperCase();
+    }
+
+    function activityAllowedForPlan(act, plan) {
+      if (!act || !plan) return false;
+      return act.kind === 'MUSCULACION' ? !!plan.includes_musculacion : !!plan.includes_grupales;
+    }
+
+    function loadReservations() {
+      try { return JSON.parse(localStorage.getItem('cambioz_reservations_db') || '[]'); } catch (e) { return []; }
+    }
+    function saveReservations(list) { localStorage.setItem('cambioz_reservations_db', JSON.stringify(list)); }
+
+    function reservationsToday(username) {
+      const today = isoToday();
+      return loadReservations().filter(r => r.username === username && r.date === today);
+    }
+
+    function hasAttendanceToday(username) {
+      return reservationsToday(username).some(r => r.status === 'ATTENDED');
+    }
+
+    // Actividades activas que el plan vigente del alumno permite reservar y que todavía no reservó hoy.
+    function reservableActivitiesFor(username) {
+      const up = getActiveUserPlan(username);
+      const plan = up ? loadPlans().find(p => p.id === up.plan_id) : null;
+      if (!plan) return [];
+      const taken = reservationsToday(username).map(r => r.activity_id);
+      return loadActivities().filter(a => a.active && activityAllowedForPlan(a, plan) && taken.indexOf(a.id) === -1);
+    }
+
+    // Reserva una actividad para hoy. Devuelve { ok, error, reservation }.
+    function createReservation(username, activityId, createdBy) {
+      const student = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').find(s => s.username === username);
+      if (!student) return { ok: false, error: 'Alumno no encontrado.' };
+      const up = getActiveUserPlan(username);
+      if (!up) return { ok: false, error: 'El alumno no tiene un plan activo.' };
+      const plan = loadPlans().find(p => p.id === up.plan_id);
+      const act = loadActivities().find(a => a.id === activityId);
+      if (!act || !act.active) return { ok: false, error: 'Elegí una actividad disponible.' };
+      if (!activityAllowedForPlan(act, plan)) {
+        return { ok: false, error: `Tu plan no incluye ${act.kind === 'MUSCULACION' ? 'musculación' : 'clases grupales'}.` };
+      }
+      if (reservationsToday(username).some(r => r.activity_id === act.id)) {
+        return { ok: false, error: 'Ya reservaste esa actividad para hoy.' };
+      }
+      const reservation = {
+        id: 'res-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        username, name: student.name, date: isoToday(),
+        activity_id: act.id, activity_name: act.name, kind: act.kind,
+        status: 'RESERVED', attended_at: null, method: null,
+        created_by: createdBy === 'STAFF' ? 'STAFF' : 'STUDENT', help_requested: false
+      };
+      const list = loadReservations();
+      list.push(reservation);
+      saveReservations(list);
+      return { ok: true, reservation };
+    }
+
+    function markAttended(list, reservation, method) {
+      reservation.status = 'ATTENDED';
+      reservation.attended_at = new Date().toISOString();
+      reservation.method = method;
+      reservation.help_requested = false;
+      saveReservations(list);
+    }
+
+    // El alumno certifica su presencia con el QR (o el código) de la zona.
+    // Devuelve { ok, status: 'ATTENDED'|'ALREADY', error, reservation, activity }.
+    function checkinWithToken(username, tokenText) {
+      const token = parseCheckinToken(tokenText);
+      if (!token) return { ok: false, error: 'Escaneá el QR de la zona o ingresá su código.' };
+      const act = loadActivities().find(a => String(a.qr_token).toUpperCase() === token);
+      if (!act) return { ok: false, error: 'Ese QR no es válido o fue reemplazado. Pedí ayuda en recepción.' };
+      if (!act.active) return { ok: false, error: `La actividad ${act.name} no está disponible hoy.` };
+      const list = loadReservations();
+      const today = isoToday();
+      const mine = list.filter(r => r.username === username && r.date === today);
+      const match = mine.find(r => r.activity_id === act.id);
+      if (!match) {
+        if (!mine.length) return { ok: false, error: `No tenés una reserva hoy para ${act.name}. Reservala primero.`, activity: act };
+        const others = mine.map(r => r.activity_name).join(', ');
+        return { ok: false, error: `Este QR es de ${act.name}, pero tu reserva de hoy es ${others}.`, activity: act };
+      }
+      if (match.status === 'ATTENDED') return { ok: true, status: 'ALREADY', reservation: match, activity: act };
+      markAttended(list, match, 'QR');
+      return { ok: true, status: 'ATTENDED', reservation: match, activity: act };
+    }
+
+    // El alumno pide que recepción valide su asistencia (cámara que no funciona, etc.).
+    function requestAttendanceHelp(username) {
+      const list = loadReservations();
+      const pend = list.filter(r => r.username === username && r.date === isoToday() && r.status === 'RESERVED');
+      if (!pend.length) return { ok: false, error: 'No tenés reservas pendientes de validar hoy.' };
+      pend.forEach(r => { r.help_requested = true; });
+      saveReservations(list);
+      return { ok: true, count: pend.length };
+    }
+
+    // Administración valida a un alumno (por ejemplo, sin celular).
+    function adminValidateReservation(id) {
+      const list = loadReservations();
+      const r = list.find(x => x.id === id);
+      if (!r) return { ok: false, error: 'La reserva no existe.' };
+      if (r.status === 'ATTENDED') return { ok: false, error: 'Ya figura como presente.' };
+      markAttended(list, r, 'ADMIN');
+      return { ok: true, reservation: r };
+    }
+
+    // Administración registra la asistencia de un alumno que no reservó (crea la reserva y la valida).
+    function adminRegisterAttendance(username, activityId) {
+      const existing = reservationsToday(username).find(r => r.activity_id === activityId);
+      if (existing) return adminValidateReservation(existing.id);
+      const res = createReservation(username, activityId, 'STAFF');
+      if (!res.ok) return res;
+      return adminValidateReservation(res.reservation.id);
+    }
+
+    function pendingHelpCount() {
+      const today = isoToday();
+      return loadReservations().filter(r => r.date === today && r.status === 'RESERVED' && r.help_requested).length;
+    }
+
+    function attendanceMethodLabel(m) { return m === 'ADMIN' ? 'Validado por recepción' : 'QR de la zona'; }
+
+    // ---------- UI alumno: panel intermedio de "Mi rutina" ----------
+    let checkinMessage = null; // { type: 'ok' | 'error', text }
+    let scannerStream = null;
+    let scannerTimer = null;
+
+    // "Mi rutina": pasa por el panel de presentismo (las reglas de plan las aplica renderStudentView).
+    function openRoutineEntry() {
+      const user = getCurrentStudent();
+      if (!user) return;
+      const access = getRoutineAccess(user.username);
+      checkinMessage = null;
+      goStudentScreen(access.ok ? 'checkin' : 'routine'); // sin acceso: el aviso de plan lo explica
+    }
+
+    function goRoutineFromCheckin() {
+      stopScanner();
+      goStudentScreen('routine');
+    }
+
+    function showCheckinMessage(type, text) {
+      checkinMessage = { type, text };
+      renderCheckin();
+    }
+
+    function renderCheckin() {
+      const user = getCurrentStudent();
+      const body = document.getElementById('checkin-body');
+      if (!user || !body) return;
+      const today = reservationsToday(user.username);
+      const pending = today.filter(r => r.status === 'RESERVED');
+      const attended = today.filter(r => r.status === 'ATTENDED');
+      const options = reservableActivitiesFor(user.username);
+
+      let html = '';
+      if (checkinMessage) {
+        const ok = checkinMessage.type === 'ok';
+        html += `<div class="rounded-xl border ${ok ? 'border-emerald-500/40 bg-emerald-950/30 text-emerald-200' : 'border-red-500/40 bg-red-950/30 text-red-200'} p-3 text-xs mb-3 flex items-start gap-2"><i class="fa-solid ${ok ? 'fa-circle-check text-emerald-400' : 'fa-triangle-exclamation text-red-400'} mt-0.5"></i><span>${escHtml(checkinMessage.text)}</span></div>`;
+      }
+
+      html += `<h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Tu actividad de hoy</h4>`;
+      if (today.length) {
+        html += '<div class="space-y-2 mb-3">' + today.map(r => {
+          const done = r.status === 'ATTENDED';
+          const time = r.attended_at ? new Date(r.attended_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '';
+          return `<div class="rounded-xl border ${done ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-brand-border bg-brand-surface'} p-3 flex items-center justify-between gap-2">
+            <div class="min-w-0"><div class="text-sm font-bold text-white">${escHtml(r.activity_name)}</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">${activityKindLabel(r.kind)}${done ? ' · ' + attendanceMethodLabel(r.method) + (time ? ' · ' + time : '') : ''}${!done && r.help_requested ? ' · recepción avisada' : ''}</div></div>
+            ${done ? '<span class="shrink-0 inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border bg-emerald-950/50 text-emerald-400 border-emerald-500/40"><i class="fa-solid fa-check mr-1"></i>Presente</span>'
+                   : '<span class="shrink-0 inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border bg-amber-950/50 text-amber-300 border-amber-500/40">Por validar</span>'}
+          </div>`;
+        }).join('') + '</div>';
+      } else {
+        html += '<div class="rounded-xl border border-dashed border-brand-border p-3 text-xs text-zinc-300 mb-3">No tenés una actividad reservada para hoy. Reservá una para poder validar tu asistencia.</div>';
+      }
+
+      if (options.length) {
+        html += `<div class="rounded-2xl border border-brand-border bg-brand-surface p-3.5 mb-3 space-y-2.5">
+          <h4 class="text-xs font-bold text-white">${today.length ? 'Reservar otra actividad' : 'Reservar para hoy'}</h4>
+          <select id="checkin-activity" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow">${options.map(a => `<option value="${escHtml(a.id)}">${escHtml(a.name)} — ${activityKindLabel(a.kind)}</option>`).join('')}</select>
+          <button onclick="handleQuickReserve()" class="btn-glossy w-full rounded-xl py-2.5 text-xs font-bold"><i class="fa-solid fa-calendar-plus mr-1.5"></i>Reservar</button>
+        </div>`;
+      } else if (!today.length) {
+        html += '<div class="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-200 mb-3">Tu plan no tiene actividades disponibles para reservar hoy.</div>';
+      }
+
+      if (attended.length) {
+        html += `<button onclick="goRoutineFromCheckin()" class="btn-glossy w-full rounded-xl py-3.5 text-sm font-bold mb-3"><i class="fa-solid fa-dumbbell mr-1.5"></i>Ir a mi rutina</button>`;
+      }
+      body.innerHTML = html;
+
+      document.getElementById('checkin-scan-card').classList.toggle('hidden', pending.length === 0);
+      document.getElementById('checkin-help-btn').classList.toggle('hidden', pending.length === 0 || pending.every(r => r.help_requested));
+    }
+
+    function handleQuickReserve() {
+      const user = getCurrentStudent();
+      const sel = document.getElementById('checkin-activity');
+      if (!user || !sel) return;
+      const res = createReservation(user.username, sel.value, 'STUDENT');
+      if (!res.ok) { showCheckinMessage('error', res.error); return; }
+      showCheckinMessage('ok', `Reservaste ${res.reservation.activity_name} para hoy. Ahora validá tu asistencia en la zona.`);
+    }
+
+    // Resultado de validar (por QR de la app, enlace, o código).
+    function applyCheckinResult(res) {
+      if (res.ok) {
+        const name = res.activity ? res.activity.name : '';
+        showCheckinMessage('ok', res.status === 'ALREADY' ? `Ya estabas registrado en ${name}.` : `¡Presente en ${name}! Tu asistencia quedó validada.`);
+        stopScanner();
+      } else {
+        showCheckinMessage('error', res.error);
+      }
+    }
+
+    function submitCheckinCode() {
+      const user = getCurrentStudent();
+      const input = document.getElementById('checkin-code');
+      if (!user || !input) return;
+      applyCheckinResult(checkinWithToken(user.username, input.value));
+      input.value = '';
+    }
+
+    function askAttendanceHelp() {
+      const user = getCurrentStudent();
+      if (!user) return;
+      const res = requestAttendanceHelp(user.username);
+      if (!res.ok) { showCheckinMessage('error', res.error); return; }
+      stopScanner();
+      updateResetBadges();
+      showCheckinMessage('ok', 'Avisamos a recepción. Te van a validar la asistencia en la zona.');
+    }
+
+    // Lectura del QR con la cámara de la app (en navegadores con BarcodeDetector). En el resto, se escanea con
+    // la cámara del celular: el QR es un enlace que abre la demo y valida solo.
+    async function startScanner() {
+      const status = document.getElementById('scanner-status');
+      const box = document.getElementById('scanner-box');
+      box.classList.remove('hidden');
+      if (!('BarcodeDetector' in window) || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        status.innerText = 'Este navegador no puede leer QR desde la app. Abrí la cámara de tu celular y apuntá al QR de la zona: te trae de vuelta acá con la asistencia validada.';
+        return;
+      }
+      try {
+        scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        const video = document.getElementById('checkin-video');
+        video.srcObject = scannerStream;
+        await video.play();
+        status.innerText = 'Apuntá al QR pegado en la zona…';
+        const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+        scannerTimer = setInterval(async () => {
+          try {
+            const codes = await detector.detect(video);
+            if (codes && codes.length) {
+              const user = getCurrentStudent();
+              if (user) applyCheckinResult(checkinWithToken(user.username, codes[0].rawValue));
+            }
+          } catch (e) { /* un cuadro sin QR no es un error */ }
+        }, 300);
+      } catch (e) {
+        status.innerText = 'No pudimos abrir la cámara. Usá la cámara del celular, ingresá el código de la zona o pedí ayuda en recepción.';
+      }
+    }
+
+    function stopScanner() {
+      if (scannerTimer) { clearInterval(scannerTimer); scannerTimer = null; }
+      if (scannerStream) { scannerStream.getTracks().forEach(t => t.stop()); scannerStream = null; }
+      const box = document.getElementById('scanner-box');
+      if (box) box.classList.add('hidden');
+      const video = document.getElementById('checkin-video');
+      if (video) video.srcObject = null;
+    }
+
+    // ---------- UI Staff: Ajustes > Presentismo ----------
+    function renderAttendanceAdmin() {
+      const today = isoToday();
+      const all = loadReservations().filter(r => r.date === today);
+      all.sort((a, b) => {
+        const rank = r => (r.status === 'RESERVED' ? (r.help_requested ? 0 : 1) : 2);
+        return rank(a) - rank(b) || (a.name < b.name ? -1 : 1);
+      });
+      const listEl = document.getElementById('att-today-list');
+      listEl.innerHTML = all.length ? '' : '<p class="text-[11px] text-zinc-500">Todavía no hay reservas para hoy.</p>';
+      all.forEach(r => {
+        const done = r.status === 'ATTENDED';
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-2 border rounded-xl p-2.5 ' + (done ? 'border-emerald-500/30' : (r.help_requested ? 'border-red-500/50 bg-red-950/10' : 'border-brand-border/50'));
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="font-bold text-white text-xs">${escHtml(r.name)} <span class="text-zinc-500 font-normal">· ${escHtml(r.username)}</span></div>
+            <div class="text-[10px] text-zinc-300 mt-0.5">${escHtml(r.activity_name)} · ${activityKindLabel(r.kind)}${r.created_by === 'STAFF' ? ' · cargada por recepción' : ''}</div>
+            ${!done && r.help_requested ? '<div class="text-[9px] text-red-300 font-bold mt-0.5"><i class="fa-solid fa-hand mr-1"></i>Pidió que lo valides</div>' : ''}
+            ${done ? `<div class="text-[9px] text-emerald-400 mt-0.5">${attendanceMethodLabel(r.method)}</div>` : ''}
+          </div>
+          ${done ? '<span class="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold border bg-emerald-950/50 text-emerald-400 border-emerald-500/40">Presente</span>'
+                 : `<button onclick="handleAdminValidate('${r.id}')" class="shrink-0 px-3 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 text-[11px] font-bold">Validar presente</button>`}`;
+        listEl.appendChild(row);
+      });
+
+      // Registro manual (alumno sin celular o que no reservó)
+      const students = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').filter(s => s.active !== false);
+      const selS = document.getElementById('att-manual-student');
+      const selA = document.getElementById('att-manual-activity');
+      const prevS = selS.value, prevA = selA.value;
+      selS.innerHTML = students.map(s => `<option value="${escHtml(s.username)}">${escHtml(s.name)} (${escHtml(s.username)})</option>`).join('');
+      const acts = loadActivities().filter(a => a.active);
+      selA.innerHTML = acts.map(a => `<option value="${escHtml(a.id)}">${escHtml(a.name)}</option>`).join('');
+      if (prevS) selS.value = prevS;
+      if (prevA) selA.value = prevA;
+
+      // Actividades y QR de zona
+      const actEl = document.getElementById('att-activities-list');
+      const allActs = loadActivities();
+      actEl.innerHTML = allActs.length ? '' : '<p class="text-[11px] text-zinc-500">No hay actividades cargadas.</p>';
+      allActs.forEach(a => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-2 border border-brand-border/50 rounded-xl p-2.5 ' + (a.active ? '' : 'opacity-50');
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="font-bold text-white text-xs">${escHtml(a.name)}</div>
+            <div class="text-[9px] text-zinc-500 mt-0.5">${activityKindLabel(a.kind)} · código ${escHtml(a.qr_token)}${a.active ? '' : ' · inactiva'}</div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <button onclick="openZoneQr('${a.id}')" class="text-brand-yellow font-bold text-[10px] uppercase tracking-wider"><i class="fa-solid fa-qrcode mr-1"></i>QR</button>
+            <button onclick="handleRenameActivity('${a.id}')" class="text-zinc-300 hover:text-white" title="Renombrar"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button onclick="handleToggleActivity('${a.id}')" class="${a.active ? 'text-amber-400' : 'text-emerald-400'} font-bold text-[9px] uppercase tracking-wider">${a.active ? 'Desactivar' : 'Activar'}</button>
+          </div>`;
+        actEl.appendChild(row);
+      });
+      updateResetBadges();
+    }
+
+    function handleAdminValidate(id) {
+      const res = adminValidateReservation(id);
+      if (!res.ok) alert('⚠️ ' + res.error);
+      renderAttendanceAdmin();
+    }
+
+    function handleAdminManual() {
+      const res = adminRegisterAttendance(
+        document.getElementById('att-manual-student').value,
+        document.getElementById('att-manual-activity').value
+      );
+      const msg = document.getElementById('att-manual-msg');
+      msg.className = 'text-[10px] ' + (res.ok ? 'text-emerald-400' : 'text-red-300');
+      msg.innerText = res.ok ? '✓ Asistencia registrada.' : res.error;
+      renderAttendanceAdmin();
+    }
+
+    function handleAddActivity(e) {
+      if (e) e.preventDefault();
+      const res = saveActivity({ name: document.getElementById('act-name').value, kind: document.getElementById('act-kind').value });
+      if (!res.ok) { alert('⚠️ ' + res.error); return; }
+      document.getElementById('act-name').value = '';
+      renderAttendanceAdmin();
+    }
+
+    function handleRenameActivity(id) {
+      const a = loadActivities().find(x => x.id === id);
+      if (!a) return;
+      const name = prompt('Nuevo nombre de la actividad:', a.name);
+      if (name === null) return;
+      const res = saveActivity({ name, kind: a.kind }, id);
+      if (!res.ok) alert('⚠️ ' + res.error);
+      renderAttendanceAdmin();
+    }
+
+    function handleToggleActivity(id) {
+      toggleActivityActive(id);
+      renderAttendanceAdmin();
+    }
+
+    // QR de la zona, para imprimir y pegar donde se entrena.
+    let zoneQrActivityId = null;
+    function openZoneQr(id) {
+      const a = loadActivities().find(x => x.id === id);
+      if (!a) return;
+      zoneQrActivityId = id;
+      renderZoneQr(a);
+      document.getElementById('modal-zone-qr').classList.remove('hidden');
+    }
+
+    function renderZoneQr(a) {
+      const url = checkinUrl(a.qr_token);
+      document.getElementById('zone-qr-title').innerText = a.name;
+      document.getElementById('zone-qr-code').innerText = a.qr_token;
+      document.getElementById('zone-qr-url').innerText = url;
+      const box = document.getElementById('zone-qr-canvas');
+      box.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        try { new QRCode(box, { text: url, width: 240, height: 240, colorDark: '#09090b', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); return; } catch (e) { /* cae al servicio externo */ }
+      }
+      const img = document.createElement('img');
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(url);
+      img.alt = 'QR de ' + a.name;
+      img.className = 'w-[240px] h-[240px] mx-auto';
+      box.appendChild(img);
+    }
+
+    function closeZoneQr() { document.getElementById('modal-zone-qr').classList.add('hidden'); }
+
+    function handleRegenerateZoneQr() {
+      if (!zoneQrActivityId) return;
+      if (!confirm('Se genera un código nuevo y el QR impreso anterior deja de funcionar. ¿Continuar?')) return;
+      regenerateActivityToken(zoneQrActivityId);
+      renderZoneQr(loadActivities().find(x => x.id === zoneQrActivityId));
+      renderAttendanceAdmin();
+    }
+
+    // ----------------------------------------------------
     // PACKS DE CLASES (cambioz_packs_db)
     // La dueña carga los packs que ofrece (nombre, texto "Incluye", cantidad de clases, vigencia y precio aparte).
     // Al tocar "Comprar pack" el alumno ve una tarjeta por pack; al elegir una pasa al proceso de pago.
@@ -6311,7 +6941,8 @@
     function updateResetBadges() {
       const resets = pendingResetCount();
       const pays = pendingPaymentCount();
-      [['reset-badge-gear', resets + pays], ['reset-badge-tab', resets], ['pay-badge-tab', pays]].forEach(([id, n]) => {
+      const helps = pendingHelpCount();
+      [['reset-badge-gear', resets + pays + helps], ['reset-badge-tab', resets], ['pay-badge-tab', pays], ['att-badge-tab', helps]].forEach(([id, n]) => {
         const el = document.getElementById(id);
         if (!el) return;
         el.innerText = n;

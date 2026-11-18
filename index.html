@@ -80,6 +80,12 @@
       box-shadow: 0 0 15px rgba(251, 191, 36, 0.12);
     }
 
+    /* Filtro de actividades de Reservas: el menú desplegable usa fondo oscuro y texto claro
+       (antes heredaba el texto blanco sobre el fondo blanco del menú nativo y las opciones no se veían) */
+    #reservas-filter { color-scheme: dark; }
+    #reservas-filter option { background-color: #18181b; color: #f4f4f5; font-weight: 700; text-transform: uppercase; }
+    #reservas-filter option:checked { background-color: #fbbf24; color: #18181b; }
+
     /* Impresión del QR de zona: solo se imprime el cartel */
     @media print {
       body > *:not(#modal-zone-qr) { display: none !important; }

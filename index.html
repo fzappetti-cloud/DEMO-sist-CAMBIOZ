@@ -104,10 +104,15 @@
        si la grilla dispone de alto de sobra, pasan a columna como en el diseño de referencia */
     .home-grid-wrap { container-type: size; }
     .home-btn { flex-direction: row; gap: 0.4rem; }
+    .home-btn.home-btn-main { gap: 0.75rem; }
     @container (min-height: 380px) {
       .home-btn { flex-direction: column; gap: 0.25rem; }
       .home-btn i { font-size: 1.5rem; }
       .home-btn span { text-align: center; }
+      /* el botón principal siempre va en fila, más grande */
+      .home-btn.home-btn-main { flex-direction: row; gap: 0.75rem; }
+      .home-btn.home-btn-main i { font-size: 1.875rem; }
+      .home-btn.home-btn-main span { font-size: 18px; }
     }
 
     /* Celulares de poca altura: el tablero se compacta para seguir entrando sin scroll */
@@ -120,6 +125,7 @@
       #student-home-screen .home-grid-wrap > div { gap: 0.5rem; }
       #student-home-screen .home-btn { border-radius: 0.875rem; }
       #student-home-screen .home-btn span { font-size: 11.5px; }
+      #student-home-screen .home-btn-main span { font-size: 15px; }
       #student-home-screen .home-install { padding: 0.5rem 0.75rem; }
       #student-home-screen .home-install p { display: none; }
       /* El nombre del plan y su detalle ocupan menos alto (el subtítulo se recorta a una línea) */
@@ -726,15 +732,15 @@
           <!-- Grilla de accesos: reparte el alto disponible -->
           <div class="home-grid-wrap flex-1 min-h-[260px] mb-3">
             <div class="h-full grid grid-cols-2 auto-rows-fr gap-2.5">
-            <button onclick="openRoutineEntry()" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-dumbbell text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mi rutina</span></button>
-            <button onclick="goStudentScreen('pagos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-wallet text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis pagos</span></button>
-            <button onclick="goStudentScreen('precios')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-tag text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Precios</span></button>
-            <button onclick="openReservas('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
-            <button onclick="openMisReservas('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis reservas</span></button>
-            <button onclick="showSoon('Mis Packs')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-layer-group text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis packs</span></button>
-            <button onclick="openPacks('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-ticket text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar pack</span></button>
-            <button onclick="showSoon('Reprogramar clase')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-days text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Reprogramar clase</span></button>
-              <button onclick="showSoon('Más funciones')" class="col-span-2 btn-glossy-off rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-hourglass-half text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Próximamente</span></button>
+              <button onclick="openRoutineEntry()" class="col-span-2 btn-glossy rounded-2xl px-2 py-1 home-btn home-btn-main flex items-center justify-center min-h-0"><i class="fa-solid fa-dumbbell text-2xl leading-none"></i><span class="text-[17px] font-black uppercase tracking-wider leading-tight">Entrenamiento</span></button>
+              <button onclick="openReservas('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-plus text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Nueva reserva</span></button>
+              <button onclick="openMisReservas('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-check text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis reservas</span></button>
+              <button onclick="openNutri()" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-apple-whole text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Turno Nutri</span></button>
+              <button onclick="showSoon('Reprogramar clase')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-calendar-days text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Reprogramar clase</span></button>
+              <button onclick="openPacks('home')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-ticket text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Comprar pack</span></button>
+              <button onclick="showSoon('Mis Packs')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-layer-group text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis packs</span></button>
+              <button onclick="goStudentScreen('pagos')" class="btn-glossy rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-wallet text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Mis pagos</span></button>
+              <button onclick="showSoon('Más funciones')" class="btn-glossy-off rounded-2xl px-1.5 py-1 home-btn flex items-center justify-center min-h-0"><i class="fa-solid fa-hourglass-half text-lg leading-none"></i><span class="text-[12px] font-bold leading-tight">Próximamente</span></button>
             </div>
           </div>
 
@@ -766,6 +772,13 @@
             <img src="logo.webp" alt="CAMBIOZ GYM" class="h-14 w-14 object-contain" />
             <span class="h-0.5 flex-1 bg-brand-yellow/60"></span>
           </div>
+        </div>
+
+        <!-- SCREEN TURNO NUTRI: elegir día y horario libre con la nutricionista -->
+        <div id="student-nutri-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
+          <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
+          <h3 class="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight mb-3">Turno Nutri</h3>
+          <div id="nutri-body"></div>
         </div>
 
         <!-- SCREEN RESERVAR CLASE: grilla de los próximos días, con lugares disponibles -->
@@ -1161,6 +1174,34 @@
               <span id="tt-msg" class="text-[10px]"></span>
             </div>
           </form>
+        </div>
+
+        <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-3">
+          <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-apple-whole text-brand-yellow"></i> Turno Nutri</h4>
+          <p class="text-[10px] text-zinc-500">Días y horarios en que atiende la nutricionista. El alumno elige un horario libre desde "Turno Nutri".</p>
+          <form id="form-nutri" onsubmit="handleSaveNutriConfig(event)" class="space-y-2.5">
+            <input type="text" id="nutri-name" maxlength="40" placeholder="Nombre de la nutricionista" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+            <div class="flex flex-wrap gap-x-3 gap-y-1.5 text-xs text-zinc-300">
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-1" class="accent-brand-yellow" /> Lun</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-2" class="accent-brand-yellow" /> Mar</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-3" class="accent-brand-yellow" /> Mie</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-4" class="accent-brand-yellow" /> Jue</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-5" class="accent-brand-yellow" /> Vie</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-6" class="accent-brand-yellow" /> Sab</label>
+              <label class="flex items-center gap-1"><input type="checkbox" id="nutri-day-0" class="accent-brand-yellow" /> Dom</label>
+            </div>
+            <div class="grid grid-cols-3 gap-2.5">
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Desde</label><input type="time" id="nutri-from" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Hasta</label><input type="time" id="nutri-to" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+              <div><label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Turno (min)</label><input type="number" id="nutri-step" min="15" max="120" step="5" class="w-full bg-brand-canvas border border-brand-border rounded-xl px-2 py-2 text-xs text-white focus:outline-none focus:border-brand-yellow" /></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="bg-brand-yellow hover:bg-brand-gold text-zinc-950 font-bold px-4 py-2 rounded-xl text-xs">Guardar horario</button>
+              <span id="nutri-msg" class="text-[10px]"></span>
+            </div>
+          </form>
+          <h5 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 pt-1">Próximos turnos</h5>
+          <div id="nutri-admin-list" class="space-y-2"></div>
         </div>
 
         <div class="bg-brand-canvas/60 border border-brand-border p-3.5 rounded-2xl space-y-2">
@@ -2945,6 +2986,7 @@
         if (contentRes) contentRes.classList.remove('hidden');
         fillReservationRulesForm();
         renderReservationsAdmin();
+        fillNutriAdmin();
       } else if (tabName === 'attendance') {
         if (tabAtt) tabAtt.className = "flex-grow py-2.5 text-center border-b-2 border-brand-yellow text-brand-yellow";
         if (contentAtt) contentAtt.classList.remove('hidden');
@@ -4210,6 +4252,7 @@
         document.getElementById('student-checkin-screen').classList.add('hidden');
         document.getElementById('student-reservas-screen').classList.add('hidden');
         document.getElementById('student-misreservas-screen').classList.add('hidden');
+        document.getElementById('student-nutri-screen').classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -4256,9 +4299,10 @@
       const pagosScreen = document.getElementById('student-pagos-screen');
       const packsScreen = document.getElementById('student-packs-screen');
       const checkinScreen = document.getElementById('student-checkin-screen');
+      const nutriScreen = document.getElementById('student-nutri-screen');
       const reservasScreen = document.getElementById('student-reservas-screen');
       const misReservasScreen = document.getElementById('student-misreservas-screen');
-      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin', 'reservas', 'misreservas'].indexOf(studentScreen) !== -1) {
+      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin', 'reservas', 'misreservas', 'nutri'].indexOf(studentScreen) !== -1) {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
@@ -4270,6 +4314,8 @@
         checkinScreen.classList.toggle('hidden', studentScreen !== 'checkin');
         reservasScreen.classList.toggle('hidden', studentScreen !== 'reservas');
         misReservasScreen.classList.toggle('hidden', studentScreen !== 'misreservas');
+        nutriScreen.classList.toggle('hidden', studentScreen !== 'nutri');
+        if (studentScreen === 'nutri') renderNutri();
         if (studentScreen !== 'reservas') closeReservaSheet();
         if (studentScreen === 'reservas') renderReservas();
         if (studentScreen === 'misreservas') renderMisReservas();
@@ -4290,6 +4336,7 @@
       checkinScreen.classList.add('hidden');
       reservasScreen.classList.add('hidden');
       misReservasScreen.classList.add('hidden');
+      nutriScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -6474,6 +6521,239 @@
       if (!confirm('¿Eliminar este bloque de horarios? Las reservas ya hechas se conservan.')) return;
       deleteTimetableBlock(id);
       renderReservationsAdmin();
+    }
+
+    // ----------------------------------------------------
+    // TURNO NUTRI (simple)
+    // Idea tomada del flujo público de reserva de "turnero-clinicas": elegir día, elegir un horario libre y confirmar.
+    // Sin plan ni cupos: cualquier alumno puede pedir un turno con la nutricionista. Un turno vigente por alumno.
+    //   cambioz_nutri_config -> { name, days[0=Dom..6=Sab], from, to, step }
+    //   cambioz_nutri_turns  -> [{ id, username, name, phone, date, time, reason, status: 'RESERVED'|'CANCELLED' }]
+    // ----------------------------------------------------
+    const DEFAULT_NUTRI_CONFIG = { name: 'Lic. en Nutrición', days: [1, 2, 3, 4, 5], from: '09:00', to: '13:00', step: 30 };
+    const NUTRI_REASONS = ['Primera consulta', 'Control', 'Plan de alimentación'];
+
+    function loadNutriConfig() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem('cambioz_nutri_config') || '{}') || {}; } catch (e) { saved = {}; }
+      return Object.assign({}, DEFAULT_NUTRI_CONFIG, saved);
+    }
+
+    // Valida y guarda el horario de la nutricionista. Devuelve { ok, error, config }.
+    function saveNutriConfig(input) {
+      const name = String(input.name || '').trim();
+      if (name.length < 3) return { ok: false, error: 'Escribí el nombre de la nutricionista.' };
+      const days = Array.from(new Set((input.days || []).map(Number))).filter(d => Number.isInteger(d) && d >= 0 && d <= 6).sort();
+      if (!days.length) return { ok: false, error: 'Elegí al menos un día de atención.' };
+      const from = timeToMinutes(input.from), to = timeToMinutes(input.to);
+      if (from === null || to === null) return { ok: false, error: 'Ingresá horarios válidos.' };
+      if (to <= from) return { ok: false, error: 'La hora de cierre debe ser posterior a la de inicio.' };
+      const step = Number(input.step);
+      if (!Number.isInteger(step) || step < 15 || step > 120) return { ok: false, error: 'Cada turno dura entre 15 y 120 minutos.' };
+      const config = { name, days, from: minutesToTime(from), to: minutesToTime(to), step };
+      localStorage.setItem('cambioz_nutri_config', JSON.stringify(config));
+      return { ok: true, config };
+    }
+
+    function loadNutriTurns() {
+      try { return JSON.parse(localStorage.getItem('cambioz_nutri_turns') || '[]'); } catch (e) { return []; }
+    }
+    function saveNutriTurns(list) { localStorage.setItem('cambioz_nutri_turns', JSON.stringify(list)); }
+
+    // Horarios del día según la configuración (el último turno termina a la hora de cierre).
+    function nutriAllTimes(dateIso) {
+      const cfg = loadNutriConfig();
+      if (cfg.days.indexOf(dateFromIso(dateIso).getDay()) === -1) return [];
+      const out = [];
+      for (let m = timeToMinutes(cfg.from); m + cfg.step <= timeToMinutes(cfg.to); m += cfg.step) out.push(minutesToTime(m));
+      return out;
+    }
+
+    function nutriTakenTimes(dateIso) {
+      return loadNutriTurns().filter(t => t.status === 'RESERVED' && t.date === dateIso).map(t => t.time);
+    }
+
+    // Horarios libres (no tomados y que todavía no pasaron).
+    function nutriFreeTimes(dateIso, now) {
+      const n = now || nowDate();
+      const taken = nutriTakenTimes(dateIso);
+      return nutriAllTimes(dateIso).filter(t => taken.indexOf(t) === -1 && sessionStart(dateIso, t) > n);
+    }
+
+    // Turnos vigentes (de hoy en adelante) del alumno.
+    function nutriMyUpcoming(username, now) {
+      const n = now || nowDate();
+      return loadNutriTurns().filter(t => t.username === username && t.status === 'RESERVED' && sessionStart(t.date, t.time) > n)
+        .sort((a, b) => ((a.date + a.time) < (b.date + b.time) ? -1 : 1));
+    }
+
+    // Pide un turno. Devuelve { ok, error, turn }.
+    function requestNutriTurn(username, date, time, reason, now) {
+      const student = JSON.parse(localStorage.getItem('cambioz_students_db') || '[]').find(s => s.username === username);
+      if (!student) return { ok: false, error: 'Alumno no encontrado.' };
+      if (nutriMyUpcoming(username, now).length) return { ok: false, error: 'Ya tenés un turno con la nutricionista. Cancelalo si querés pedir otro.' };
+      if (nutriAllTimes(date).indexOf(time) === -1) return { ok: false, error: 'Ese horario no está disponible.' };
+      if (nutriTakenTimes(date).indexOf(time) !== -1) return { ok: false, error: 'Ese horario ya fue tomado. Elegí otro.' };
+      if (sessionStart(date, time) <= (now || nowDate())) return { ok: false, error: 'Ese horario ya pasó. Elegí otro.' };
+      const turn = {
+        id: 'nt-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        username, name: student.name, phone: student.phone || '',
+        date, time, reason: NUTRI_REASONS.indexOf(reason) === -1 ? NUTRI_REASONS[0] : reason, status: 'RESERVED'
+      };
+      const list = loadNutriTurns();
+      list.push(turn);
+      saveNutriTurns(list);
+      return { ok: true, turn };
+    }
+
+    function cancelNutriTurn(id, username) {
+      const list = loadNutriTurns();
+      const t = list.find(x => x.id === id && (!username || x.username === username));
+      if (!t || t.status !== 'RESERVED') return { ok: false, error: 'El turno no existe o ya estaba cancelado.' };
+      t.status = 'CANCELLED';
+      saveNutriTurns(list);
+      return { ok: true };
+    }
+
+    // ---------- UI alumno ----------
+    let nutriDay = null;
+    let nutriTime = null;
+    let nutriReason = NUTRI_REASONS[0];
+
+    function openNutri() {
+      nutriDay = null; nutriTime = null; nutriReason = NUTRI_REASONS[0];
+      goStudentScreen('nutri');
+    }
+
+    function pickNutriDay(iso) { nutriDay = iso; nutriTime = null; renderNutri(); }
+    function pickNutriTime(t) { nutriTime = t; renderNutri(); }
+    function pickNutriReason(r) { nutriReason = r; renderNutri(); }
+
+    function renderNutri() {
+      const user = getCurrentStudent();
+      const body = document.getElementById('nutri-body');
+      if (!user || !body) return;
+      const cfg = loadNutriConfig();
+      const now = nowDate();
+      const mine = nutriMyUpcoming(user.username, now)[0];
+
+      let html = `<div class="flex items-center gap-3 rounded-2xl border border-brand-yellow/40 bg-zinc-900 p-3.5 mb-4">
+        <div class="h-12 w-12 shrink-0 rounded-full border-2 border-brand-yellow/80 flex items-center justify-center text-brand-yellow"><i class="fa-solid fa-apple-whole text-xl"></i></div>
+        <div class="min-w-0"><div class="text-sm font-extrabold text-white">${escHtml(cfg.name)}</div>
+        <div class="text-[11px] text-zinc-400">Consulta de ${cfg.step} minutos</div></div></div>`;
+
+      if (mine) {
+        html += `<div class="rounded-2xl border-2 border-emerald-500/60 bg-emerald-950/30 p-4 text-center mb-3">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-3xl"></i>
+          <div class="text-[11px] font-bold uppercase tracking-widest text-emerald-300 mt-2">Tu turno</div>
+          <div class="text-4xl font-black text-white leading-none mt-1">${mine.time}</div>
+          <div class="text-sm font-bold text-white mt-1.5">${formatDayLong(mine.date)}</div>
+          <div class="text-[11px] text-zinc-300 mt-1">${escHtml(mine.reason)} · ${escHtml(cfg.name)}</div>
+          <div class="text-[10px] text-zinc-400 mt-2">Llegá 5 minutos antes.</div></div>
+          <button onclick="handleCancelNutri('${mine.id}')" class="w-full rounded-xl py-3 text-sm font-bold border border-red-500/50 text-red-300">Cancelar turno</button>`;
+        body.innerHTML = html;
+        return;
+      }
+
+      // 1) Día
+      const days = [];
+      for (let i = 0; i < 14 && days.length < 8; i++) {
+        const iso = isoAddDays(isoToday(), i);
+        if (nutriAllTimes(iso).length) days.push({ iso, free: nutriFreeTimes(iso, now).length });
+      }
+      if (!nutriDay || !days.some(d => d.iso === nutriDay && d.free)) {
+        const first = days.find(d => d.free);
+        nutriDay = first ? first.iso : null;
+      }
+      html += '<h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">1 · Elegí el día</h4><div class="flex gap-2 overflow-x-auto pb-2 mb-3 scrollbar-none">';
+      html += days.map(d => {
+        const dt = dateFromIso(d.iso), sel = d.iso === nutriDay;
+        return `<button onclick="pickNutriDay('${d.iso}')" ${d.free ? '' : 'disabled'} class="shrink-0 w-14 rounded-xl border py-2 text-center ${sel ? 'border-brand-yellow bg-brand-yellow text-zinc-950' : (d.free ? 'border-brand-border bg-zinc-900 text-white' : 'border-zinc-800 bg-zinc-900/40 text-zinc-600')}">
+          <div class="text-[10px] font-bold uppercase">${WEEKDAY_SHORT[dt.getDay()]}</div><div class="text-lg font-black leading-tight">${dt.getDate()}</div></button>`;
+      }).join('') + '</div>';
+
+      // 2) Horario
+      if (!nutriDay) {
+        html += '<div class="rounded-xl border border-dashed border-brand-border p-4 text-xs text-zinc-300 text-center">No hay turnos disponibles por el momento.</div>';
+        body.innerHTML = html;
+        return;
+      }
+      const taken = nutriTakenTimes(nutriDay);
+      const times = nutriAllTimes(nutriDay).filter(t => sessionStart(nutriDay, t) > now);
+      html += `<h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">2 · Elegí el horario</h4><div class="grid grid-cols-4 gap-2 mb-4">`;
+      html += times.map(t => {
+        const isTaken = taken.indexOf(t) !== -1, sel = t === nutriTime;
+        return `<button onclick="pickNutriTime('${t}')" ${isTaken ? 'disabled' : ''} class="rounded-xl border py-2.5 text-sm font-bold ${sel ? 'border-brand-yellow bg-brand-yellow text-zinc-950' : (isTaken ? 'border-zinc-800 bg-zinc-900/40 text-zinc-600 line-through' : 'border-brand-yellow/50 bg-zinc-900 text-brand-yellow')}">${t}</button>`;
+      }).join('') + '</div>';
+
+      // 3) Motivo
+      html += '<h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">3 · Motivo de la consulta</h4><div class="flex flex-wrap gap-2 mb-4">';
+      html += NUTRI_REASONS.map(r => `<button onclick="pickNutriReason('${r}')" class="rounded-full border px-3.5 py-2 text-xs font-bold ${r === nutriReason ? 'border-brand-yellow bg-brand-yellow/15 text-brand-yellow' : 'border-brand-border bg-zinc-900 text-zinc-300'}">${r}</button>`).join('') + '</div>';
+
+      html += `<button onclick="submitNutri()" ${nutriTime ? '' : 'disabled'} class="btn-glossy w-full rounded-xl py-3.5 text-sm font-bold ${nutriTime ? '' : 'opacity-40'}"><i class="fa-solid fa-calendar-check mr-1.5"></i>${nutriTime ? `Pedir turno · ${nutriTime}` : 'Elegí un horario'}</button>`;
+      body.innerHTML = html;
+    }
+
+    function submitNutri() {
+      const user = getCurrentStudent();
+      if (!user || !nutriDay || !nutriTime) return;
+      const res = requestNutriTurn(user.username, nutriDay, nutriTime, nutriReason);
+      if (!res.ok) { showToast(escHtml(res.error), 3500); renderNutri(); return; }
+      showToast('✅ ¡Turno reservado!', 2500);
+      renderNutri();
+    }
+
+    function handleCancelNutri(id) {
+      const user = getCurrentStudent();
+      if (!user) return;
+      cancelNutriTurn(id, user.username);
+      nutriDay = null; nutriTime = null;
+      showToast('Turno cancelado.', 2200);
+      renderNutri();
+    }
+
+    // ---------- UI Staff (dentro de Ajustes > Reservas) ----------
+    function fillNutriAdmin() {
+      const c = loadNutriConfig();
+      document.getElementById('nutri-name').value = c.name;
+      document.getElementById('nutri-from').value = c.from;
+      document.getElementById('nutri-to').value = c.to;
+      document.getElementById('nutri-step').value = c.step;
+      [0, 1, 2, 3, 4, 5, 6].forEach(d => { document.getElementById('nutri-day-' + d).checked = c.days.indexOf(d) !== -1; });
+      document.getElementById('nutri-msg').innerText = '';
+      renderNutriAdminList();
+    }
+
+    function handleSaveNutriConfig(e) {
+      if (e) e.preventDefault();
+      const res = saveNutriConfig({
+        name: document.getElementById('nutri-name').value,
+        from: document.getElementById('nutri-from').value,
+        to: document.getElementById('nutri-to').value,
+        step: document.getElementById('nutri-step').value,
+        days: [0, 1, 2, 3, 4, 5, 6].filter(d => document.getElementById('nutri-day-' + d).checked)
+      });
+      const msg = document.getElementById('nutri-msg');
+      msg.className = 'text-[10px] ' + (res.ok ? 'text-emerald-400' : 'text-red-300');
+      msg.innerText = res.ok ? '✓ Horario guardado.' : res.error;
+    }
+
+    function renderNutriAdminList() {
+      const el = document.getElementById('nutri-admin-list');
+      const now = nowDate();
+      const list = loadNutriTurns().filter(t => t.status === 'RESERVED' && sessionStart(t.date, t.time) > now)
+        .sort((a, b) => ((a.date + a.time) < (b.date + b.time) ? -1 : 1));
+      el.innerHTML = list.length ? list.map(t => `<div class="flex items-center justify-between gap-2 border border-brand-border/50 rounded-xl p-2.5">
+        <div class="min-w-0"><div class="text-xs font-bold text-white">${t.time} · ${escHtml(t.name)}</div>
+        <div class="text-[10px] text-zinc-400">${formatDayLong(t.date)} · ${escHtml(t.reason)}${t.phone ? ' · Tel: ' + escHtml(t.phone) : ''}</div></div>
+        <button onclick="handleAdminCancelNutri('${t.id}')" class="shrink-0 text-red-300 hover:text-red-200 text-[10px] font-bold uppercase">Cancelar</button></div>`).join('')
+        : '<p class="text-[11px] text-zinc-500">No hay turnos próximos con la nutricionista.</p>';
+    }
+
+    function handleAdminCancelNutri(id) {
+      if (!confirm('¿Cancelar este turno?')) return;
+      cancelNutriTurn(id, null);
+      renderNutriAdminList();
     }
 
     // ----------------------------------------------------

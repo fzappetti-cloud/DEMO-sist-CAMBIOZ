@@ -86,6 +86,18 @@
     #reservas-filter option { background-color: #18181b; color: #f4f4f5; font-weight: 700; text-transform: uppercase; }
     #reservas-filter option:checked { background-color: #fbbf24; color: #18181b; }
 
+    /* Ilustración animada de un QR siendo escaneado (panel de presentismo) */
+    .qr-scan-anim { position: relative; width: 150px; height: 150px; margin: 0 auto; border-radius: 14px; background: #0a0a0a; border: 1px solid rgba(251,191,36,.25); overflow: hidden; }
+    .qr-scan-anim svg { position: absolute; inset: 14px; width: calc(100% - 28px); height: calc(100% - 28px); }
+    .qr-scan-anim .qr-corner { position: absolute; width: 22px; height: 22px; border: 3px solid #fbbf24; }
+    .qr-scan-anim .qr-corner.tl { top: 6px; left: 6px; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+    .qr-scan-anim .qr-corner.tr { top: 6px; right: 6px; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
+    .qr-scan-anim .qr-corner.bl { bottom: 6px; left: 6px; border-right: 0; border-top: 0; border-bottom-left-radius: 8px; }
+    .qr-scan-anim .qr-corner.br { bottom: 6px; right: 6px; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+    .qr-scan-anim .qr-line { position: absolute; left: 8px; right: 8px; height: 3px; border-radius: 2px; background: linear-gradient(90deg, transparent, #fbbf24, transparent); box-shadow: 0 0 12px 3px rgba(251,191,36,.65); animation: qr-scan-move 2.2s ease-in-out infinite; }
+    @keyframes qr-scan-move { 0%, 100% { top: 10%; } 50% { top: 86%; } }
+    @media (prefers-reduced-motion: reduce) { .qr-scan-anim .qr-line { animation: none; top: 48%; } }
+
     /* Impresión del QR de zona: solo se imprime el cartel */
     @media print {
       body > *:not(#modal-zone-qr) { display: none !important; }
@@ -812,16 +824,38 @@
           <div id="checkin-scan-card" class="hidden rounded-2xl border border-brand-yellow/40 p-3.5 mb-3 space-y-2.5">
             <h4 class="text-xs font-bold text-brand-yellow uppercase tracking-wider"><i class="fa-solid fa-qrcode mr-1.5"></i>Validá tu asistencia</h4>
             <p class="text-[11px] text-zinc-300">Escaneá el QR pegado en la zona donde vas a entrenar.</p>
+            <!-- Ilustración: un QR con una línea de escaneo que sube y baja -->
+            <div class="qr-scan-anim" aria-hidden="true">
+              <svg viewBox="0 0 21 21" shape-rendering="crispEdges">
+                <g fill="#fbbf24">
+                  <rect x="0" y="0" width="7" height="7"/><rect x="14" y="0" width="7" height="7"/><rect x="0" y="14" width="7" height="7"/>
+                </g>
+                <g fill="#0a0a0a">
+                  <rect x="1" y="1" width="5" height="5"/><rect x="15" y="1" width="5" height="5"/><rect x="1" y="15" width="5" height="5"/>
+                </g>
+                <g fill="#fbbf24">
+                  <rect x="2" y="2" width="3" height="3"/><rect x="16" y="2" width="3" height="3"/><rect x="2" y="16" width="3" height="3"/>
+                  <rect x="8" y="0" width="2" height="2"/><rect x="11" y="1" width="2" height="2"/><rect x="8" y="3" width="1" height="3"/><rect x="10" y="4" width="3" height="1"/>
+                  <rect x="0" y="8" width="2" height="2"/><rect x="3" y="9" width="2" height="1"/><rect x="6" y="8" width="3" height="2"/><rect x="10" y="7" width="2" height="3"/>
+                  <rect x="13" y="8" width="2" height="2"/><rect x="16" y="9" width="3" height="1"/><rect x="19" y="7" width="2" height="2"/>
+                  <rect x="8" y="12" width="2" height="2"/><rect x="11" y="11" width="3" height="1"/><rect x="12" y="13" width="2" height="3"/><rect x="15" y="12" width="2" height="2"/>
+                  <rect x="18" y="12" width="3" height="2"/><rect x="8" y="16" width="3" height="2"/><rect x="14" y="16" width="2" height="2"/><rect x="17" y="15" width="2" height="3"/>
+                  <rect x="9" y="19" width="2" height="2"/><rect x="12" y="18" width="2" height="1"/><rect x="15" y="19" width="3" height="2"/><rect x="19" y="18" width="2" height="3"/>
+                </g>
+              </svg>
+              <span class="qr-corner tl"></span><span class="qr-corner tr"></span><span class="qr-corner bl"></span><span class="qr-corner br"></span>
+              <span class="qr-line"></span>
+            </div>
             <button onclick="startScanner()" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-camera mr-1.5"></i>Escanear QR de la zona</button>
             <div id="scanner-box" class="hidden space-y-2">
-              <video id="checkin-video" playsinline muted class="w-full rounded-xl bg-black max-h-56 object-cover"></video>
+              <video id="checkin-video" playsinline muted class="hidden w-full rounded-xl bg-black max-h-56 object-cover"></video>
               <p id="scanner-status" class="text-[11px] text-zinc-300"></p>
               <button onclick="stopScanner()" class="text-[11px] text-zinc-400 hover:text-white font-semibold py-1">Cerrar cámara</button>
             </div>
             <div>
               <label class="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">¿No podés escanear? Código de la zona</label>
               <div class="flex gap-2">
-                <input type="text" id="checkin-code" autocapitalize="characters" placeholder="Ej: ZONA-FUNC-9Q2M" class="flex-1 min-w-0 bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
+                <input type="text" id="checkin-code" autocapitalize="characters" placeholder="Ej: ZONA-ENTR-9Q2M" class="flex-1 min-w-0 bg-brand-surface border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-yellow" />
                 <button onclick="submitCheckinCode()" class="shrink-0 px-4 rounded-xl bg-brand-card border border-brand-border text-brand-yellow text-xs font-bold">Validar</button>
               </div>
             </div>
@@ -5866,6 +5900,7 @@
         scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
         const video = document.getElementById('checkin-video');
         video.srcObject = scannerStream;
+        video.classList.remove('hidden'); // solo se ve el video cuando la cámara está activa
         await video.play();
         status.innerText = 'Apuntá al QR pegado en la zona…';
         const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
@@ -5889,7 +5924,7 @@
       const box = document.getElementById('scanner-box');
       if (box) box.classList.add('hidden');
       const video = document.getElementById('checkin-video');
-      if (video) video.srcObject = null;
+      if (video) { video.srcObject = null; video.classList.add('hidden'); }
     }
 
     // ---------- UI Staff: Ajustes > Presentismo ----------

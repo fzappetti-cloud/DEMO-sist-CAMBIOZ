@@ -786,6 +786,11 @@
           </div>
         </div>
 
+        <!-- SCREEN ENTRENAMIENTO: resultado tras validar la asistencia (mensaje de clase grupal o pizarra virtual) -->
+        <div id="student-entrena-screen" class="hidden flex-grow flex flex-col justify-center overflow-y-auto px-4 py-6 relative scrollbar-none bg-black">
+          <div id="entrena-body"></div>
+        </div>
+
         <!-- SCREEN TURNO NUTRI: elegir día y horario libre con la nutricionista -->
         <div id="student-nutri-screen" class="hidden flex-grow flex flex-col overflow-y-auto pt-4 pb-6 px-4 relative scrollbar-none bg-black">
           <button onclick="goStudentScreen('home')" class="self-start text-[11px] text-zinc-300 hover:text-white font-semibold mb-2 flex items-center gap-1.5 py-1.5"><i class="fa-solid fa-chevron-left"></i> Inicio</button>
@@ -847,6 +852,7 @@
               <span class="qr-line"></span>
             </div>
             <button onclick="startScanner()" class="btn-glossy w-full rounded-xl py-3 text-sm font-bold"><i class="fa-solid fa-camera mr-1.5"></i>Escanear QR de la zona</button>
+            <button onclick="simulateQrRead()" class="w-full rounded-xl py-2.5 text-xs font-bold border border-brand-yellow/50 text-brand-yellow hover:bg-brand-yellow/10"><i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>Simular lectura del QR (demo)</button>
             <div id="scanner-box" class="hidden space-y-2">
               <video id="checkin-video" playsinline muted class="hidden w-full rounded-xl bg-black max-h-56 object-cover"></video>
               <p id="scanner-status" class="text-[11px] text-zinc-300"></p>
@@ -1006,7 +1012,7 @@
             </h3>
             <!-- Routine Title -->
             <h4 id="student-routine-name-val" class="text-xs text-brand-yellow font-bold mt-1 tracking-tight">Rutina General</h4>
-            <p class="text-[8px] text-zinc-500 uppercase tracking-widest mt-0.5">Rutina Interactiva de Sala</p>
+            <p class="text-[8px] text-zinc-500 uppercase tracking-widest mt-0.5">Pizarra virtual · Rutina de sala</p>
 
             <!-- Datos de Sede / Turno / Cronómetro General -->
             <div class="flex flex-col gap-2 mt-2 items-center">
@@ -4287,6 +4293,7 @@
         document.getElementById('student-reservas-screen').classList.add('hidden');
         document.getElementById('student-misreservas-screen').classList.add('hidden');
         document.getElementById('student-nutri-screen').classList.add('hidden');
+        document.getElementById('student-entrena-screen').classList.add('hidden');
         routineScreen.classList.add('hidden');
         homeScreen.classList.add('hidden');
         preciosScreen.classList.add('hidden');
@@ -4312,18 +4319,19 @@
         checkinMessage = res.ok
           ? { type: 'ok', text: res.status === 'ALREADY' ? `Ya estabas registrado en ${res.activity.name}.` : `¡Presente en ${res.activity.name}! Tu asistencia quedó validada.` }
           : { type: 'error', text: res.error };
-        studentScreen = 'checkin';
+        if (res.ok) { trainingId = res.reservation.id; studentScreen = 'entrena'; } else { studentScreen = 'checkin'; }
       }
 
-      // Acceso a la rutina: requiere plan activo que incluya musculación y la asistencia de hoy validada
+      // Acceso a la rutina (pizarra virtual): requiere plan activo que incluya musculación y asistencia de musculación validada hoy
       if (studentScreen === 'routine') {
         const access = getRoutineAccess(user.username);
         if (!access.ok) {
           studentScreen = 'noaccess';
           renderNoAccess(access);
-        } else if (!hasAttendanceToday(user.username)) {
+        } else if (!hasMusculacionAttendanceToday(user.username)) {
           checkinMessage = null;
-          studentScreen = 'checkin';
+          const last = latestAttendanceToday(user.username);
+          if (last) { trainingId = last.id; studentScreen = 'entrena'; } else { studentScreen = 'checkin'; }
         }
       }
       if (studentScreen !== 'checkin') stopScanner();
@@ -4334,9 +4342,10 @@
       const packsScreen = document.getElementById('student-packs-screen');
       const checkinScreen = document.getElementById('student-checkin-screen');
       const nutriScreen = document.getElementById('student-nutri-screen');
+      const entrenaScreen = document.getElementById('student-entrena-screen');
       const reservasScreen = document.getElementById('student-reservas-screen');
       const misReservasScreen = document.getElementById('student-misreservas-screen');
-      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin', 'reservas', 'misreservas', 'nutri'].indexOf(studentScreen) !== -1) {
+      if (['home', 'precios', 'noaccess', 'enroll', 'pagos', 'packs', 'checkin', 'reservas', 'misreservas', 'nutri', 'entrena'].indexOf(studentScreen) !== -1) {
         routineScreen.classList.add('hidden');
         footerActions.classList.add('hidden');
         homeScreen.classList.toggle('hidden', studentScreen !== 'home');
@@ -4349,6 +4358,8 @@
         reservasScreen.classList.toggle('hidden', studentScreen !== 'reservas');
         misReservasScreen.classList.toggle('hidden', studentScreen !== 'misreservas');
         nutriScreen.classList.toggle('hidden', studentScreen !== 'nutri');
+        entrenaScreen.classList.toggle('hidden', studentScreen !== 'entrena');
+        if (studentScreen === 'entrena') renderEntrena();
         if (studentScreen === 'nutri') renderNutri();
         if (studentScreen !== 'reservas') closeReservaSheet();
         if (studentScreen === 'reservas') renderReservas();
@@ -4371,6 +4382,7 @@
       reservasScreen.classList.add('hidden');
       misReservasScreen.classList.add('hidden');
       nutriScreen.classList.add('hidden');
+      entrenaScreen.classList.add('hidden');
       routineScreen.classList.remove('hidden');
       footerActions.classList.remove('hidden');
 
@@ -5681,6 +5693,18 @@
       return reservationsToday(username).some(r => r.status === 'ATTENDED');
     }
 
+    // La pizarra virtual (rutina) solo se habilita con asistencia validada en musculación.
+    function hasMusculacionAttendanceToday(username) {
+      return reservationsToday(username).some(r => r.status === 'ATTENDED' && r.kind === 'MUSCULACION');
+    }
+
+    // Última asistencia validada hoy (la más reciente), o null.
+    function latestAttendanceToday(username) {
+      const list = reservationsToday(username).filter(r => r.status === 'ATTENDED')
+        .sort((a, b) => ((a.attended_at || '') < (b.attended_at || '') ? 1 : -1));
+      return list[0] || null;
+    }
+
     // Actividades activas que el plan vigente del alumno permite reservar y que todavía no reservó hoy.
     function reservableActivitiesFor(username) {
       const up = getActiveUserPlan(username);
@@ -5803,9 +5827,57 @@
       goStudentScreen(access.ok ? 'checkin' : 'routine'); // sin acceso: el aviso de plan lo explica
     }
 
+    // Después de validar: musculación habilita la pizarra virtual; una clase grupal muestra su mensaje.
+    let trainingId = null;
+
     function goRoutineFromCheckin() {
       stopScanner();
-      goStudentScreen('routine');
+      const user = getCurrentStudent();
+      const last = user ? latestAttendanceToday(user.username) : null;
+      if (!last) return;
+      trainingId = last.id;
+      goStudentScreen('entrena');
+    }
+
+    // Demo: simula la lectura del QR de la zona de la reserva pendiente (sin cámara).
+    function simulateQrRead() {
+      const user = getCurrentStudent();
+      if (!user) return;
+      const nowMin = nowDate().getHours() * 60 + nowDate().getMinutes();
+      const pend = reservationsToday(user.username).filter(r => r.status === 'RESERVED')
+        .sort((a, b) => Math.abs((timeToMinutes(a.time) === null ? nowMin : timeToMinutes(a.time)) - nowMin) - Math.abs((timeToMinutes(b.time) === null ? nowMin : timeToMinutes(b.time)) - nowMin));
+      if (!pend.length) { showCheckinMessage('error', 'No tenés reservas pendientes de validar hoy.'); return; }
+      const act = loadActivities().find(a => a.id === pend[0].activity_id);
+      if (!act) { showCheckinMessage('error', 'La actividad de tu reserva ya no existe.'); return; }
+      applyCheckinResult(checkinWithToken(user.username, act.qr_token));
+    }
+
+    // Pantalla de entrenamiento tras validar la asistencia.
+    function renderEntrena() {
+      const user = getCurrentStudent();
+      const body = document.getElementById('entrena-body');
+      if (!user || !body) return;
+      const r = reservationsToday(user.username).find(x => x.id === trainingId && x.status === 'ATTENDED') || latestAttendanceToday(user.username);
+      if (!r) { body.innerHTML = ''; return; }
+      const hora = r.time ? ' · ' + r.time : '';
+      if (r.kind === 'GRUPAL') {
+        body.innerHTML = `<div class="rounded-3xl border-2 border-brand-yellow p-6 text-center" style="background:linear-gradient(180deg,rgba(251,191,36,.18),rgba(251,191,36,.04));">
+          <div class="text-5xl text-brand-yellow animate-bounce"><i class="fa-solid fa-fire"></i></div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-300 mt-4"><i class="fa-solid fa-circle-check mr-1"></i>Asistencia validada · ${escHtml(r.activity_name)}${hora}</p>
+          <h3 class="text-2xl font-extrabold text-white leading-tight mt-2">Excelente, ya podés hacer la clase</h3>
+          <p class="text-4xl font-black text-brand-yellow leading-tight mt-3">¡VAMOS CON TODO!!</p>
+        </div>
+        <button onclick="goStudentScreen('home')" class="w-full mt-4 rounded-xl py-3 text-sm font-bold border border-brand-border text-zinc-300">Volver al inicio</button>`;
+      } else {
+        body.innerHTML = `<div class="rounded-3xl border-2 border-emerald-500/60 bg-emerald-950/20 p-6 text-center">
+          <div class="text-5xl text-emerald-400"><i class="fa-solid fa-chalkboard-user"></i></div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-300 mt-4"><i class="fa-solid fa-circle-check mr-1"></i>Asistencia validada · ${escHtml(r.activity_name)}${hora}</p>
+          <h3 class="text-2xl font-extrabold text-white leading-tight mt-2">¡Pizarra virtual habilitada!</h3>
+          <p class="text-xs text-zinc-300 mt-2">Ya podés ver y completar tu rutina de hoy.</p>
+        </div>
+        <button onclick="goStudentScreen('routine')" class="btn-glossy w-full mt-4 rounded-xl py-3.5 text-sm font-bold"><i class="fa-solid fa-chalkboard-user mr-1.5"></i>Abrir pizarra virtual</button>
+        <button onclick="goStudentScreen('home')" class="w-full mt-2 rounded-xl py-3 text-sm font-bold border border-brand-border text-zinc-300">Volver al inicio</button>`;
+      }
     }
 
     function showCheckinMessage(type, text) {
@@ -5849,7 +5921,7 @@
       }
 
       if (attended.length) {
-        html += `<button onclick="goRoutineFromCheckin()" class="btn-glossy w-full rounded-xl py-3.5 text-sm font-bold mb-3"><i class="fa-solid fa-dumbbell mr-1.5"></i>Ir a mi rutina</button>`;
+        html += `<button onclick="goRoutineFromCheckin()" class="btn-glossy w-full rounded-xl py-3.5 text-sm font-bold mb-3"><i class="fa-solid fa-dumbbell mr-1.5"></i>Ir al entrenamiento</button>`;
       }
       body.innerHTML = html;
 
@@ -5860,9 +5932,10 @@
     // Resultado de validar (por QR de la app, enlace, o código).
     function applyCheckinResult(res) {
       if (res.ok) {
-        const name = res.activity ? res.activity.name : '';
-        showCheckinMessage('ok', res.status === 'ALREADY' ? `Ya estabas registrado en ${name}.` : `¡Presente en ${name}! Tu asistencia quedó validada.`);
+        // Asistencia validada: pasa al módulo de entrenamiento (clase grupal o pizarra virtual)
         stopScanner();
+        trainingId = res.reservation.id;
+        goStudentScreen('entrena');
       } else {
         showCheckinMessage('error', res.error);
       }
